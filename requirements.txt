@@ -1,0 +1,22 @@
+# Core Deep Learning
+torch
+torchvision
+torchaudio
+
+# SNN Libraries
+snntorch
+spikingjelly
+
+# Reinforcement Learning & Environments
+gymnasium
+minatar
+
+# Logging and Tracking
+wandb
+
+# Utilities
+numpy
+pandas
+matplotlib
+tqdm
+jupyter

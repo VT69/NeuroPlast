@@ -1,0 +1,25 @@
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Environments
+.env
+.venv
+venv/
+env/
+ENV/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# ML / Data / Logs
+data/
+checkpoints/
+models/
+logs/
+wandb/
+
+# OS specific
+.DS_Store
+Thumbs.db
