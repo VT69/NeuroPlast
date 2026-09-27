@@ -1,0 +1,22 @@
+# RQ2/RQ5 continual sweep, SNN trunk, fetch3
+# NOTE: vanilla sleep_stdp / sleep_dream only run for seed 1 (catastrophic, see PROGRESS.md); stabilised versions in cl_snn2.txt
+runs/continual_snn/fetch3_naive_s1/results.json :: python continual.py --suite fetch3 --method naive --config configs/cl_snn.yaml --seed 1 --out runs/continual_snn
+runs/continual_snn/fetch3_isolation_s1/results.json :: python continual.py --suite fetch3 --method isolation --config configs/cl_snn.yaml --seed 1 --out runs/continual_snn
+runs/continual_snn/fetch3_replay_s1/results.json :: python continual.py --suite fetch3 --method replay --config configs/cl_snn.yaml --seed 1 --out runs/continual_snn
+runs/continual_snn/fetch3_sleep_s1/results.json :: python continual.py --suite fetch3 --method sleep --config configs/cl_snn.yaml --seed 1 --out runs/continual_snn
+runs/continual_snn/fetch3_sleep_stdp_s1/results.json :: python continual.py --suite fetch3 --method sleep --config configs/cl_snn.yaml --seed 1 --out runs/continual_snn --mk stdp_alpha=1.0 --tag _stdp
+runs/continual_snn/fetch3_sleep_dream_s1/results.json :: python continual.py --suite fetch3 --method sleep --config configs/cl_snn.yaml --seed 1 --out runs/continual_snn --mk stdp_alpha=1.0 dream=true distill=false rehearsal_coef=0 --tag _dream
+runs/continual_snn/fetch3_ewc_lam100_s1/results.json :: python continual.py --suite fetch3 --method ewc --config configs/cl_snn.yaml --seed 1 --out runs/continual_snn --mk lam=100 --tag _lam100
+runs/continual_snn/fetch3_naive_wakestdp_s1/results.json :: python continual.py --suite fetch3 --method naive --config configs/cl_snn.yaml --seed 1 --out runs/continual_snn --tag _wakestdp --set "stdp={alpha: 1.0, mode: three_factor}"
+runs/continual_snn/fetch3_naive_s2/results.json :: python continual.py --suite fetch3 --method naive --config configs/cl_snn.yaml --seed 2 --out runs/continual_snn
+runs/continual_snn/fetch3_isolation_s2/results.json :: python continual.py --suite fetch3 --method isolation --config configs/cl_snn.yaml --seed 2 --out runs/continual_snn
+runs/continual_snn/fetch3_replay_s2/results.json :: python continual.py --suite fetch3 --method replay --config configs/cl_snn.yaml --seed 2 --out runs/continual_snn
+runs/continual_snn/fetch3_sleep_s2/results.json :: python continual.py --suite fetch3 --method sleep --config configs/cl_snn.yaml --seed 2 --out runs/continual_snn
+runs/continual_snn/fetch3_ewc_lam100_s2/results.json :: python continual.py --suite fetch3 --method ewc --config configs/cl_snn.yaml --seed 2 --out runs/continual_snn --mk lam=100 --tag _lam100
+runs/continual_snn/fetch3_naive_wakestdp_s2/results.json :: python continual.py --suite fetch3 --method naive --config configs/cl_snn.yaml --seed 2 --out runs/continual_snn --tag _wakestdp --set "stdp={alpha: 1.0, mode: three_factor}"
+runs/continual_snn/fetch3_naive_s3/results.json :: python continual.py --suite fetch3 --method naive --config configs/cl_snn.yaml --seed 3 --out runs/continual_snn
+runs/continual_snn/fetch3_isolation_s3/results.json :: python continual.py --suite fetch3 --method isolation --config configs/cl_snn.yaml --seed 3 --out runs/continual_snn
+runs/continual_snn/fetch3_replay_s3/results.json :: python continual.py --suite fetch3 --method replay --config configs/cl_snn.yaml --seed 3 --out runs/continual_snn
+runs/continual_snn/fetch3_sleep_s3/results.json :: python continual.py --suite fetch3 --method sleep --config configs/cl_snn.yaml --seed 3 --out runs/continual_snn
+runs/continual_snn/fetch3_ewc_lam100_s3/results.json :: python continual.py --suite fetch3 --method ewc --config configs/cl_snn.yaml --seed 3 --out runs/continual_snn --mk lam=100 --tag _lam100
+runs/continual_snn/fetch3_naive_wakestdp_s3/results.json :: python continual.py --suite fetch3 --method naive --config configs/cl_snn.yaml --seed 3 --out runs/continual_snn --tag _wakestdp --set "stdp={alpha: 1.0, mode: three_factor}"

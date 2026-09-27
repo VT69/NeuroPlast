@@ -1,0 +1,6 @@
+# ABANDONED: vanilla PPO got 0 return after 1.5M frames (sparse reward); see cnn_doorkey6.yaml
+# Harder task: teacher for the RQ3 dataset + sample-efficiency testbed for RQ1
+run_name: cnn_doorkey8
+env_id: MiniGrid-DoorKey-8x8-v0
+encoder: cnn
+total_frames: 2000000

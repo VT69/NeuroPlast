@@ -1,0 +1,22 @@
+# RQ2/RQ5 continual sweep, CNN trunk, fetch3 (150k frames/task)
+runs/continual/fetch3_naive_s1/results.json :: python continual.py --suite fetch3 --method naive --config configs/cl_cnn.yaml --seed 1
+runs/continual/fetch3_isolation_s1/results.json :: python continual.py --suite fetch3 --method isolation --config configs/cl_cnn.yaml --seed 1
+runs/continual/fetch3_replay_s1/results.json :: python continual.py --suite fetch3 --method replay --config configs/cl_cnn.yaml --seed 1
+runs/continual/fetch3_sleep_s1/results.json :: python continual.py --suite fetch3 --method sleep --config configs/cl_cnn.yaml --seed 1
+runs/continual/fetch3_ewc_lam10_s1/results.json :: python continual.py --suite fetch3 --method ewc --config configs/cl_cnn.yaml --seed 1 --mk lam=10 --tag _lam10
+runs/continual/fetch3_ewc_lam100_s1/results.json :: python continual.py --suite fetch3 --method ewc --config configs/cl_cnn.yaml --seed 1 --mk lam=100 --tag _lam100
+runs/continual/fetch3_ewc_lam1000_s1/results.json :: python continual.py --suite fetch3 --method ewc --config configs/cl_cnn.yaml --seed 1 --mk lam=1000 --tag _lam1000
+runs/continual/fetch3_naive_s2/results.json :: python continual.py --suite fetch3 --method naive --config configs/cl_cnn.yaml --seed 2
+runs/continual/fetch3_isolation_s2/results.json :: python continual.py --suite fetch3 --method isolation --config configs/cl_cnn.yaml --seed 2
+runs/continual/fetch3_replay_s2/results.json :: python continual.py --suite fetch3 --method replay --config configs/cl_cnn.yaml --seed 2
+runs/continual/fetch3_sleep_s2/results.json :: python continual.py --suite fetch3 --method sleep --config configs/cl_cnn.yaml --seed 2
+runs/continual/fetch3_ewc_lam10_s2/results.json :: python continual.py --suite fetch3 --method ewc --config configs/cl_cnn.yaml --seed 2 --mk lam=10 --tag _lam10
+runs/continual/fetch3_ewc_lam100_s2/results.json :: python continual.py --suite fetch3 --method ewc --config configs/cl_cnn.yaml --seed 2 --mk lam=100 --tag _lam100
+runs/continual/fetch3_ewc_lam1000_s2/results.json :: python continual.py --suite fetch3 --method ewc --config configs/cl_cnn.yaml --seed 2 --mk lam=1000 --tag _lam1000
+runs/continual/fetch3_naive_s3/results.json :: python continual.py --suite fetch3 --method naive --config configs/cl_cnn.yaml --seed 3
+runs/continual/fetch3_isolation_s3/results.json :: python continual.py --suite fetch3 --method isolation --config configs/cl_cnn.yaml --seed 3
+runs/continual/fetch3_replay_s3/results.json :: python continual.py --suite fetch3 --method replay --config configs/cl_cnn.yaml --seed 3
+runs/continual/fetch3_sleep_s3/results.json :: python continual.py --suite fetch3 --method sleep --config configs/cl_cnn.yaml --seed 3
+runs/continual/fetch3_ewc_lam10_s3/results.json :: python continual.py --suite fetch3 --method ewc --config configs/cl_cnn.yaml --seed 3 --mk lam=10 --tag _lam10
+runs/continual/fetch3_ewc_lam100_s3/results.json :: python continual.py --suite fetch3 --method ewc --config configs/cl_cnn.yaml --seed 3 --mk lam=100 --tag _lam100
+runs/continual/fetch3_ewc_lam1000_s3/results.json :: python continual.py --suite fetch3 --method ewc --config configs/cl_cnn.yaml --seed 3 --mk lam=1000 --tag _lam1000

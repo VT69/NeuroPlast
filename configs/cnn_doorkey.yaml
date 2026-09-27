@@ -1,0 +1,5 @@
+# Conventional CNN + PPO baseline (priority 2)
+run_name: cnn_doorkey5
+env_id: MiniGrid-DoorKey-5x5-v0
+encoder: cnn
+total_frames: 400000

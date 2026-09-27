@@ -1,0 +1,50 @@
+32 jobs pending
+START runs/rq1/rq1_tf1_s1/eval.json
+END rc=0 775s runs/rq1/rq1_tf1_s1/eval.json
+START runs/rq1/rq1_heb1_s1/eval.json
+END rc=0 815s runs/rq1/rq1_heb1_s1/eval.json
+START runs/rq1/rq1_frozen_s1/eval.json
+END rc=0 440s runs/rq1/rq1_frozen_s1/eval.json
+START runs/rq1/rq1_bp_s2/eval.json
+END rc=0 510s runs/rq1/rq1_bp_s2/eval.json
+START runs/rq1/rq1_tf1_s2/eval.json
+END rc=0 1010s runs/rq1/rq1_tf1_s2/eval.json
+START runs/rq1/rq1_heb1_s2/eval.json
+END rc=0 1040s runs/rq1/rq1_heb1_s2/eval.json
+START runs/rq1/rq1_frozen_s2/eval.json
+END rc=0 445s runs/rq1/rq1_frozen_s2/eval.json
+START runs/rq1/rq1_bp_s3/eval.json
+END rc=0 570s runs/rq1/rq1_bp_s3/eval.json
+START runs/rq1/rq1_tf1_s3/eval.json
+END rc=0 850s runs/rq1/rq1_tf1_s3/eval.json
+START runs/rq1/rq1_heb1_s3/eval.json
+END rc=0 780s runs/rq1/rq1_heb1_s3/eval.json
+START runs/rq1/rq1_tf1_local_s3/eval.json
+END rc=0 755s runs/rq1/rq1_tf1_local_s3/eval.json
+START runs/rq1/rq1_bp_linear_s1/eval.json
+END rc=0 425s runs/rq1/rq1_bp_linear_s1/eval.json
+START runs/rq1/rq1_bp_linear_s2/eval.json
+END rc=0 420s runs/rq1/rq1_bp_linear_s2/eval.json
+START runs/rq1/rq1_bp_linear_s3/eval.json
+END rc=0 440s runs/rq1/rq1_bp_linear_s3/eval.json
+START runs/rq1/rq1_cnn_s2/eval.json
+END rc=0 135s runs/rq1/rq1_cnn_s2/eval.json
+24 jobs pending
+START runs/continual_snn/fetch3_naive_s1/results.json
+END rc=0 660s runs/continual_snn/fetch3_naive_s1/results.json
+START runs/continual_snn/fetch3_replay_s1/results.json
+END rc=0 800s runs/continual_snn/fetch3_replay_s1/results.json
+START runs/continual_snn/fetch3_sleep_stdp_s1/results.json
+END rc=0 1170s runs/continual_snn/fetch3_sleep_stdp_s1/results.json
+START runs/continual_snn/fetch3_naive_wakestdp_s1/results.json
+END rc=0 1346s runs/continual_snn/fetch3_naive_wakestdp_s1/results.json
+START runs/continual_snn/fetch3_isolation_s2/results.json
+END rc=0 786s runs/continual_snn/fetch3_isolation_s2/results.json
+START runs/continual_snn/fetch3_sleep_s2/results.json
+END rc=0 1296s runs/continual_snn/fetch3_sleep_s2/results.json
+START runs/continual_snn/fetch3_naive_s3/results.json
+END rc=0 836s runs/continual_snn/fetch3_naive_s3/results.json
+START runs/continual_snn/fetch3_isolation_s3/results.json
+END rc=0 806s runs/continual_snn/fetch3_isolation_s3/results.json
+START runs/continual_snn/fetch3_sleep_s3/results.json
+END rc=0 1216s runs/continual_snn/fetch3_sleep_s3/results.json

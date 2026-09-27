@@ -1,0 +1,50 @@
+[
+ {
+  "variant": "CNN",
+  "params": 159864,
+  "enc_ops_k_per_decision": 156.1275,
+  "enc_energy_nj_per_decision": 1653.3503999999998,
+  "rollout_ms_per_16": 1.146639149999995,
+  "train_step_ms_per_256": 16.231333399999937
+ },
+ {
+  "variant": "A: SNN e2e (surrogate BPTT)",
+  "params": 160104,
+  "enc_ops_k_per_decision": 160.411,
+  "enc_energy_nj_per_decision": 144.3699,
+  "rollout_ms_per_16": 4.342295700000021,
+  "train_step_ms_per_256": 68.7696334
+ },
+ {
+  "variant": "A+mem: SNN + Transformer (window 4)",
+  "params": 293352,
+  "enc_ops_k_per_decision": 149.53140625,
+  "enc_energy_nj_per_decision": 134.578265625,
+  "rollout_ms_per_16": 5.321797549999996,
+  "train_step_ms_per_256": 69.94267179999989
+ },
+ {
+  "variant": "A+STDP: hybrid rule (stabilised, alpha 0.3)",
+  "params": 160104,
+  "enc_ops_k_per_decision": 264.8235,
+  "enc_energy_nj_per_decision": 238.34115,
+  "rollout_ms_per_16": 3.722307849999984,
+  "train_step_ms_per_256": 132.38476180000004
+ },
+ {
+  "variant": "B: local-only SNN encoder + backprop heads",
+  "params": 160104,
+  "enc_ops_k_per_decision": 158.353,
+  "enc_energy_nj_per_decision": 142.51770000000002,
+  "rollout_ms_per_16": 3.4860859500000174,
+  "train_step_ms_per_256": 160.64910680000006
+ },
+ {
+  "variant": "C: DFA SNN + linear readouts (no backprop)",
+  "params": 144104,
+  "enc_ops_k_per_decision": 340.117,
+  "enc_energy_nj_per_decision": 306.1053,
+  "rollout_ms_per_16": 4.818944699999994,
+  "train_step_ms_per_256": 78.37669220000016
+ }
+]

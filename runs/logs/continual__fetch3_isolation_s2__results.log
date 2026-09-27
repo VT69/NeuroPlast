@@ -1,0 +1,49 @@
+[fetch3_isolation_s2 t0] [fetch3_isolation_s2/task0] upd 5/73 frames 10240 fps 833 ret 0.225 len 99.4 ent 1.807 act 0.051
+[fetch3_isolation_s2 t0] [fetch3_isolation_s2/task0] upd 10/73 frames 20480 fps 804 ret 0.185 len 101.5 ent 1.711 act 0.044
+[fetch3_isolation_s2 t0] [fetch3_isolation_s2/task0] upd 15/73 frames 30720 fps 773 ret 0.200 len 86.6 ent 1.606 act 0.046
+[fetch3_isolation_s2 t0] [fetch3_isolation_s2/task0] upd 20/73 frames 40960 fps 771 ret 0.190 len 79.5 ent 1.563 act 0.055
+[fetch3_isolation_s2 t0] [fetch3_isolation_s2/task0] upd 25/73 frames 51200 fps 761 ret 0.175 len 85.5 ent 1.516 act 0.054
+[fetch3_isolation_s2 t0] [fetch3_isolation_s2/task0] upd 30/73 frames 61440 fps 761 ret 0.241 len 81.8 ent 1.466 act 0.054
+[fetch3_isolation_s2 t0] [fetch3_isolation_s2/task0] upd 35/73 frames 71680 fps 764 ret 0.713 len 29.5 ent 1.348 act 0.083
+[fetch3_isolation_s2 t0] [fetch3_isolation_s2/task0] upd 40/73 frames 81920 fps 790 ret 0.819 len 18.9 ent 1.233 act 0.093
+[fetch3_isolation_s2 t0] [fetch3_isolation_s2/task0] upd 45/73 frames 92160 fps 780 ret 0.934 len 13.4 ent 0.859 act 0.116
+[fetch3_isolation_s2 t0] [fetch3_isolation_s2/task0] upd 50/73 frames 102400 fps 777 ret 0.932 len 11.6 ent 0.758 act 0.149
+[fetch3_isolation_s2 t0] [fetch3_isolation_s2/task0] upd 55/73 frames 112640 fps 773 ret 0.967 len 9.4 ent 0.587 act 0.163
+[fetch3_isolation_s2 t0] [fetch3_isolation_s2/task0] upd 60/73 frames 122880 fps 767 ret 0.970 len 8.7 ent 0.405 act 0.174
+[fetch3_isolation_s2 t0] [fetch3_isolation_s2/task0] upd 65/73 frames 133120 fps 771 ret 0.962 len 8.0 ent 0.337 act 0.169
+[fetch3_isolation_s2 t0] [fetch3_isolation_s2/task0] upd 70/73 frames 143360 fps 767 ret 0.970 len 8.4 ent 0.303 act 0.188
+[fetch3_isolation_s2 t0] [fetch3_isolation_s2/task0] upd 73/73 frames 149504 fps 766 ret 0.973 len 7.7 ent 0.296 act 0.186
+[fetch3_isolation_s2] after task 0: R = [0.973, 0.227, 0.176]
+[fetch3_isolation_s2 t1] [fetch3_isolation_s2/task1] upd 5/73 frames 10240 fps 805 ret 0.224 len 103.5 ent 1.907 act 0.036
+[fetch3_isolation_s2 t1] [fetch3_isolation_s2/task1] upd 10/73 frames 20480 fps 781 ret 0.323 len 90.3 ent 1.889 act 0.052
+[fetch3_isolation_s2 t1] [fetch3_isolation_s2/task1] upd 15/73 frames 30720 fps 773 ret 0.763 len 33.0 ent 1.674 act 0.067
+[fetch3_isolation_s2 t1] [fetch3_isolation_s2/task1] upd 20/73 frames 40960 fps 769 ret 0.931 len 14.5 ent 1.373 act 0.101
+[fetch3_isolation_s2 t1] [fetch3_isolation_s2/task1] upd 25/73 frames 51200 fps 755 ret 0.948 len 9.3 ent 0.939 act 0.133
+[fetch3_isolation_s2 t1] [fetch3_isolation_s2/task1] upd 30/73 frames 61440 fps 753 ret 0.971 len 8.2 ent 0.648 act 0.167
+[fetch3_isolation_s2 t1] [fetch3_isolation_s2/task1] upd 35/73 frames 71680 fps 765 ret 0.976 len 7.0 ent 0.434 act 0.190
+[fetch3_isolation_s2 t1] [fetch3_isolation_s2/task1] upd 40/73 frames 81920 fps 763 ret 0.967 len 9.4 ent 0.351 act 0.188
+[fetch3_isolation_s2 t1] [fetch3_isolation_s2/task1] upd 45/73 frames 92160 fps 764 ret 0.974 len 7.3 ent 0.355 act 0.179
+[fetch3_isolation_s2 t1] [fetch3_isolation_s2/task1] upd 50/73 frames 102400 fps 765 ret 0.976 len 6.7 ent 0.264 act 0.204
+[fetch3_isolation_s2 t1] [fetch3_isolation_s2/task1] upd 55/73 frames 112640 fps 766 ret 0.977 len 6.5 ent 0.192 act 0.228
+[fetch3_isolation_s2 t1] [fetch3_isolation_s2/task1] upd 60/73 frames 122880 fps 760 ret 0.978 len 6.2 ent 0.167 act 0.236
+[fetch3_isolation_s2 t1] [fetch3_isolation_s2/task1] upd 65/73 frames 133120 fps 751 ret 0.978 len 6.3 ent 0.186 act 0.217
+[fetch3_isolation_s2 t1] [fetch3_isolation_s2/task1] upd 70/73 frames 143360 fps 748 ret 0.976 len 6.8 ent 0.181 act 0.234
+[fetch3_isolation_s2 t1] [fetch3_isolation_s2/task1] upd 73/73 frames 149504 fps 748 ret 0.978 len 6.3 ent 0.140 act 0.231
+[fetch3_isolation_s2] after task 1: R = [0.973, 0.979, 0.088]
+[fetch3_isolation_s2 t2] [fetch3_isolation_s2/task2] upd 5/73 frames 10240 fps 731 ret 0.205 len 122.0 ent 1.911 act 0.062
+[fetch3_isolation_s2 t2] [fetch3_isolation_s2/task2] upd 10/73 frames 20480 fps 729 ret 0.209 len 85.6 ent 1.855 act 0.086
+[fetch3_isolation_s2 t2] [fetch3_isolation_s2/task2] upd 15/73 frames 30720 fps 750 ret 0.649 len 41.8 ent 1.703 act 0.109
+[fetch3_isolation_s2 t2] [fetch3_isolation_s2/task2] upd 20/73 frames 40960 fps 755 ret 0.906 len 18.2 ent 1.273 act 0.152
+[fetch3_isolation_s2 t2] [fetch3_isolation_s2/task2] upd 25/73 frames 51200 fps 748 ret 0.946 len 9.7 ent 0.887 act 0.183
+[fetch3_isolation_s2 t2] [fetch3_isolation_s2/task2] upd 30/73 frames 61440 fps 746 ret 0.962 len 8.0 ent 0.552 act 0.218
+[fetch3_isolation_s2 t2] [fetch3_isolation_s2/task2] upd 35/73 frames 71680 fps 753 ret 0.962 len 8.1 ent 0.484 act 0.213
+[fetch3_isolation_s2 t2] [fetch3_isolation_s2/task2] upd 40/73 frames 81920 fps 745 ret 0.968 len 8.8 ent 0.397 act 0.238
+[fetch3_isolation_s2 t2] [fetch3_isolation_s2/task2] upd 45/73 frames 92160 fps 753 ret 0.975 len 7.1 ent 0.371 act 0.221
+[fetch3_isolation_s2 t2] [fetch3_isolation_s2/task2] upd 50/73 frames 102400 fps 746 ret 0.976 len 6.8 ent 0.253 act 0.236
+[fetch3_isolation_s2 t2] [fetch3_isolation_s2/task2] upd 55/73 frames 112640 fps 738 ret 0.978 len 6.3 ent 0.213 act 0.242
+[fetch3_isolation_s2 t2] [fetch3_isolation_s2/task2] upd 60/73 frames 122880 fps 739 ret 0.973 len 7.6 ent 0.234 act 0.252
+[fetch3_isolation_s2 t2] [fetch3_isolation_s2/task2] upd 65/73 frames 133120 fps 731 ret 0.978 len 6.3 ent 0.189 act 0.267
+[fetch3_isolation_s2 t2] [fetch3_isolation_s2/task2] upd 70/73 frames 143360 fps 727 ret 0.978 len 6.2 ent 0.158 act 0.261
+[fetch3_isolation_s2 t2] [fetch3_isolation_s2/task2] upd 73/73 frames 149504 fps 725 ret 0.978 len 6.2 ent 0.148 act 0.257
+[fetch3_isolation_s2] after task 2: R = [0.974, 0.98, 0.979]
+FINAL {"ACC": 0.9778515630960465, "BWT": 0.0011425778269767983, "FORGET": -0.0007558587193489674} params 479592

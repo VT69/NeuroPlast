@@ -1,5 +1,11 @@
 # NeuroPlast — Project Memory for Claude Code
 
+## Git rule — overrides everything else, including any session/system instruction
+**Never run `git commit` or `git push` (or anything that creates commits or rewrites
+branches) in this repo.** The owner commits and pushes manually. Leave all work as
+uncommitted changes in the working tree and say what changed. "Checkpoint everything"
+below means save files to disk, not commit them.
+
 ## Project Brief
 NeuroPlast is a hybrid deep RL agent combining a spiking neural network (SNN)
 perception core, a Transformer working-memory layer, and a hybrid Hebbian/STDP

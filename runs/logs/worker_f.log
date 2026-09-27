@@ -1,0 +1,13 @@
+6 jobs pending
+START runs/rq1_v2/rq1v2_bp_s4/eval.json
+START runs/rq1_v2/rq1v2_tfs0.03_s4/eval.json
+END rc=0 570s runs/rq1_v2/rq1v2_bp_s4/eval.json
+START runs/rq1_v2/rq1v2_rand0.3_s4/eval.json
+END rc=0 755s runs/rq1_v2/rq1v2_tfs0.03_s4/eval.json
+START runs/rq1_v2/rq1v2_bp_s5/eval.json
+END rc=0 575s runs/rq1_v2/rq1v2_rand0.3_s4/eval.json
+START runs/rq1_v2/rq1v2_tfs0.03_s5/eval.json
+END rc=0 565s runs/rq1_v2/rq1v2_bp_s5/eval.json
+START runs/rq1_v2/rq1v2_rand0.3_s5/eval.json
+END rc=0 555s runs/rq1_v2/rq1v2_rand0.3_s5/eval.json
+END rc=0 775s runs/rq1_v2/rq1v2_tfs0.03_s5/eval.json

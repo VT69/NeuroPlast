@@ -1,0 +1,4 @@
+run_name: cnn_lavagap5
+env_id: MiniGrid-LavaGapS5-v0
+encoder: cnn
+total_frames: 300000

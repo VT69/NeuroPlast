@@ -2,44 +2,66 @@
 
 *Hybrid Spiking-Neural / Transformer Architecture • Hebbian-STDP + Gradient Descent • Sleep-Phase Memory Consolidation*
 
-## Overview
-NeuroPlast is a deep reinforcement learning (RL) agent whose perception-to-action pipeline is modeled on biological brain learning and memory consolidation. Instead of standard dense networks trained end-to-end by backpropagation, it integrates three neuro-inspired mechanisms to tackle catastrophic forgetting, energy inefficiency, and the biological implausibility of backprop:
+NeuroPlast is a deep RL agent that combines a spiking neural network (SNN)
+perception core, a Transformer working-memory layer, a hybrid local
+STDP + gradient-descent learning rule, and periodic offline "sleep"
+consolidation against catastrophic forgetting. The research questions (RQ1–RQ5)
+are listed in `CLAUDE.md`; **`PROGRESS.md` is the lab notebook** (what was run,
+what was found, what failed, and what changed from the original plan), and
+`results/` holds the aggregated tables and figures.
 
-- **Spiking Neural Network (SNN) Core**: Handles low-level perception using discrete, event-driven spikes.
-- **Transformer Working Memory**: Attends over a short window of recent spiking activity to provide context.
-- **Hybrid Learning Rule**: Combines standard gradient descent with a local Hebbian/STDP update.
-- **Sleep-Phase Consolidation**: Periodically replays sampled past experiences offline to prevent catastrophic forgetting.
-
-## Research Questions
-1. **RQ1**: Does adding a local Hebbian/STDP term alongside gradient descent change sample efficiency or final return?
-2. **RQ2**: Does a periodic sleep-replay consolidation phase reduce catastrophic forgetting across a sequence of tasks?
-3. **RQ3**: Does the SNN encoder offer a better accuracy-vs-estimated-energy trade-off (spike sparsity as a proxy) than a same-capacity dense CNN encoder?
-4. **RQ4**: Which architecture variant offers the best continual-learning robustness per unit of compute?
-
-## Architecture Variants
-We explore three candidate architectures to balance biological plausibility with training stability:
-- **Variant A (Differentiable End-to-End)**: SNN trained via surrogate gradients with an auxiliary STDP regularizer.
-- **Variant B (STDP Front-End + Backprop Core)**: Frozen SNN front-end trained purely by local STDP; Transformer core trained by backprop.
-- **Variant C (Fully Spiking Transformer)**: Fully local, reward-modulated three-factor learning rules end-to-end.
-
-## Repository Structure
+## Layout
 ```text
-.
-├── src/
-│   ├── models/         # SNN encoders, Transformer modules, Actor-Critic heads
-│   ├── core/           # Hybrid learning algorithms (STDP + backprop mixing)
-│   ├── memory/         # Experience buffer, sleep-phase replay mechanisms
-│   ├── envs/           # Environment wrappers (MinAtar) and continual task suites
-│   └── utils/          # Checkpointing, Google Drive sync, W&B logging
-├── scripts/            # Training and evaluation entry points
-├── notebooks/          # Exploratory analysis and plotting
-├── requirements.txt    # Project dependencies
-└── README.md           # This file
+neuroplast/
+  envs/            MiniGrid wrappers, one-hot obs, vector env; continual task suites (fetch3, natural3)
+  models/snn/      LIF neuron + surrogate gradient
+  models/encoders.py  CNN and topology-matched SNN encoders, op/energy accounting (RQ3)
+  models/memory/   Transformer working memory over the last K frames
+  models/heads/    actor / critic heads (multi-head for task-incremental CL)
+  models/agent.py  encoder -> [memory] -> heads
+  learning/stdp.py    trace STDP, eligibility traces, three-factor modulation
+  learning/hybrid.py  dW = alpha * STDP + beta * backprop hook for PPO (RQ1)
+  sleep/           sleep-phase consolidation (RQ2)
+  baselines/       naive fine-tuning, EWC, replay (CLEAR-style), parameter isolation
+  eval/            continual-learning metrics
+train.py           single-file PPO (CleanRL-style); `train()` reused by everything
+continual.py       task-sequence runner -> accuracy matrix, forgetting, transfer
+configs/           one YAML per experiment
+scripts/           experiment drivers (RQ3 sweep, job queue, analysis)
+jobs/              job lists for scripts/run_queue.py (resumable sweeps)
+runs/              run outputs (metrics.csv, final.pt, eval.json / results.json) — committed
+results/           aggregated markdown tables + figures (scripts/analyze.py)
+tests/             pytest unit tests (LIF, encoders, STDP, agent)
 ```
 
-## Setup & Dependencies
-This project uses PyTorch, snnTorch, SpikingJelly, Gymnasium, and Weights & Biases for experiment tracking. It is designed to be runnable in constrained environments like Google Colab.
-
+## Quick start
 ```bash
 pip install -r requirements.txt
+pytest tests/                                            # ~1-2 min on CPU
+python train.py --config configs/cnn_doorkey.yaml        # CNN+PPO baseline, ~3 min
+python train.py --config configs/hybrid_doorkey.yaml     # SNN+Transformer agent, ~10 min
+python continual.py --suite fetch3 --method naive --config configs/cl_cnn.yaml
+python scripts/run_queue.py jobs/cl_cnn.txt --procs 2    # a whole sweep, resumable
+python scripts/analyze.py                                # -> results/*.md, results/figs/*.png
 ```
+Override any config key from the command line: `--set seed=2 total_frames=100000`.
+
+## Running on a modest local machine (CPU only, e.g. i3 + 12 GB RAM)
+Everything here was developed CPU-only; every model is ~150–330k parameters and
+every job uses one thread, so a 2-core/4-thread laptop runs 2–3 jobs at once.
+- **Install the CPU-only PyTorch wheel first**: the default `pip install torch`
+  on Linux/Windows can pull ~3 GB of CUDA libraries you don't need:
+  `pip install torch --index-url https://download.pytorch.org/whl/cpu`
+- **If C: is full (Windows)**, create the virtualenv and caches on another drive:
+  ```bat
+  python -m venv D:\venvs\neuroplast
+  D:\venvs\neuroplast\Scripts\activate
+  set PIP_CACHE_DIR=D:\pip-cache
+  set TORCH_HOME=D:\torch-cache
+  pip install torch --index-url https://download.pytorch.org/whl/cpu
+  pip install -r requirements.txt
+  ```
+  and clone the repo onto D: or E: too (run outputs land in `runs/`).
+- Use `--procs 2` (not 4) with `scripts/run_queue.py` on a dual-core CPU.
+- RAM: each job uses < 1 GB.
+- Google Colab also works (CPU runtime is enough), but it isn't needed.

@@ -1,0 +1,43 @@
+21 jobs pending
+START runs/continual/fetch3_naive_s1/results.json
+START runs/continual/fetch3_isolation_s1/results.json
+START runs/continual/fetch3_replay_s1/results.json
+END rc=0 625s runs/continual/fetch3_isolation_s1/results.json
+START runs/continual/fetch3_sleep_s1/results.json
+END rc=0 681s runs/continual/fetch3_naive_s1/results.json
+START runs/continual/fetch3_ewc_lam10_s1/results.json
+END rc=0 751s runs/continual/fetch3_replay_s1/results.json
+START runs/continual/fetch3_ewc_lam100_s1/results.json
+END rc=0 675s runs/continual/fetch3_ewc_lam10_s1/results.json
+START runs/continual/fetch3_ewc_lam1000_s1/results.json
+END rc=0 680s runs/continual/fetch3_ewc_lam100_s1/results.json
+START runs/continual/fetch3_naive_s2/results.json
+END rc=0 891s runs/continual/fetch3_sleep_s1/results.json
+START runs/continual/fetch3_isolation_s2/results.json
+END rc=0 695s runs/continual/fetch3_ewc_lam1000_s1/results.json
+START runs/continual/fetch3_replay_s2/results.json
+END rc=0 655s runs/continual/fetch3_naive_s2/results.json
+START runs/continual/fetch3_sleep_s2/results.json
+END rc=0 661s runs/continual/fetch3_isolation_s2/results.json
+START runs/continual/fetch3_ewc_lam10_s2/results.json
+END rc=0 740s runs/continual/fetch3_replay_s2/results.json
+START runs/continual/fetch3_ewc_lam100_s2/results.json
+END rc=0 665s runs/continual/fetch3_ewc_lam10_s2/results.json
+START runs/continual/fetch3_ewc_lam1000_s2/results.json
+END rc=0 861s runs/continual/fetch3_sleep_s2/results.json
+START runs/continual/fetch3_naive_s3/results.json
+END rc=0 861s runs/continual/fetch3_ewc_lam100_s2/results.json
+START runs/continual/fetch3_isolation_s3/results.json
+END rc=0 886s runs/continual/fetch3_ewc_lam1000_s2/results.json
+START runs/continual/fetch3_replay_s3/results.json
+END rc=0 911s runs/continual/fetch3_naive_s3/results.json
+START runs/continual/fetch3_sleep_s3/results.json
+END rc=0 981s runs/continual/fetch3_isolation_s3/results.json
+START runs/continual/fetch3_ewc_lam10_s3/results.json
+END rc=0 1157s runs/continual/fetch3_replay_s3/results.json
+START runs/continual/fetch3_ewc_lam100_s3/results.json
+END rc=0 1332s runs/continual/fetch3_sleep_s3/results.json
+START runs/continual/fetch3_ewc_lam1000_s3/results.json
+END rc=0 1007s runs/continual/fetch3_ewc_lam10_s3/results.json
+END rc=0 906s runs/continual/fetch3_ewc_lam100_s3/results.json
+END rc=0 696s runs/continual/fetch3_ewc_lam1000_s3/results.json

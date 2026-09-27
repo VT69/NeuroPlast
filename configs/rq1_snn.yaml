@@ -1,0 +1,6 @@
+# RQ1: hybrid learning rule on the SNN encoder (no memory, for speed), DoorKey-5x5.
+# Arms differ only in the `stdp` dict (see neuroplast/learning/hybrid.py).
+env_id: MiniGrid-DoorKey-5x5-v0
+encoder: snn
+enc_kwargs: {T: 4}
+total_frames: 300000

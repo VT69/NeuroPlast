@@ -1,0 +1,10 @@
+# Priority 5: first end-to-end hybrid agent (variant A):
+# SNN encoder (surrogate-gradient BPTT, T=4) -> Transformer working memory (window 4) -> actor/critic
+run_name: hybrid_doorkey5
+env_id: MiniGrid-DoorKey-5x5-v0
+encoder: snn
+enc_kwargs: {T: 4}
+memory: true
+window: 4
+mem_kwargs: {layers: 1, heads: 4}
+total_frames: 400000

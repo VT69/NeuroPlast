@@ -1,0 +1,7 @@
+# RQ1 v2: stabilised STDP (covariance + homeostasis) + backprop, DoorKey-6x6, 400k frames
+runs/rq1_v2/rq1v2_bp_s4/eval.json :: python train.py --config configs/rq1_v2.yaml --set seed=4 run_name=rq1v2_bp_s4 out_dir=runs/rq1_v2
+runs/rq1_v2/rq1v2_tfs0.03_s4/eval.json :: python train.py --config configs/rq1_v2.yaml --set seed=4 run_name=rq1v2_tfs0.03_s4 out_dir=runs/rq1_v2 "stdp={alpha: 0.03, mode: three_factor, center: true, homeo: 0.15}"
+runs/rq1_v2/rq1v2_rand0.3_s4/eval.json :: python train.py --config configs/rq1_v2.yaml --set seed=4 run_name=rq1v2_rand0.3_s4 out_dir=runs/rq1_v2 "stdp={alpha: 0.3, mode: random}"
+runs/rq1_v2/rq1v2_bp_s5/eval.json :: python train.py --config configs/rq1_v2.yaml --set seed=5 run_name=rq1v2_bp_s5 out_dir=runs/rq1_v2
+runs/rq1_v2/rq1v2_tfs0.03_s5/eval.json :: python train.py --config configs/rq1_v2.yaml --set seed=5 run_name=rq1v2_tfs0.03_s5 out_dir=runs/rq1_v2 "stdp={alpha: 0.03, mode: three_factor, center: true, homeo: 0.15}"
+runs/rq1_v2/rq1v2_rand0.3_s5/eval.json :: python train.py --config configs/rq1_v2.yaml --set seed=5 run_name=rq1v2_rand0.3_s5 out_dir=runs/rq1_v2 "stdp={alpha: 0.3, mode: random}"

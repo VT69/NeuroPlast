@@ -1,0 +1,14 @@
+6 jobs pending
+START runs/continual_snn/fetch3_sleep_stdps0.01_s1/results.json
+END rc=0 1406s runs/continual_snn/fetch3_sleep_stdps0.01_s1/results.json
+START runs/continual_snn/fetch3_sleep_stdps0.003_s1/results.json
+END rc=0 1431s runs/continual_snn/fetch3_sleep_stdps0.003_s1/results.json
+START runs/continual_snn/fetch3_sleep_stdps0.01_s2/results.json
+END rc=0 1506s runs/continual_snn/fetch3_sleep_stdps0.01_s2/results.json
+START runs/continual_snn/fetch3_sleep_stdps0.003_s2/results.json
+END rc=0 1461s runs/continual_snn/fetch3_sleep_stdps0.003_s2/results.json
+START runs/continual_snn/fetch3_sleep_stdps0.01_s3/results.json
+END rc=0 1180s runs/continual_snn/fetch3_sleep_stdps0.01_s3/results.json
+START runs/continual_snn/fetch3_sleep_stdps0.003_s3/results.json
+END rc=0 1175s runs/continual_snn/fetch3_sleep_stdps0.003_s3/results.json
+0 jobs pending

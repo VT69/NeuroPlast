@@ -1,0 +1,49 @@
+[fetch3_sleep_stdp_s1 t0] [fetch3_sleep_stdp_s1/task0] upd 5/73 frames 10240 fps 683 ret 0.226 len 110.0 ent 1.912 act 0.118
+[fetch3_sleep_stdp_s1 t0] [fetch3_sleep_stdp_s1/task0] upd 10/73 frames 20480 fps 673 ret 0.243 len 105.3 ent 1.824 act 0.123
+[fetch3_sleep_stdp_s1 t0] [fetch3_sleep_stdp_s1/task0] upd 15/73 frames 30720 fps 673 ret 0.229 len 92.8 ent 1.770 act 0.134
+[fetch3_sleep_stdp_s1 t0] [fetch3_sleep_stdp_s1/task0] upd 20/73 frames 40960 fps 686 ret 0.321 len 101.2 ent 1.777 act 0.132
+[fetch3_sleep_stdp_s1 t0] [fetch3_sleep_stdp_s1/task0] upd 25/73 frames 51200 fps 691 ret 0.347 len 89.5 ent 1.795 act 0.140
+[fetch3_sleep_stdp_s1 t0] [fetch3_sleep_stdp_s1/task0] upd 30/73 frames 61440 fps 692 ret 0.454 len 88.0 ent 1.716 act 0.153
+[fetch3_sleep_stdp_s1 t0] [fetch3_sleep_stdp_s1/task0] upd 35/73 frames 71680 fps 692 ret 0.511 len 90.9 ent 1.600 act 0.163
+[fetch3_sleep_stdp_s1 t0] [fetch3_sleep_stdp_s1/task0] upd 40/73 frames 81920 fps 706 ret 0.630 len 74.4 ent 1.582 act 0.162
+[fetch3_sleep_stdp_s1 t0] [fetch3_sleep_stdp_s1/task0] upd 45/73 frames 92160 fps 717 ret 0.667 len 54.7 ent 1.528 act 0.166
+[fetch3_sleep_stdp_s1 t0] [fetch3_sleep_stdp_s1/task0] upd 50/73 frames 102400 fps 746 ret 0.691 len 56.8 ent 1.450 act 0.174
+[fetch3_sleep_stdp_s1 t0] [fetch3_sleep_stdp_s1/task0] upd 55/73 frames 112640 fps 750 ret 0.767 len 57.7 ent 1.476 act 0.171
+[fetch3_sleep_stdp_s1 t0] [fetch3_sleep_stdp_s1/task0] upd 60/73 frames 122880 fps 743 ret 0.784 len 47.3 ent 1.350 act 0.173
+[fetch3_sleep_stdp_s1 t0] [fetch3_sleep_stdp_s1/task0] upd 65/73 frames 133120 fps 741 ret 0.842 len 40.7 ent 1.341 act 0.178
+[fetch3_sleep_stdp_s1 t0] [fetch3_sleep_stdp_s1/task0] upd 70/73 frames 143360 fps 742 ret 0.834 len 46.4 ent 1.317 act 0.175
+[fetch3_sleep_stdp_s1 t0] [fetch3_sleep_stdp_s1/task0] upd 73/73 frames 149504 fps 742 ret 0.847 len 38.9 ent 1.273 act 0.174
+[fetch3_sleep_stdp_s1] after task 0: R = [0.909, 0.232, 0.192]
+[fetch3_sleep_stdp_s1 t1] [fetch3_sleep_stdp_s1/task1] upd 5/73 frames 10240 fps 737 ret 0.225 len 114.4 ent 1.862 act 0.174
+[fetch3_sleep_stdp_s1 t1] [fetch3_sleep_stdp_s1/task1] upd 10/73 frames 20480 fps 718 ret 0.291 len 93.5 ent 1.814 act 0.173
+[fetch3_sleep_stdp_s1 t1] [fetch3_sleep_stdp_s1/task1] upd 15/73 frames 30720 fps 724 ret 0.401 len 63.7 ent 1.797 act 0.169
+[fetch3_sleep_stdp_s1 t1] [fetch3_sleep_stdp_s1/task1] upd 20/73 frames 40960 fps 720 ret 0.654 len 32.2 ent 1.671 act 0.174
+[fetch3_sleep_stdp_s1 t1] [fetch3_sleep_stdp_s1/task1] upd 25/73 frames 51200 fps 748 ret 0.711 len 26.4 ent 1.473 act 0.172
+[fetch3_sleep_stdp_s1 t1] [fetch3_sleep_stdp_s1/task1] upd 30/73 frames 61440 fps 381 ret 0.382 len 93.3 ent 1.199 act 0.622
+[fetch3_sleep_stdp_s1 t1] [fetch3_sleep_stdp_s1/task1] upd 35/73 frames 71680 fps 408 ret 0.146 len 164.8 ent 1.522 act 0.622
+[fetch3_sleep_stdp_s1 t1] [fetch3_sleep_stdp_s1/task1] upd 40/73 frames 81920 fps 430 ret 0.149 len 158.1 ent 1.557 act 0.622
+[fetch3_sleep_stdp_s1 t1] [fetch3_sleep_stdp_s1/task1] upd 45/73 frames 92160 fps 451 ret 0.157 len 134.4 ent 1.851 act 0.622
+[fetch3_sleep_stdp_s1 t1] [fetch3_sleep_stdp_s1/task1] upd 50/73 frames 102400 fps 471 ret 0.171 len 126.3 ent 1.613 act 0.622
+[fetch3_sleep_stdp_s1 t1] [fetch3_sleep_stdp_s1/task1] upd 55/73 frames 112640 fps 358 ret 0.162 len 108.8 ent 1.452 act 0.640
+[fetch3_sleep_stdp_s1 t1] [fetch3_sleep_stdp_s1/task1] upd 60/73 frames 122880 fps 375 ret 0.201 len 113.2 ent 1.608 act 0.641
+[fetch3_sleep_stdp_s1 t1] [fetch3_sleep_stdp_s1/task1] upd 65/73 frames 133120 fps 390 ret 0.290 len 100.4 ent 1.707 act 0.640
+[fetch3_sleep_stdp_s1 t1] [fetch3_sleep_stdp_s1/task1] upd 70/73 frames 143360 fps 403 ret 0.216 len 84.6 ent 1.699 act 0.641
+[fetch3_sleep_stdp_s1 t1] [fetch3_sleep_stdp_s1/task1] upd 73/73 frames 149504 fps 410 ret 0.217 len 88.2 ent 1.680 act 0.641
+[fetch3_sleep_stdp_s1] after task 1: R = [0.211, 0.225, 0.125]
+[fetch3_sleep_stdp_s1 t2] [fetch3_sleep_stdp_s1/task2] upd 5/73 frames 10240 fps 734 ret 0.167 len 136.7 ent 1.894 act 0.672
+[fetch3_sleep_stdp_s1 t2] [fetch3_sleep_stdp_s1/task2] upd 10/73 frames 20480 fps 718 ret 0.094 len 178.3 ent 1.829 act 0.672
+[fetch3_sleep_stdp_s1 t2] [fetch3_sleep_stdp_s1/task2] upd 15/73 frames 30720 fps 716 ret 0.037 len 192.5 ent 1.782 act 0.672
+[fetch3_sleep_stdp_s1 t2] [fetch3_sleep_stdp_s1/task2] upd 20/73 frames 40960 fps 739 ret 0.024 len 208.2 ent 1.686 act 0.672
+[fetch3_sleep_stdp_s1 t2] [fetch3_sleep_stdp_s1/task2] upd 25/73 frames 51200 fps 740 ret 0.023 len 223.5 ent 1.651 act 0.672
+[fetch3_sleep_stdp_s1 t2] [fetch3_sleep_stdp_s1/task2] upd 30/73 frames 61440 fps 381 ret 0.013 len 232.8 ent 1.659 act 0.673
+[fetch3_sleep_stdp_s1 t2] [fetch3_sleep_stdp_s1/task2] upd 35/73 frames 71680 fps 411 ret 0.000 len 235.0 ent 1.531 act 0.673
+[fetch3_sleep_stdp_s1 t2] [fetch3_sleep_stdp_s1/task2] upd 40/73 frames 81920 fps 436 ret 0.004 len 234.9 ent 1.567 act 0.673
+[fetch3_sleep_stdp_s1 t2] [fetch3_sleep_stdp_s1/task2] upd 45/73 frames 92160 fps 458 ret 0.008 len 236.0 ent 1.576 act 0.673
+[fetch3_sleep_stdp_s1 t2] [fetch3_sleep_stdp_s1/task2] upd 50/73 frames 102400 fps 477 ret 0.022 len 238.9 ent 1.462 act 0.673
+[fetch3_sleep_stdp_s1 t2] [fetch3_sleep_stdp_s1/task2] upd 55/73 frames 112640 fps 359 ret 0.018 len 239.4 ent 1.579 act 0.688
+[fetch3_sleep_stdp_s1 t2] [fetch3_sleep_stdp_s1/task2] upd 60/73 frames 122880 fps 375 ret 0.018 len 244.0 ent 1.523 act 0.688
+[fetch3_sleep_stdp_s1 t2] [fetch3_sleep_stdp_s1/task2] upd 65/73 frames 133120 fps 389 ret 0.000 len 250.6 ent 1.537 act 0.688
+[fetch3_sleep_stdp_s1 t2] [fetch3_sleep_stdp_s1/task2] upd 70/73 frames 143360 fps 403 ret 0.000 len 251.7 ent 1.565 act 0.688
+[fetch3_sleep_stdp_s1 t2] [fetch3_sleep_stdp_s1/task2] upd 73/73 frames 149504 fps 410 ret 0.000 len 252.9 ent 1.566 act 0.688
+[fetch3_sleep_stdp_s1] after task 2: R = [0.205, 0.274, 0.008]
+FINAL {"ACC": 0.162584634522597, "BWT": -0.3272753916680813, "FORGET": 0.3308164066076279} params 194552

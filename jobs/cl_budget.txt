@@ -1,0 +1,13 @@
+# RQ2 budget sweep: replay vs sleep with small per-task buffers, CNN trunk
+runs/continual_budget/fetch3_replay_buf50_s1/results.json :: python continual.py --suite fetch3 --method replay --config configs/cl_cnn.yaml --seed 1 --out runs/continual_budget --mk buffer_per_task=50 --tag _buf50
+runs/continual_budget/fetch3_sleep_buf50_s1/results.json :: python continual.py --suite fetch3 --method sleep --config configs/cl_cnn.yaml --seed 1 --out runs/continual_budget --mk buffer_per_task=50 --tag _buf50
+runs/continual_budget/fetch3_replay_buf200_s1/results.json :: python continual.py --suite fetch3 --method replay --config configs/cl_cnn.yaml --seed 1 --out runs/continual_budget --mk buffer_per_task=200 --tag _buf200
+runs/continual_budget/fetch3_sleep_buf200_s1/results.json :: python continual.py --suite fetch3 --method sleep --config configs/cl_cnn.yaml --seed 1 --out runs/continual_budget --mk buffer_per_task=200 --tag _buf200
+runs/continual_budget/fetch3_replay_buf50_s2/results.json :: python continual.py --suite fetch3 --method replay --config configs/cl_cnn.yaml --seed 2 --out runs/continual_budget --mk buffer_per_task=50 --tag _buf50
+runs/continual_budget/fetch3_sleep_buf50_s2/results.json :: python continual.py --suite fetch3 --method sleep --config configs/cl_cnn.yaml --seed 2 --out runs/continual_budget --mk buffer_per_task=50 --tag _buf50
+runs/continual_budget/fetch3_replay_buf200_s2/results.json :: python continual.py --suite fetch3 --method replay --config configs/cl_cnn.yaml --seed 2 --out runs/continual_budget --mk buffer_per_task=200 --tag _buf200
+runs/continual_budget/fetch3_sleep_buf200_s2/results.json :: python continual.py --suite fetch3 --method sleep --config configs/cl_cnn.yaml --seed 2 --out runs/continual_budget --mk buffer_per_task=200 --tag _buf200
+runs/continual_budget/fetch3_replay_buf50_s3/results.json :: python continual.py --suite fetch3 --method replay --config configs/cl_cnn.yaml --seed 3 --out runs/continual_budget --mk buffer_per_task=50 --tag _buf50
+runs/continual_budget/fetch3_sleep_buf50_s3/results.json :: python continual.py --suite fetch3 --method sleep --config configs/cl_cnn.yaml --seed 3 --out runs/continual_budget --mk buffer_per_task=50 --tag _buf50
+runs/continual_budget/fetch3_replay_buf200_s3/results.json :: python continual.py --suite fetch3 --method replay --config configs/cl_cnn.yaml --seed 3 --out runs/continual_budget --mk buffer_per_task=200 --tag _buf200
+runs/continual_budget/fetch3_sleep_buf200_s3/results.json :: python continual.py --suite fetch3 --method sleep --config configs/cl_cnn.yaml --seed 3 --out runs/continual_budget --mk buffer_per_task=200 --tag _buf200

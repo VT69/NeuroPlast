@@ -1,0 +1,49 @@
+12 jobs pending
+START runs/continual_budget/fetch3_replay_buf50_s1/results.json
+END rc=0 330s runs/continual_budget/fetch3_replay_buf50_s1/results.json
+START runs/continual_budget/fetch3_sleep_buf50_s1/results.json
+END rc=0 430s runs/continual_budget/fetch3_sleep_buf50_s1/results.json
+START runs/continual_budget/fetch3_replay_buf200_s1/results.json
+END rc=0 335s runs/continual_budget/fetch3_replay_buf200_s1/results.json
+START runs/continual_budget/fetch3_sleep_buf200_s1/results.json
+END rc=0 435s runs/continual_budget/fetch3_sleep_buf200_s1/results.json
+START runs/continual_budget/fetch3_replay_buf50_s2/results.json
+END rc=0 270s runs/continual_budget/fetch3_replay_buf50_s2/results.json
+START runs/continual_budget/fetch3_sleep_buf50_s2/results.json
+END rc=0 305s runs/continual_budget/fetch3_sleep_buf50_s2/results.json
+START runs/continual_budget/fetch3_replay_buf200_s2/results.json
+END rc=0 265s runs/continual_budget/fetch3_replay_buf200_s2/results.json
+START runs/continual_budget/fetch3_sleep_buf200_s2/results.json
+END rc=0 305s runs/continual_budget/fetch3_sleep_buf200_s2/results.json
+START runs/continual_budget/fetch3_replay_buf50_s3/results.json
+END rc=0 260s runs/continual_budget/fetch3_replay_buf50_s3/results.json
+START runs/continual_budget/fetch3_sleep_buf50_s3/results.json
+END rc=0 305s runs/continual_budget/fetch3_sleep_buf50_s3/results.json
+START runs/continual_budget/fetch3_replay_buf200_s3/results.json
+END rc=0 260s runs/continual_budget/fetch3_replay_buf200_s3/results.json
+START runs/continual_budget/fetch3_sleep_buf200_s3/results.json
+END rc=0 305s runs/continual_budget/fetch3_sleep_buf200_s3/results.json
+20 jobs pending
+START runs/rq1_v2/rq1v2_hebs0.3_s1/eval.json
+END rc=0 1060s runs/rq1_v2/rq1v2_hebs0.3_s1/eval.json
+START runs/rq1_v2/rq1v2_bp_s2/eval.json
+END rc=0 540s runs/rq1_v2/rq1v2_bp_s2/eval.json
+START runs/rq1_v2/rq1v2_frozen_s2/eval.json
+END rc=0 565s runs/rq1_v2/rq1v2_frozen_s2/eval.json
+START runs/rq1_v2/rq1v2_tfs0.3_s2/eval.json
+END rc=0 700s runs/rq1_v2/rq1v2_tfs0.3_s2/eval.json
+START runs/rq1_v2/rq1v2_hebs0.03_s2/eval.json
+END rc=0 760s runs/rq1_v2/rq1v2_hebs0.03_s2/eval.json
+START runs/rq1_v2/rq1v2_rand0.3_s2/eval.json
+END rc=0 595s runs/rq1_v2/rq1v2_rand0.3_s2/eval.json
+START runs/rq1_v2/rq1v2_bp_s3/eval.json
+END rc=0 761s runs/rq1_v2/rq1v2_bp_s3/eval.json
+START runs/rq1_v2/rq1v2_frozen_s3/eval.json
+END rc=0 711s runs/rq1_v2/rq1v2_frozen_s3/eval.json
+START runs/rq1_v2/rq1v2_tfs0.3_s3/eval.json
+END rc=0 1401s runs/rq1_v2/rq1v2_tfs0.3_s3/eval.json
+START runs/rq1_v2/rq1v2_hebs0.3_s3/eval.json
+END rc=0 1391s runs/rq1_v2/rq1v2_hebs0.3_s3/eval.json
+START runs/rq1_v2/rq1v2_tfs0.3_local_s3/eval.json
+END rc=0 1091s runs/rq1_v2/rq1v2_tfs0.3_local_s3/eval.json
+3 jobs pending

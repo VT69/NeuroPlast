@@ -1,0 +1,58 @@
+33 jobs pending
+START runs/rq1/rq1_bp_s1/eval.json
+END rc=0 425s runs/rq1/rq1_bp_s1/eval.json
+START runs/rq1/rq1_tf0.1_s1/eval.json
+END rc=0 480s runs/rq1/rq1_tf0.1_s1/eval.json
+START runs/rq1/rq1_heb0.1_s1/eval.json
+END rc=0 750s runs/rq1/rq1_heb0.1_s1/eval.json
+START runs/rq1/rq1_rand1_s1/eval.json
+END rc=0 385s runs/rq1/rq1_rand1_s1/eval.json
+START runs/rq1/rq1_tf1_local_s1/eval.json
+END rc=0 770s runs/rq1/rq1_tf1_local_s1/eval.json
+START runs/rq1/rq1_tf0.1_s2/eval.json
+END rc=0 930s runs/rq1/rq1_tf0.1_s2/eval.json
+START runs/rq1/rq1_heb0.1_s2/eval.json
+END rc=0 980s runs/rq1/rq1_heb0.1_s2/eval.json
+START runs/rq1/rq1_rand1_s2/eval.json
+END rc=0 420s runs/rq1/rq1_rand1_s2/eval.json
+START runs/rq1/rq1_tf1_local_s2/eval.json
+END rc=0 1036s runs/rq1/rq1_tf1_local_s2/eval.json
+START runs/rq1/rq1_tf0.1_s3/eval.json
+END rc=0 691s runs/rq1/rq1_tf0.1_s3/eval.json
+START runs/rq1/rq1_heb0.1_s3/eval.json
+END rc=0 745s runs/rq1/rq1_heb0.1_s3/eval.json
+START runs/rq1/rq1_rand1_s3/eval.json
+END rc=0 395s runs/rq1/rq1_rand1_s3/eval.json
+START runs/rq1/rq1_frozen_s3/eval.json
+END rc=0 405s runs/rq1/rq1_frozen_s3/eval.json
+START runs/rq1/rq1_dfa_s1/eval.json
+END rc=0 475s runs/rq1/rq1_dfa_s1/eval.json
+START runs/rq1/rq1_dfa_s2/eval.json
+END rc=0 455s runs/rq1/rq1_dfa_s2/eval.json
+START runs/rq1/rq1_dfa_s3/eval.json
+END rc=0 455s runs/rq1/rq1_dfa_s3/eval.json
+START runs/rq1/rq1_cnn_s1/eval.json
+END rc=0 140s runs/rq1/rq1_cnn_s1/eval.json
+START runs/rq1/rq1_cnn_s3/eval.json
+END rc=0 135s runs/rq1/rq1_cnn_s3/eval.json
+24 jobs pending
+START runs/continual_snn/fetch3_isolation_s1/results.json
+END rc=0 650s runs/continual_snn/fetch3_isolation_s1/results.json
+START runs/continual_snn/fetch3_sleep_s1/results.json
+END rc=0 1000s runs/continual_snn/fetch3_sleep_s1/results.json
+START runs/continual_snn/fetch3_sleep_dream_s1/results.json
+END rc=0 855s runs/continual_snn/fetch3_sleep_dream_s1/results.json
+START runs/continual_snn/fetch3_ewc_lam100_s1/results.json
+END rc=0 750s runs/continual_snn/fetch3_ewc_lam100_s1/results.json
+START runs/continual_snn/fetch3_naive_s2/results.json
+END rc=0 816s runs/continual_snn/fetch3_naive_s2/results.json
+START runs/continual_snn/fetch3_replay_s2/results.json
+END rc=0 1026s runs/continual_snn/fetch3_replay_s2/results.json
+START runs/continual_snn/fetch3_ewc_lam100_s2/results.json
+END rc=0 861s runs/continual_snn/fetch3_ewc_lam100_s2/results.json
+START runs/continual_snn/fetch3_naive_wakestdp_s2/results.json
+END rc=0 1466s runs/continual_snn/fetch3_naive_wakestdp_s2/results.json
+START runs/continual_snn/fetch3_replay_s3/results.json
+END rc=0 1111s runs/continual_snn/fetch3_replay_s3/results.json
+START runs/continual_snn/fetch3_naive_wakestdp_s3/results.json
+END rc=0 1145s runs/continual_snn/fetch3_naive_wakestdp_s3/results.json

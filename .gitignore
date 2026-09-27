@@ -2,6 +2,7 @@ __pycache__/
 *.pyc
 *.pyo
 *.pyd
+.pytest_cache/
 
 # Environments
 .env
@@ -13,13 +14,16 @@ ENV/
 # Jupyter Notebook
 .ipynb_checkpoints
 
-# ML / Data / Logs
-data/
-checkpoints/
-models/
-logs/
+# ML / Data / Logs (run outputs under runs/ ARE tracked: they're small and the
+# container is ephemeral, so committing them is how checkpoints survive)
+/data/
+/checkpoints/
+/logs/
 wandb/
+runs/**/tmp/
 
 # OS specific
 .DS_Store
 Thumbs.db
+*.lock
+runs/**/data.pt

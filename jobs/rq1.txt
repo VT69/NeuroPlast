@@ -1,0 +1,34 @@
+# RQ1 sweep: hybrid STDP + backprop on SNN encoder, DoorKey-5x5, 300k frames
+runs/rq1/rq1_bp_s1/eval.json :: python train.py --config configs/rq1_snn.yaml --set seed=1 run_name=rq1_bp_s1 out_dir=runs/rq1
+runs/rq1/rq1_tf0.1_s1/eval.json :: python train.py --config configs/rq1_snn.yaml --set seed=1 run_name=rq1_tf0.1_s1 out_dir=runs/rq1 "stdp={alpha: 0.1, mode: three_factor}"
+runs/rq1/rq1_tf1_s1/eval.json :: python train.py --config configs/rq1_snn.yaml --set seed=1 run_name=rq1_tf1_s1 out_dir=runs/rq1 "stdp={alpha: 1.0, mode: three_factor}"
+runs/rq1/rq1_heb0.1_s1/eval.json :: python train.py --config configs/rq1_snn.yaml --set seed=1 run_name=rq1_heb0.1_s1 out_dir=runs/rq1 "stdp={alpha: 0.1, mode: hebbian}"
+runs/rq1/rq1_heb1_s1/eval.json :: python train.py --config configs/rq1_snn.yaml --set seed=1 run_name=rq1_heb1_s1 out_dir=runs/rq1 "stdp={alpha: 1.0, mode: hebbian}"
+runs/rq1/rq1_rand1_s1/eval.json :: python train.py --config configs/rq1_snn.yaml --set seed=1 run_name=rq1_rand1_s1 out_dir=runs/rq1 "stdp={alpha: 1.0, mode: random}"
+runs/rq1/rq1_tf1_local_s1/eval.json :: python train.py --config configs/rq1_snn.yaml --set seed=1 run_name=rq1_tf1_local_s1 out_dir=runs/rq1 "stdp={alpha: 1.0, mode: three_factor, beta: 0}"
+runs/rq1/rq1_frozen_s1/eval.json :: python train.py --config configs/rq1_snn.yaml --set seed=1 run_name=rq1_frozen_s1 out_dir=runs/rq1 "stdp={alpha: 0.0, mode: three_factor, beta: 0}"
+runs/rq1/rq1_bp_s2/eval.json :: python train.py --config configs/rq1_snn.yaml --set seed=2 run_name=rq1_bp_s2 out_dir=runs/rq1
+runs/rq1/rq1_tf0.1_s2/eval.json :: python train.py --config configs/rq1_snn.yaml --set seed=2 run_name=rq1_tf0.1_s2 out_dir=runs/rq1 "stdp={alpha: 0.1, mode: three_factor}"
+runs/rq1/rq1_tf1_s2/eval.json :: python train.py --config configs/rq1_snn.yaml --set seed=2 run_name=rq1_tf1_s2 out_dir=runs/rq1 "stdp={alpha: 1.0, mode: three_factor}"
+runs/rq1/rq1_heb0.1_s2/eval.json :: python train.py --config configs/rq1_snn.yaml --set seed=2 run_name=rq1_heb0.1_s2 out_dir=runs/rq1 "stdp={alpha: 0.1, mode: hebbian}"
+runs/rq1/rq1_heb1_s2/eval.json :: python train.py --config configs/rq1_snn.yaml --set seed=2 run_name=rq1_heb1_s2 out_dir=runs/rq1 "stdp={alpha: 1.0, mode: hebbian}"
+runs/rq1/rq1_rand1_s2/eval.json :: python train.py --config configs/rq1_snn.yaml --set seed=2 run_name=rq1_rand1_s2 out_dir=runs/rq1 "stdp={alpha: 1.0, mode: random}"
+runs/rq1/rq1_tf1_local_s2/eval.json :: python train.py --config configs/rq1_snn.yaml --set seed=2 run_name=rq1_tf1_local_s2 out_dir=runs/rq1 "stdp={alpha: 1.0, mode: three_factor, beta: 0}"
+runs/rq1/rq1_frozen_s2/eval.json :: python train.py --config configs/rq1_snn.yaml --set seed=2 run_name=rq1_frozen_s2 out_dir=runs/rq1 "stdp={alpha: 0.0, mode: three_factor, beta: 0}"
+runs/rq1/rq1_bp_s3/eval.json :: python train.py --config configs/rq1_snn.yaml --set seed=3 run_name=rq1_bp_s3 out_dir=runs/rq1
+runs/rq1/rq1_tf0.1_s3/eval.json :: python train.py --config configs/rq1_snn.yaml --set seed=3 run_name=rq1_tf0.1_s3 out_dir=runs/rq1 "stdp={alpha: 0.1, mode: three_factor}"
+runs/rq1/rq1_tf1_s3/eval.json :: python train.py --config configs/rq1_snn.yaml --set seed=3 run_name=rq1_tf1_s3 out_dir=runs/rq1 "stdp={alpha: 1.0, mode: three_factor}"
+runs/rq1/rq1_heb0.1_s3/eval.json :: python train.py --config configs/rq1_snn.yaml --set seed=3 run_name=rq1_heb0.1_s3 out_dir=runs/rq1 "stdp={alpha: 0.1, mode: hebbian}"
+runs/rq1/rq1_heb1_s3/eval.json :: python train.py --config configs/rq1_snn.yaml --set seed=3 run_name=rq1_heb1_s3 out_dir=runs/rq1 "stdp={alpha: 1.0, mode: hebbian}"
+runs/rq1/rq1_rand1_s3/eval.json :: python train.py --config configs/rq1_snn.yaml --set seed=3 run_name=rq1_rand1_s3 out_dir=runs/rq1 "stdp={alpha: 1.0, mode: random}"
+runs/rq1/rq1_tf1_local_s3/eval.json :: python train.py --config configs/rq1_snn.yaml --set seed=3 run_name=rq1_tf1_local_s3 out_dir=runs/rq1 "stdp={alpha: 1.0, mode: three_factor, beta: 0}"
+runs/rq1/rq1_frozen_s3/eval.json :: python train.py --config configs/rq1_snn.yaml --set seed=3 run_name=rq1_frozen_s3 out_dir=runs/rq1 "stdp={alpha: 0.0, mode: three_factor, beta: 0}"
+runs/rq1/rq1_dfa_s1/eval.json :: python train.py --config configs/rq1_snn.yaml --set seed=1 run_name=rq1_dfa_s1 out_dir=runs/rq1 dfa=true hidden=0
+runs/rq1/rq1_bp_linear_s1/eval.json :: python train.py --config configs/rq1_snn.yaml --set seed=1 run_name=rq1_bp_linear_s1 out_dir=runs/rq1 hidden=0
+runs/rq1/rq1_dfa_s2/eval.json :: python train.py --config configs/rq1_snn.yaml --set seed=2 run_name=rq1_dfa_s2 out_dir=runs/rq1 dfa=true hidden=0
+runs/rq1/rq1_bp_linear_s2/eval.json :: python train.py --config configs/rq1_snn.yaml --set seed=2 run_name=rq1_bp_linear_s2 out_dir=runs/rq1 hidden=0
+runs/rq1/rq1_dfa_s3/eval.json :: python train.py --config configs/rq1_snn.yaml --set seed=3 run_name=rq1_dfa_s3 out_dir=runs/rq1 dfa=true hidden=0
+runs/rq1/rq1_bp_linear_s3/eval.json :: python train.py --config configs/rq1_snn.yaml --set seed=3 run_name=rq1_bp_linear_s3 out_dir=runs/rq1 hidden=0
+runs/rq1/rq1_cnn_s1/eval.json :: python train.py --config configs/rq1_snn.yaml --set seed=1 run_name=rq1_cnn_s1 out_dir=runs/rq1 encoder=cnn
+runs/rq1/rq1_cnn_s2/eval.json :: python train.py --config configs/rq1_snn.yaml --set seed=2 run_name=rq1_cnn_s2 out_dir=runs/rq1 encoder=cnn
+runs/rq1/rq1_cnn_s3/eval.json :: python train.py --config configs/rq1_snn.yaml --set seed=3 run_name=rq1_cnn_s3 out_dir=runs/rq1 encoder=cnn

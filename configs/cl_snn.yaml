@@ -1,0 +1,5 @@
+# Continual learning, SNN encoder trunk (T=4, no memory): the trunk where STDP-based
+# consolidation can act. 150k frames per task.
+encoder: snn
+enc_kwargs: {T: 4}
+total_frames: 150000

@@ -1,22 +1,15 @@
-# Core Deep Learning
-torch
-torchvision
-torchaudio
-
-# SNN Libraries
-snntorch
-spikingjelly
-
-# Reinforcement Learning & Environments
-gymnasium
-minatar
-
-# Logging and Tracking
-wandb
-
-# Utilities
+# Core (CPU-only is fine: all models here are small; 4-core CPU was the dev box)
+torch>=2.2
 numpy
+# SNN: LIF + surrogate gradients are implemented in-repo (neuroplast/models/snn);
+# snntorch is only used as a cross-check in tests.
+snntorch
+# RL environments
+gymnasium>=1.0
+minigrid>=3.0
+# Utilities
 pandas
 matplotlib
-tqdm
-jupyter
+pyyaml
+pytest
+scipy

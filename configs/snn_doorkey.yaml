@@ -1,0 +1,6 @@
+# SNN encoder + PPO, no memory: isolates the encoder swap vs cnn_doorkey.yaml (RQ3 in the RL loop)
+run_name: snn_doorkey5
+env_id: MiniGrid-DoorKey-5x5-v0
+encoder: snn
+enc_kwargs: {T: 4}
+total_frames: 400000

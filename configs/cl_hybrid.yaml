@@ -1,0 +1,6 @@
+# Continual learning, hybrid agent: SNN encoder (T=4) + Transformer memory (window 4)
+encoder: snn
+enc_kwargs: {T: 4}
+memory: true
+window: 4
+total_frames: 150000   # per task

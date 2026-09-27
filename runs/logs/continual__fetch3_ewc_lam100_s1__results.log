@@ -1,0 +1,49 @@
+[fetch3_ewc_lam100_s1 t0] [fetch3_ewc_lam100_s1/task0] upd 5/73 frames 10240 fps 773 ret 0.224 len 106.3 ent 1.925 act 0.089
+[fetch3_ewc_lam100_s1 t0] [fetch3_ewc_lam100_s1/task0] upd 10/73 frames 20480 fps 774 ret 0.417 len 74.7 ent 1.753 act 0.102
+[fetch3_ewc_lam100_s1 t0] [fetch3_ewc_lam100_s1/task0] upd 15/73 frames 30720 fps 809 ret 0.778 len 26.5 ent 1.519 act 0.118
+[fetch3_ewc_lam100_s1 t0] [fetch3_ewc_lam100_s1/task0] upd 20/73 frames 40960 fps 839 ret 0.936 len 18.1 ent 1.091 act 0.155
+[fetch3_ewc_lam100_s1 t0] [fetch3_ewc_lam100_s1/task0] upd 25/73 frames 51200 fps 839 ret 0.929 len 14.3 ent 0.890 act 0.191
+[fetch3_ewc_lam100_s1 t0] [fetch3_ewc_lam100_s1/task0] upd 30/73 frames 61440 fps 842 ret 0.965 len 10.0 ent 0.562 act 0.210
+[fetch3_ewc_lam100_s1 t0] [fetch3_ewc_lam100_s1/task0] upd 35/73 frames 71680 fps 846 ret 0.970 len 8.6 ent 0.473 act 0.207
+[fetch3_ewc_lam100_s1 t0] [fetch3_ewc_lam100_s1/task0] upd 40/73 frames 81920 fps 816 ret 0.968 len 9.0 ent 0.308 act 0.218
+[fetch3_ewc_lam100_s1 t0] [fetch3_ewc_lam100_s1/task0] upd 45/73 frames 92160 fps 813 ret 0.972 len 7.9 ent 0.236 act 0.229
+[fetch3_ewc_lam100_s1 t0] [fetch3_ewc_lam100_s1/task0] upd 50/73 frames 102400 fps 803 ret 0.975 len 7.0 ent 0.177 act 0.247
+[fetch3_ewc_lam100_s1 t0] [fetch3_ewc_lam100_s1/task0] upd 55/73 frames 112640 fps 837 ret 0.971 len 8.3 ent 0.186 act 0.254
+[fetch3_ewc_lam100_s1 t0] [fetch3_ewc_lam100_s1/task0] upd 60/73 frames 122880 fps 868 ret 0.975 len 7.2 ent 0.157 act 0.253
+[fetch3_ewc_lam100_s1 t0] [fetch3_ewc_lam100_s1/task0] upd 65/73 frames 133120 fps 894 ret 0.972 len 7.8 ent 0.168 act 0.242
+[fetch3_ewc_lam100_s1 t0] [fetch3_ewc_lam100_s1/task0] upd 70/73 frames 143360 fps 900 ret 0.971 len 8.2 ent 0.179 act 0.252
+[fetch3_ewc_lam100_s1 t0] [fetch3_ewc_lam100_s1/task0] upd 73/73 frames 149504 fps 889 ret 0.976 len 6.7 ent 0.154 act 0.258
+[fetch3_ewc_lam100_s1] after task 0: R = [0.976, 0.175, 0.102]
+[fetch3_ewc_lam100_s1 t1] [fetch3_ewc_lam100_s1/task1] upd 5/73 frames 10240 fps 657 ret 0.146 len 120.8 ent 1.900 act 0.207
+[fetch3_ewc_lam100_s1 t1] [fetch3_ewc_lam100_s1/task1] upd 10/73 frames 20480 fps 671 ret 0.290 len 99.9 ent 1.874 act 0.218
+[fetch3_ewc_lam100_s1 t1] [fetch3_ewc_lam100_s1/task1] upd 15/73 frames 30720 fps 668 ret 0.256 len 106.1 ent 1.836 act 0.208
+[fetch3_ewc_lam100_s1 t1] [fetch3_ewc_lam100_s1/task1] upd 20/73 frames 40960 fps 672 ret 0.259 len 128.4 ent 1.786 act 0.206
+[fetch3_ewc_lam100_s1 t1] [fetch3_ewc_lam100_s1/task1] upd 25/73 frames 51200 fps 675 ret 0.389 len 87.3 ent 1.732 act 0.210
+[fetch3_ewc_lam100_s1 t1] [fetch3_ewc_lam100_s1/task1] upd 30/73 frames 61440 fps 679 ret 0.323 len 105.5 ent 1.725 act 0.200
+[fetch3_ewc_lam100_s1 t1] [fetch3_ewc_lam100_s1/task1] upd 35/73 frames 71680 fps 686 ret 0.348 len 108.3 ent 1.712 act 0.205
+[fetch3_ewc_lam100_s1 t1] [fetch3_ewc_lam100_s1/task1] upd 40/73 frames 81920 fps 692 ret 0.346 len 101.0 ent 1.761 act 0.207
+[fetch3_ewc_lam100_s1 t1] [fetch3_ewc_lam100_s1/task1] upd 45/73 frames 92160 fps 690 ret 0.406 len 75.8 ent 1.697 act 0.209
+[fetch3_ewc_lam100_s1 t1] [fetch3_ewc_lam100_s1/task1] upd 50/73 frames 102400 fps 689 ret 0.418 len 60.5 ent 1.597 act 0.207
+[fetch3_ewc_lam100_s1 t1] [fetch3_ewc_lam100_s1/task1] upd 55/73 frames 112640 fps 689 ret 0.419 len 56.0 ent 1.553 act 0.207
+[fetch3_ewc_lam100_s1 t1] [fetch3_ewc_lam100_s1/task1] upd 60/73 frames 122880 fps 690 ret 0.510 len 75.9 ent 1.582 act 0.211
+[fetch3_ewc_lam100_s1 t1] [fetch3_ewc_lam100_s1/task1] upd 65/73 frames 133120 fps 690 ret 0.564 len 49.2 ent 1.507 act 0.216
+[fetch3_ewc_lam100_s1 t1] [fetch3_ewc_lam100_s1/task1] upd 70/73 frames 143360 fps 689 ret 0.522 len 67.0 ent 1.544 act 0.220
+[fetch3_ewc_lam100_s1 t1] [fetch3_ewc_lam100_s1/task1] upd 73/73 frames 149504 fps 687 ret 0.574 len 54.4 ent 1.510 act 0.221
+[fetch3_ewc_lam100_s1] after task 1: R = [0.977, 0.471, 0.16]
+[fetch3_ewc_lam100_s1 t2] [fetch3_ewc_lam100_s1/task2] upd 5/73 frames 10240 fps 768 ret 0.129 len 115.5 ent 1.934 act 0.211
+[fetch3_ewc_lam100_s1 t2] [fetch3_ewc_lam100_s1/task2] upd 10/73 frames 20480 fps 743 ret 0.135 len 133.6 ent 1.927 act 0.201
+[fetch3_ewc_lam100_s1 t2] [fetch3_ewc_lam100_s1/task2] upd 15/73 frames 30720 fps 731 ret 0.196 len 135.3 ent 1.910 act 0.206
+[fetch3_ewc_lam100_s1 t2] [fetch3_ewc_lam100_s1/task2] upd 20/73 frames 40960 fps 728 ret 0.189 len 105.4 ent 1.751 act 0.205
+[fetch3_ewc_lam100_s1 t2] [fetch3_ewc_lam100_s1/task2] upd 25/73 frames 51200 fps 729 ret 0.310 len 83.8 ent 1.732 act 0.208
+[fetch3_ewc_lam100_s1 t2] [fetch3_ewc_lam100_s1/task2] upd 30/73 frames 61440 fps 715 ret 0.357 len 83.7 ent 1.696 act 0.212
+[fetch3_ewc_lam100_s1 t2] [fetch3_ewc_lam100_s1/task2] upd 35/73 frames 71680 fps 711 ret 0.418 len 86.9 ent 1.661 act 0.209
+[fetch3_ewc_lam100_s1 t2] [fetch3_ewc_lam100_s1/task2] upd 40/73 frames 81920 fps 707 ret 0.309 len 71.8 ent 1.686 act 0.214
+[fetch3_ewc_lam100_s1 t2] [fetch3_ewc_lam100_s1/task2] upd 45/73 frames 92160 fps 706 ret 0.337 len 77.1 ent 1.683 act 0.204
+[fetch3_ewc_lam100_s1 t2] [fetch3_ewc_lam100_s1/task2] upd 50/73 frames 102400 fps 707 ret 0.360 len 65.6 ent 1.553 act 0.213
+[fetch3_ewc_lam100_s1 t2] [fetch3_ewc_lam100_s1/task2] upd 55/73 frames 112640 fps 712 ret 0.412 len 62.2 ent 1.489 act 0.212
+[fetch3_ewc_lam100_s1 t2] [fetch3_ewc_lam100_s1/task2] upd 60/73 frames 122880 fps 711 ret 0.441 len 50.1 ent 1.414 act 0.219
+[fetch3_ewc_lam100_s1 t2] [fetch3_ewc_lam100_s1/task2] upd 65/73 frames 133120 fps 708 ret 0.449 len 63.9 ent 1.415 act 0.219
+[fetch3_ewc_lam100_s1 t2] [fetch3_ewc_lam100_s1/task2] upd 70/73 frames 143360 fps 708 ret 0.439 len 48.5 ent 1.385 act 0.224
+[fetch3_ewc_lam100_s1 t2] [fetch3_ewc_lam100_s1/task2] upd 73/73 frames 149504 fps 709 ret 0.351 len 71.7 ent 1.382 act 0.222
+[fetch3_ewc_lam100_s1] after task 2: R = [0.977, 0.496, 0.447]
+FINAL {"ACC": 0.6400690097113451, "BWT": 0.013224608823657058, "FORGET": -0.01259179674088956} params 194312

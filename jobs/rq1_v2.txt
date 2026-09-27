@@ -1,0 +1,25 @@
+# RQ1 v2: stabilised STDP (covariance + homeostasis) + backprop, DoorKey-6x6, 400k frames
+runs/rq1_v2/rq1v2_bp_s1/eval.json :: python train.py --config configs/rq1_v2.yaml --set seed=1 run_name=rq1v2_bp_s1 out_dir=runs/rq1_v2
+runs/rq1_v2/rq1v2_frozen_s1/eval.json :: python train.py --config configs/rq1_v2.yaml --set seed=1 run_name=rq1v2_frozen_s1 out_dir=runs/rq1_v2 "stdp={alpha: 0.0, beta: 0}"
+runs/rq1_v2/rq1v2_tfs0.03_s1/eval.json :: python train.py --config configs/rq1_v2.yaml --set seed=1 run_name=rq1v2_tfs0.03_s1 out_dir=runs/rq1_v2 "stdp={alpha: 0.03, mode: three_factor, center: true, homeo: 0.15}"
+runs/rq1_v2/rq1v2_tfs0.3_s1/eval.json :: python train.py --config configs/rq1_v2.yaml --set seed=1 run_name=rq1v2_tfs0.3_s1 out_dir=runs/rq1_v2 "stdp={alpha: 0.3, mode: three_factor, center: true, homeo: 0.15}"
+runs/rq1_v2/rq1v2_hebs0.03_s1/eval.json :: python train.py --config configs/rq1_v2.yaml --set seed=1 run_name=rq1v2_hebs0.03_s1 out_dir=runs/rq1_v2 "stdp={alpha: 0.03, mode: hebbian, center: true, homeo: 0.15}"
+runs/rq1_v2/rq1v2_hebs0.3_s1/eval.json :: python train.py --config configs/rq1_v2.yaml --set seed=1 run_name=rq1v2_hebs0.3_s1 out_dir=runs/rq1_v2 "stdp={alpha: 0.3, mode: hebbian, center: true, homeo: 0.15}"
+runs/rq1_v2/rq1v2_rand0.3_s1/eval.json :: python train.py --config configs/rq1_v2.yaml --set seed=1 run_name=rq1v2_rand0.3_s1 out_dir=runs/rq1_v2 "stdp={alpha: 0.3, mode: random}"
+runs/rq1_v2/rq1v2_tfs0.3_local_s1/eval.json :: python train.py --config configs/rq1_v2.yaml --set seed=1 run_name=rq1v2_tfs0.3_local_s1 out_dir=runs/rq1_v2 "stdp={alpha: 0.3, mode: three_factor, beta: 0, center: true, homeo: 0.15}"
+runs/rq1_v2/rq1v2_bp_s2/eval.json :: python train.py --config configs/rq1_v2.yaml --set seed=2 run_name=rq1v2_bp_s2 out_dir=runs/rq1_v2
+runs/rq1_v2/rq1v2_frozen_s2/eval.json :: python train.py --config configs/rq1_v2.yaml --set seed=2 run_name=rq1v2_frozen_s2 out_dir=runs/rq1_v2 "stdp={alpha: 0.0, beta: 0}"
+runs/rq1_v2/rq1v2_tfs0.03_s2/eval.json :: python train.py --config configs/rq1_v2.yaml --set seed=2 run_name=rq1v2_tfs0.03_s2 out_dir=runs/rq1_v2 "stdp={alpha: 0.03, mode: three_factor, center: true, homeo: 0.15}"
+runs/rq1_v2/rq1v2_tfs0.3_s2/eval.json :: python train.py --config configs/rq1_v2.yaml --set seed=2 run_name=rq1v2_tfs0.3_s2 out_dir=runs/rq1_v2 "stdp={alpha: 0.3, mode: three_factor, center: true, homeo: 0.15}"
+runs/rq1_v2/rq1v2_hebs0.03_s2/eval.json :: python train.py --config configs/rq1_v2.yaml --set seed=2 run_name=rq1v2_hebs0.03_s2 out_dir=runs/rq1_v2 "stdp={alpha: 0.03, mode: hebbian, center: true, homeo: 0.15}"
+runs/rq1_v2/rq1v2_hebs0.3_s2/eval.json :: python train.py --config configs/rq1_v2.yaml --set seed=2 run_name=rq1v2_hebs0.3_s2 out_dir=runs/rq1_v2 "stdp={alpha: 0.3, mode: hebbian, center: true, homeo: 0.15}"
+runs/rq1_v2/rq1v2_rand0.3_s2/eval.json :: python train.py --config configs/rq1_v2.yaml --set seed=2 run_name=rq1v2_rand0.3_s2 out_dir=runs/rq1_v2 "stdp={alpha: 0.3, mode: random}"
+runs/rq1_v2/rq1v2_tfs0.3_local_s2/eval.json :: python train.py --config configs/rq1_v2.yaml --set seed=2 run_name=rq1v2_tfs0.3_local_s2 out_dir=runs/rq1_v2 "stdp={alpha: 0.3, mode: three_factor, beta: 0, center: true, homeo: 0.15}"
+runs/rq1_v2/rq1v2_bp_s3/eval.json :: python train.py --config configs/rq1_v2.yaml --set seed=3 run_name=rq1v2_bp_s3 out_dir=runs/rq1_v2
+runs/rq1_v2/rq1v2_frozen_s3/eval.json :: python train.py --config configs/rq1_v2.yaml --set seed=3 run_name=rq1v2_frozen_s3 out_dir=runs/rq1_v2 "stdp={alpha: 0.0, beta: 0}"
+runs/rq1_v2/rq1v2_tfs0.03_s3/eval.json :: python train.py --config configs/rq1_v2.yaml --set seed=3 run_name=rq1v2_tfs0.03_s3 out_dir=runs/rq1_v2 "stdp={alpha: 0.03, mode: three_factor, center: true, homeo: 0.15}"
+runs/rq1_v2/rq1v2_tfs0.3_s3/eval.json :: python train.py --config configs/rq1_v2.yaml --set seed=3 run_name=rq1v2_tfs0.3_s3 out_dir=runs/rq1_v2 "stdp={alpha: 0.3, mode: three_factor, center: true, homeo: 0.15}"
+runs/rq1_v2/rq1v2_hebs0.03_s3/eval.json :: python train.py --config configs/rq1_v2.yaml --set seed=3 run_name=rq1v2_hebs0.03_s3 out_dir=runs/rq1_v2 "stdp={alpha: 0.03, mode: hebbian, center: true, homeo: 0.15}"
+runs/rq1_v2/rq1v2_hebs0.3_s3/eval.json :: python train.py --config configs/rq1_v2.yaml --set seed=3 run_name=rq1v2_hebs0.3_s3 out_dir=runs/rq1_v2 "stdp={alpha: 0.3, mode: hebbian, center: true, homeo: 0.15}"
+runs/rq1_v2/rq1v2_rand0.3_s3/eval.json :: python train.py --config configs/rq1_v2.yaml --set seed=3 run_name=rq1v2_rand0.3_s3 out_dir=runs/rq1_v2 "stdp={alpha: 0.3, mode: random}"
+runs/rq1_v2/rq1v2_tfs0.3_local_s3/eval.json :: python train.py --config configs/rq1_v2.yaml --set seed=3 run_name=rq1v2_tfs0.3_local_s3 out_dir=runs/rq1_v2 "stdp={alpha: 0.3, mode: three_factor, beta: 0, center: true, homeo: 0.15}"

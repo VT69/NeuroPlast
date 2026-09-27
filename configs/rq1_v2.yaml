@@ -1,0 +1,6 @@
+# RQ1 v2: DoorKey-6x6, where encoder learning matters (frozen random SNN encoder
+# reaches 0.9 return ~2x later than backprop; on 5x5 they were equal).
+env_id: MiniGrid-DoorKey-6x6-v0
+encoder: snn
+enc_kwargs: {T: 4}
+total_frames: 400000
