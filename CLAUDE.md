@@ -91,14 +91,10 @@ failed and why, and what to look at first when I'm back.
   architecture choices.** The research questions above are the fixed target;
   nothing else in this file is.
 
-## Suggested Priority List for an Extended Session
-Rough ordering, front-loaded toward de-risking the overall approach before
-going deep on any one piece. Adjust as you learn more.
-
-1. Repo scaffold, dependencies, and a smoke test confirming the environment setup actually works end to end.
-2. A conventional CNN + PPO/DQN baseline, trained on 1–2 MiniGrid tasks to reasonable performance — this de-risks the RL loop itself before anything spiking gets added.
-3. The SNN encoder module (unit-tested), plus a standalone SNN-vs-CNN comparison on accuracy vs. spike-sparsity — first real evidence toward RQ3.
-4. The STDP/Hebbian eligibility-trace rule as its own tested module.
-5. A first end-to-end hybrid agent (SNN + Transformer + RL heads) training on a single task — the first real test of whether the overall approach works at all.
-6. If there's time left: a small continual task sequence (2–3 tasks) plus the naive-fine-tuning baseline, to get a first real forgetting measurement.
-7. Keep `PROGRESS.md` current throughout, with a clear "what I'd look at first" note at whatever point the session ends.
+## Current Status
+Read `PROGRESS.md` at the start of every session before doing anything else —
+it holds the running log, what's been tried, what's confirmed, what's still
+open, and a "what to look at first" note. This file (`CLAUDE.md`) is the
+stable project context; `PROGRESS.md` is the live state. Don't treat
+anything in this file as a task list — task lists come from `PROGRESS.md`
+and whatever prompt starts the session.
