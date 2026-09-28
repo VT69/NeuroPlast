@@ -24,14 +24,22 @@ from neuroplast.models.memory.transformer import WorkingMemory
 
 class Agent(nn.Module):
     def __init__(self, encoder="cnn", enc_kwargs=None, memory=False, window=1, mem_kwargs=None,
-                 feat_dim=128, n_tasks=1, multihead=False, task_embed=True, hidden=64, dfa=False):
+                 feat_dim=128, n_tasks=1, multihead=False, task_embed=True, hidden=64, dfa=False,
+                 dfa_scope="all", frame_stack=1):
         super().__init__()
         enc_kwargs = dict(enc_kwargs or {})
         enc_kwargs.setdefault("out_dim", feat_dim)
+        # frame_stack > 1: non-attention memory baseline (literature doc sections 27 / 38.5): the last
+        # k one-hot frames are stacked as input channels to the same encoder; pre-episode padding
+        # frames are zero. Mutually exclusive with the Transformer memory.
+        self.frame_stack = frame_stack
+        if frame_stack > 1:
+            assert not memory, "frame_stack and Transformer memory are alternative memory baselines"
+            enc_kwargs["in_ch"] = 20 * frame_stack
         self.encoder = make_encoder(encoder, **enc_kwargs)
         self.use_memory = memory
         self.feat_dim = feat_dim
-        self.window = window if memory else 1
+        self.window = window if memory else (frame_stack if frame_stack > 1 else 1)
         if memory:
             self.memory = WorkingMemory(feat_dim, window, **(mem_kwargs or {}))
         self.n_tasks = n_tasks
@@ -40,11 +48,22 @@ class Agent(nn.Module):
             nn.init.normal_(self.task_emb.weight, std=0.1)
         self.dfa = None
         if dfa:  # variant C: no backprop between layers (see neuroplast/learning/dfa.py)
-            assert encoder == "snn" and not memory and hidden == 0, "DFA agent = SNN + linear heads, no memory"
+            assert encoder == "snn" and not memory, "DFA agent = SNN encoder, no Transformer memory"
             from neuroplast.learning.dfa import DFAContext
             c = self.encoder.convs
             sizes = [c[0].out_channels * 36, c[1].out_channels * 25, c[2].out_channels * 16, feat_dim]
-            self.dfa = DFAContext(sizes, N_ACTIONS + 1)
+            # dfa_scope "all": every hidden layer (SNN + head MLPs + task-conditioned
+            # features) learns from random feedback -> no backprop anywhere.
+            # "encoder": only the SNN synapses get the DFA signal (the "global term" of
+            # the hybrid rule); the small non-spiking heads keep exact gradients.
+            assert dfa_scope in ("all", "encoder")
+            self.dfa_scope = dfa_scope
+            extra = {}
+            if dfa_scope == "all":
+                extra = {"ha": hidden, "hc": hidden} if hidden else {}
+                if self.task_emb is not None:
+                    extra["z"] = feat_dim
+            self.dfa = DFAContext(sizes, N_ACTIONS + 1, extra=extra)
             self.dfa.T = self.encoder.T
             object.__setattr__(self.encoder, "dfa", self.dfa)  # plain ref, not a 2nd registration
         n_heads = n_tasks if multihead else 1
@@ -55,6 +74,13 @@ class Agent(nn.Module):
         is ignored and recomputed). When given, only the newest frame goes
         through the encoder (gradients reach the encoder via that frame only);
         older frames use the features computed at rollout time."""
+        if self.frame_stack > 1:
+            k = self.frame_stack
+            x = obs_to_onehot(obs[:, -k:]) * mask[:, -k:, None, None, None]   # (B, k, 20, 7, 7)
+            z = self.encoder(x.flatten(1, 2))
+            if self.task_emb is not None and task is not None:
+                z = z + self.task_emb(task)
+            return z
         if not self.use_memory:
             z = self.encoder(obs_to_onehot(obs[:, -1]))
             if self.task_emb is not None and task is not None:
@@ -76,16 +102,18 @@ class Agent(nn.Module):
             feats = feats + self.task_emb(task)[:, None]
         return self.memory(feats, mask)
 
-    def _heads(self, z, task):
+    def _heads(self, z, task, box=None):
+        kw = dict(dfa=self.dfa, box=box) if box is not None else {}
         if len(self.heads) == 1:
-            return self.heads[0](z)
+            return self.heads[0](z, **kw)
         if isinstance(task, int):
-            return self.heads[task](z)
+            return self.heads[task](z, **kw)
         logits = z.new_zeros(z.shape[0], N_ACTIONS)
         value = z.new_zeros(z.shape[0])
         for t in task.unique().tolist():
             sel = task == t
-            logits[sel], value[sel] = self.heads[t](z[sel])
+            rows = sel.nonzero().squeeze(1)
+            logits[sel], value[sel] = self.heads[t](z[sel], **(dict(kw, rows=rows) if kw else {}))
         return logits, value
 
     def forward(self, obs, mask, task=None, past_feats=None):
@@ -99,7 +127,12 @@ class Agent(nn.Module):
         self.encoder.dfa_box = box
         z = self.features(obs, mask, task_t, past_feats)
         self.encoder.dfa_box = None
-        logits, value = self._heads(z, task if task is not None else 0)
+        if self.dfa_scope == "all":
+            if self.task_emb is not None and task is not None:
+                z = self.dfa.hidden(z, "z", box, 1.0)  # task embedding learns from B_z e, not W^T e
+            logits, value = self._heads(z, task if task is not None else 0, box)
+        else:  # heads by backprop; their gradient into z is discarded at the SNN's DFA nodes
+            logits, value = self._heads(z, task if task is not None else 0)
         y = self.dfa.output(torch.cat([logits, value[:, None]], 1), box)
         return y[:, :-1], y[:, -1]
 

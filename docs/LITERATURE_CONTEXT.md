@@ -726,3 +726,29 @@ disentangling the mechanisms.
 7. **Paper-derived numbers.** Figures attributed to papers in this document
    were produced by automated summarisation and are unverified. Check them
    against the PDFs in `docs/papers/` before quoting them in any write-up.
+
+8. **Correction note, 2026-09-28 (session 3).** Overrides 38.3, 38.4, and the
+   RQ5 statements in sections 22, 23 and 34.
+   - **38.4 was wrong.** Backprop + homeostasis *had* been run, in session 2:
+     `runs/rq1_v2/rq1v2_homeo_s1-3`, 3/3 solved on DoorKey-6x6, AUC 0.67 vs 0.41
+     for backprop (p = 0.09). Session 3 extended it to 10 seeds alongside
+     backprop, backprop + stabilised STDP, and a matched random-perturbation
+     control. The pre-registered results are in `PROGRESS.md` and
+     `results/rq1_stats.md`; those, not the "DFA-specific" wording in 22, 24, 31,
+     34 and 38.4, are authoritative.
+   - **38.3's buffer estimate is replaced by a measurement.** The replay buffer
+     stores the raw uint8 symbolic view (7×7×3 = 147 B), not the one-hot tensor:
+     **188 B per stored state** on the CNN/SNN trunks (observation + mask + task
+     id + teacher logits + value) and **632 B** for the hybrid's 4-frame
+     windows. The implementation keeps a second concatenated copy (2× RAM), which
+     is an implementation artefact reported separately.
+   - **The RQ5 claims in sections 23 and 34 are superseded by the memory-fair
+     analysis** (`results/rq5_memory.md`, `scripts/memory_fair.py`). Shared
+     weights win *per parameter* (unchanged), but *per total memory* (parameters
+     + replay buffer) at the default 5,000 states/task, isolation uses less
+     memory and gets about twice the ACC per MB: CNN fetch3 1.92 MB / 0.979 vs
+     sleep 3.60 MB / 0.978; hybrid 3.52 MB vs 10.79 MB; CNN fetch5 3.20 MB vs
+     5.62 MB. Shared weights win per total memory **only at small buffers**
+     (CNN fetch3, 200 states/task: 0.964 ACC at 0.89 MB, vs isolation 0.979 at
+     1.92 MB). "Shared weights are more memory-efficient than isolation" may only
+     be claimed with the buffer size stated.

@@ -1,0 +1,7 @@
+# session 3 queue 4: P4 hybrid sleep vs replay extra seeds (same protocol: configs/cl_hybrid_v2.yaml, lr 3e-4, 400k/task)
+runs/continual_hybrid/fetch3_sleep_s4/results.json :: python continual.py --suite fetch3 --method sleep --config configs/cl_hybrid_v2.yaml --seed 4 --out runs/continual_hybrid
+runs/continual_hybrid/fetch3_replay_s4/results.json :: python continual.py --suite fetch3 --method replay --config configs/cl_hybrid_v2.yaml --seed 4 --out runs/continual_hybrid
+runs/continual_hybrid/fetch3_sleep_s5/results.json :: python continual.py --suite fetch3 --method sleep --config configs/cl_hybrid_v2.yaml --seed 5 --out runs/continual_hybrid
+runs/continual_hybrid/fetch3_replay_s5/results.json :: python continual.py --suite fetch3 --method replay --config configs/cl_hybrid_v2.yaml --seed 5 --out runs/continual_hybrid
+runs/continual_hybrid/fetch3_sleep_s6/results.json :: python continual.py --suite fetch3 --method sleep --config configs/cl_hybrid_v2.yaml --seed 6 --out runs/continual_hybrid
+runs/continual_hybrid/fetch3_replay_s6/results.json :: python continual.py --suite fetch3 --method replay --config configs/cl_hybrid_v2.yaml --seed 6 --out runs/continual_hybrid

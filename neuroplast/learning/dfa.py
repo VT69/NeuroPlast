@@ -39,26 +39,34 @@ class _Output(torch.autograd.Function):
 
 class _Hidden(torch.autograd.Function):
     @staticmethod
-    def forward(ctx, s, B, box, scale):
-        ctx.B, ctx.box, ctx.scale, ctx.shape = B, box, scale, s.shape
+    def forward(ctx, s, B, box, scale, rows):
+        ctx.B, ctx.box, ctx.scale, ctx.shape, ctx.rows = B, box, scale, s.shape, rows
         return s.view_as(s)
 
     @staticmethod
     def backward(ctx, g):
         e = ctx.box.get("e")
         if e is None:
-            return torch.zeros_like(g), None, None, None
+            return torch.zeros_like(g), None, None, None, None
+        if ctx.rows is not None:  # this node saw only a subset of the batch (multi-head routing)
+            e = e[ctx.rows]
         proj = (e @ ctx.B.T) * ctx.scale      # (N, numel of the layer's per-sample output)
-        return proj.view(ctx.shape), None, None, None
+        return proj.view(ctx.shape), None, None, None, None
 
 
 class DFAContext(torch.nn.Module):
-    def __init__(self, layer_sizes, out_dim, seed=0):
+    def __init__(self, layer_sizes, out_dim, seed=0, extra=None):
+        """layer_sizes: SNN layers (keys 0..n-1, error spread over T steps);
+        extra: {name: size} for non-spiking hidden layers (MLP heads 'ha'/'hc',
+        task-conditioned features 'z'); created after the SNN ones so B0..B3 are
+        identical with or without them."""
         super().__init__()
         g = torch.Generator().manual_seed(seed)
         for i, n in enumerate(layer_sizes):
             # unit-variance random feedback, scaled by 1/sqrt(out_dim)
             self.register_buffer(f"B{i}", torch.randn(n, out_dim, generator=g) / out_dim ** 0.5)
+        for name, n in (extra or {}).items():
+            self.register_buffer(f"B{name}", torch.randn(n, out_dim, generator=g) / out_dim ** 0.5)
         self.T = 1
 
     # `box` is a fresh dict per forward pass, shared by that pass's output and
@@ -67,8 +75,9 @@ class DFAContext(torch.nn.Module):
     def output(self, y, box):
         return _Output.apply(y, box)
 
-    def hidden(self, s, i, box):
+    def hidden(self, s, i, box, scale=None, rows=None):
         B = getattr(self, f"B{i}")
-        # the same error is broadcast at every timestep; divide by T so the
-        # total signal per frame doesn't scale with simulation length
-        return _Hidden.apply(s, B, box, 1.0 / self.T)
+        # SNN layers: the same error is broadcast at every timestep; divide by T so
+        # the total signal per frame doesn't scale with simulation length.
+        # Non-spiking layers (heads, features) pass scale=1.
+        return _Hidden.apply(s, B, box, 1.0 / self.T if scale is None else scale, rows)

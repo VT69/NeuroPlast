@@ -30,6 +30,10 @@ VARIANTS = {
     "B: local-only SNN encoder + backprop heads": dict(encoder="snn", enc_kwargs={"T": 4},
                                                        stdp={"alpha": 0.3, "mode": "three_factor", "beta": 0, "center": True, "homeo": 0.15}),
     "C: DFA SNN + linear readouts (no backprop)": dict(encoder="snn", enc_kwargs={"T": 4}, dfa=True, hidden=0),
+    "Cmlp: DFA SNN + MLP heads (no backprop)": dict(encoder="snn", enc_kwargs={"T": 4}, dfa=True, dfa_scope="all"),
+    "Cenc: DFA on SNN synapses + homeostasis, heads exact": dict(encoder="snn", enc_kwargs={"T": 4}, dfa=True,
+                                                                 dfa_scope="encoder",
+                                                                 stdp={"alpha": 0.0, "homeo": 0.15}),
 }
 
 
@@ -98,7 +102,7 @@ def main():
     with open("results/compute.md", "w") as f:
         f.write("# RQ4 compute per variant\n\nCPU process time, 1 thread; encoder energy uses the RQ3 "
                 "accounting (CNN: dense MACs x 4.6 pJ; SNN: SynOps x 0.9 pJ) at initialisation "
-                "(trained SNNs are sparser, see results/rq3*.md). Memory agents encode one new frame per decision "
+                "(trained SNNs are sparser, see results/rq3*.md). Timings were measured while other jobs ran; they vary by ~15% with machine load. Memory agents encode one new frame per decision "
                 "(cached features for the rest of the window); their train step re-encodes only the newest frame too.\n\n")
         f.write(pd.DataFrame(rows).to_markdown(index=False, floatfmt=".3g") + "\n")
 

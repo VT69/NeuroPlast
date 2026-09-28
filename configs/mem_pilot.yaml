@@ -1,0 +1,4 @@
+# Session 3 pilot (sizing only, no conclusions): MiniGrid-MemoryS7, literature doc section 27 ablation.
+# The cue object is seen at the start; the matching object must be chosen at the corridor's end.
+env_id: MiniGrid-MemoryS7-v0
+total_frames: 1000000

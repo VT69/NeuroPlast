@@ -1,0 +1,7 @@
+# session 3 queue 2: P3b isolation budget. fetch5 SNN, 450k frames/task for ALL arms (probes: fresh SNN reaches >=0.8 by 450k in 3/4 probes)
+runs/continual5_snn_450k/fetch5_isolation_s1/results.json :: python continual.py --suite fetch5 --method isolation --config configs/cl_snn.yaml --seed 1 --out runs/continual5_snn_450k --set total_frames=450000
+runs/continual5_snn_450k/fetch5_sleep_s1/results.json :: python continual.py --suite fetch5 --method sleep --config configs/cl_snn.yaml --seed 1 --out runs/continual5_snn_450k --set total_frames=450000
+runs/continual5_snn_450k/fetch5_isolation_s2/results.json :: python continual.py --suite fetch5 --method isolation --config configs/cl_snn.yaml --seed 2 --out runs/continual5_snn_450k --set total_frames=450000
+runs/continual5_snn_450k/fetch5_sleep_s2/results.json :: python continual.py --suite fetch5 --method sleep --config configs/cl_snn.yaml --seed 2 --out runs/continual5_snn_450k --set total_frames=450000
+runs/continual5_snn_450k/fetch5_isolation_s3/results.json :: python continual.py --suite fetch5 --method isolation --config configs/cl_snn.yaml --seed 3 --out runs/continual5_snn_450k --set total_frames=450000
+runs/continual5_snn_450k/fetch5_sleep_s3/results.json :: python continual.py --suite fetch5 --method sleep --config configs/cl_snn.yaml --seed 3 --out runs/continual5_snn_450k --set total_frames=450000

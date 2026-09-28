@@ -1,0 +1,20 @@
+43 jobs pending
+START runs/s3_probes/probe5_task3_s1/eval.json
+END rc=0 695s runs/s3_probes/probe5_task3_s1/eval.json
+START runs/rq1_v2/rq1v2_rands0.03_s1/eval.json
+END rc=0 420s runs/rq1_v2/rq1v2_rands0.03_s1/eval.json
+START runs/rq1_v2/rq1v2_rands0.03_s4/eval.json
+END rc=0 520s runs/rq1_v2/rq1v2_rands0.03_s4/eval.json
+START runs/rq1_v2/rq1v2_homeo_s6/eval.json
+END rc=0 495s runs/rq1_v2/rq1v2_homeo_s6/eval.json
+START runs/rq1_v2/rq1v2_homeo_s7/eval.json
+END rc=0 620s runs/rq1_v2/rq1v2_homeo_s7/eval.json
+START runs/rq1_v2/rq1v2_homeo_s8/eval.json
+END rc=0 585s runs/rq1_v2/rq1v2_homeo_s8/eval.json
+START runs/rq1_v2/rq1v2_bp_s9/eval.json
+END rc=0 710s runs/rq1_v2/rq1v2_bp_s9/eval.json
+START runs/rq1_v2/rq1v2_rands0.03_s9/eval.json
+END rc=0 555s runs/rq1_v2/rq1v2_rands0.03_s9/eval.json
+START runs/rq1_v2/rq1v2_tfs0.03_s10/eval.json
+END rc=0 715s runs/rq1_v2/rq1v2_tfs0.03_s10/eval.json
+START runs/continual_snn_budget/fetch3_sleep_buf2000_s1/results.json

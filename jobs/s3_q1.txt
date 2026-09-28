@@ -1,0 +1,60 @@
+# session 3 queue 1 (see PROGRESS.md 'Session 3' plan)
+# P3a: single-task SNN on hard fetch5 tasks, 600k frames, to size the isolation budget
+runs/s3_probes/probe5_task0_s1/eval.json :: python train.py --config configs/cl_snn.yaml --set seed=1 run_name=probe5_task0_s1 out_dir=runs/s3_probes env_id=FetchObj5-0 total_frames=600000
+runs/s3_probes/probe5_task2_s1/eval.json :: python train.py --config configs/cl_snn.yaml --set seed=1 run_name=probe5_task2_s1 out_dir=runs/s3_probes env_id=FetchObj5-2 total_frames=600000
+runs/s3_probes/probe5_task3_s1/eval.json :: python train.py --config configs/cl_snn.yaml --set seed=1 run_name=probe5_task3_s1 out_dir=runs/s3_probes env_id=FetchObj5-3 total_frames=600000
+runs/s3_probes/probe5_task4_s2/eval.json :: python train.py --config configs/cl_snn.yaml --set seed=2 run_name=probe5_task4_s2 out_dir=runs/s3_probes env_id=FetchObj5-4 total_frames=600000
+# P1: RQ1 DoorKey-6x6 controls to 10 seeds (seed-major so partial results stay balanced)
+runs/rq1_v2/rq1v2_bp_s1/eval.json :: python train.py --config configs/rq1_v2.yaml --set seed=1 run_name=rq1v2_bp_s1 out_dir=runs/rq1_v2
+runs/rq1_v2/rq1v2_homeo_s1/eval.json :: python train.py --config configs/rq1_v2.yaml --set seed=1 run_name=rq1v2_homeo_s1 out_dir=runs/rq1_v2 "stdp={alpha: 0.0, homeo: 0.15}"
+runs/rq1_v2/rq1v2_tfs0.03_s1/eval.json :: python train.py --config configs/rq1_v2.yaml --set seed=1 run_name=rq1v2_tfs0.03_s1 out_dir=runs/rq1_v2 "stdp={alpha: 0.03, mode: three_factor, center: true, homeo: 0.15}"
+runs/rq1_v2/rq1v2_rands0.03_s1/eval.json :: python train.py --config configs/rq1_v2.yaml --set seed=1 run_name=rq1v2_rands0.03_s1 out_dir=runs/rq1_v2 "stdp={alpha: 0.03, mode: random, homeo: 0.15}"
+runs/rq1_v2/rq1v2_bp_s2/eval.json :: python train.py --config configs/rq1_v2.yaml --set seed=2 run_name=rq1v2_bp_s2 out_dir=runs/rq1_v2
+runs/rq1_v2/rq1v2_homeo_s2/eval.json :: python train.py --config configs/rq1_v2.yaml --set seed=2 run_name=rq1v2_homeo_s2 out_dir=runs/rq1_v2 "stdp={alpha: 0.0, homeo: 0.15}"
+runs/rq1_v2/rq1v2_tfs0.03_s2/eval.json :: python train.py --config configs/rq1_v2.yaml --set seed=2 run_name=rq1v2_tfs0.03_s2 out_dir=runs/rq1_v2 "stdp={alpha: 0.03, mode: three_factor, center: true, homeo: 0.15}"
+runs/rq1_v2/rq1v2_rands0.03_s2/eval.json :: python train.py --config configs/rq1_v2.yaml --set seed=2 run_name=rq1v2_rands0.03_s2 out_dir=runs/rq1_v2 "stdp={alpha: 0.03, mode: random, homeo: 0.15}"
+runs/rq1_v2/rq1v2_bp_s3/eval.json :: python train.py --config configs/rq1_v2.yaml --set seed=3 run_name=rq1v2_bp_s3 out_dir=runs/rq1_v2
+runs/rq1_v2/rq1v2_homeo_s3/eval.json :: python train.py --config configs/rq1_v2.yaml --set seed=3 run_name=rq1v2_homeo_s3 out_dir=runs/rq1_v2 "stdp={alpha: 0.0, homeo: 0.15}"
+runs/rq1_v2/rq1v2_tfs0.03_s3/eval.json :: python train.py --config configs/rq1_v2.yaml --set seed=3 run_name=rq1v2_tfs0.03_s3 out_dir=runs/rq1_v2 "stdp={alpha: 0.03, mode: three_factor, center: true, homeo: 0.15}"
+runs/rq1_v2/rq1v2_rands0.03_s3/eval.json :: python train.py --config configs/rq1_v2.yaml --set seed=3 run_name=rq1v2_rands0.03_s3 out_dir=runs/rq1_v2 "stdp={alpha: 0.03, mode: random, homeo: 0.15}"
+runs/rq1_v2/rq1v2_bp_s4/eval.json :: python train.py --config configs/rq1_v2.yaml --set seed=4 run_name=rq1v2_bp_s4 out_dir=runs/rq1_v2
+runs/rq1_v2/rq1v2_homeo_s4/eval.json :: python train.py --config configs/rq1_v2.yaml --set seed=4 run_name=rq1v2_homeo_s4 out_dir=runs/rq1_v2 "stdp={alpha: 0.0, homeo: 0.15}"
+runs/rq1_v2/rq1v2_tfs0.03_s4/eval.json :: python train.py --config configs/rq1_v2.yaml --set seed=4 run_name=rq1v2_tfs0.03_s4 out_dir=runs/rq1_v2 "stdp={alpha: 0.03, mode: three_factor, center: true, homeo: 0.15}"
+runs/rq1_v2/rq1v2_rands0.03_s4/eval.json :: python train.py --config configs/rq1_v2.yaml --set seed=4 run_name=rq1v2_rands0.03_s4 out_dir=runs/rq1_v2 "stdp={alpha: 0.03, mode: random, homeo: 0.15}"
+runs/rq1_v2/rq1v2_bp_s5/eval.json :: python train.py --config configs/rq1_v2.yaml --set seed=5 run_name=rq1v2_bp_s5 out_dir=runs/rq1_v2
+runs/rq1_v2/rq1v2_homeo_s5/eval.json :: python train.py --config configs/rq1_v2.yaml --set seed=5 run_name=rq1v2_homeo_s5 out_dir=runs/rq1_v2 "stdp={alpha: 0.0, homeo: 0.15}"
+runs/rq1_v2/rq1v2_tfs0.03_s5/eval.json :: python train.py --config configs/rq1_v2.yaml --set seed=5 run_name=rq1v2_tfs0.03_s5 out_dir=runs/rq1_v2 "stdp={alpha: 0.03, mode: three_factor, center: true, homeo: 0.15}"
+runs/rq1_v2/rq1v2_rands0.03_s5/eval.json :: python train.py --config configs/rq1_v2.yaml --set seed=5 run_name=rq1v2_rands0.03_s5 out_dir=runs/rq1_v2 "stdp={alpha: 0.03, mode: random, homeo: 0.15}"
+runs/rq1_v2/rq1v2_bp_s6/eval.json :: python train.py --config configs/rq1_v2.yaml --set seed=6 run_name=rq1v2_bp_s6 out_dir=runs/rq1_v2
+runs/rq1_v2/rq1v2_homeo_s6/eval.json :: python train.py --config configs/rq1_v2.yaml --set seed=6 run_name=rq1v2_homeo_s6 out_dir=runs/rq1_v2 "stdp={alpha: 0.0, homeo: 0.15}"
+runs/rq1_v2/rq1v2_tfs0.03_s6/eval.json :: python train.py --config configs/rq1_v2.yaml --set seed=6 run_name=rq1v2_tfs0.03_s6 out_dir=runs/rq1_v2 "stdp={alpha: 0.03, mode: three_factor, center: true, homeo: 0.15}"
+runs/rq1_v2/rq1v2_rands0.03_s6/eval.json :: python train.py --config configs/rq1_v2.yaml --set seed=6 run_name=rq1v2_rands0.03_s6 out_dir=runs/rq1_v2 "stdp={alpha: 0.03, mode: random, homeo: 0.15}"
+runs/rq1_v2/rq1v2_bp_s7/eval.json :: python train.py --config configs/rq1_v2.yaml --set seed=7 run_name=rq1v2_bp_s7 out_dir=runs/rq1_v2
+runs/rq1_v2/rq1v2_homeo_s7/eval.json :: python train.py --config configs/rq1_v2.yaml --set seed=7 run_name=rq1v2_homeo_s7 out_dir=runs/rq1_v2 "stdp={alpha: 0.0, homeo: 0.15}"
+runs/rq1_v2/rq1v2_tfs0.03_s7/eval.json :: python train.py --config configs/rq1_v2.yaml --set seed=7 run_name=rq1v2_tfs0.03_s7 out_dir=runs/rq1_v2 "stdp={alpha: 0.03, mode: three_factor, center: true, homeo: 0.15}"
+runs/rq1_v2/rq1v2_rands0.03_s7/eval.json :: python train.py --config configs/rq1_v2.yaml --set seed=7 run_name=rq1v2_rands0.03_s7 out_dir=runs/rq1_v2 "stdp={alpha: 0.03, mode: random, homeo: 0.15}"
+runs/rq1_v2/rq1v2_bp_s8/eval.json :: python train.py --config configs/rq1_v2.yaml --set seed=8 run_name=rq1v2_bp_s8 out_dir=runs/rq1_v2
+runs/rq1_v2/rq1v2_homeo_s8/eval.json :: python train.py --config configs/rq1_v2.yaml --set seed=8 run_name=rq1v2_homeo_s8 out_dir=runs/rq1_v2 "stdp={alpha: 0.0, homeo: 0.15}"
+runs/rq1_v2/rq1v2_tfs0.03_s8/eval.json :: python train.py --config configs/rq1_v2.yaml --set seed=8 run_name=rq1v2_tfs0.03_s8 out_dir=runs/rq1_v2 "stdp={alpha: 0.03, mode: three_factor, center: true, homeo: 0.15}"
+runs/rq1_v2/rq1v2_rands0.03_s8/eval.json :: python train.py --config configs/rq1_v2.yaml --set seed=8 run_name=rq1v2_rands0.03_s8 out_dir=runs/rq1_v2 "stdp={alpha: 0.03, mode: random, homeo: 0.15}"
+runs/rq1_v2/rq1v2_bp_s9/eval.json :: python train.py --config configs/rq1_v2.yaml --set seed=9 run_name=rq1v2_bp_s9 out_dir=runs/rq1_v2
+runs/rq1_v2/rq1v2_homeo_s9/eval.json :: python train.py --config configs/rq1_v2.yaml --set seed=9 run_name=rq1v2_homeo_s9 out_dir=runs/rq1_v2 "stdp={alpha: 0.0, homeo: 0.15}"
+runs/rq1_v2/rq1v2_tfs0.03_s9/eval.json :: python train.py --config configs/rq1_v2.yaml --set seed=9 run_name=rq1v2_tfs0.03_s9 out_dir=runs/rq1_v2 "stdp={alpha: 0.03, mode: three_factor, center: true, homeo: 0.15}"
+runs/rq1_v2/rq1v2_rands0.03_s9/eval.json :: python train.py --config configs/rq1_v2.yaml --set seed=9 run_name=rq1v2_rands0.03_s9 out_dir=runs/rq1_v2 "stdp={alpha: 0.03, mode: random, homeo: 0.15}"
+runs/rq1_v2/rq1v2_bp_s10/eval.json :: python train.py --config configs/rq1_v2.yaml --set seed=10 run_name=rq1v2_bp_s10 out_dir=runs/rq1_v2
+runs/rq1_v2/rq1v2_homeo_s10/eval.json :: python train.py --config configs/rq1_v2.yaml --set seed=10 run_name=rq1v2_homeo_s10 out_dir=runs/rq1_v2 "stdp={alpha: 0.0, homeo: 0.15}"
+runs/rq1_v2/rq1v2_tfs0.03_s10/eval.json :: python train.py --config configs/rq1_v2.yaml --set seed=10 run_name=rq1v2_tfs0.03_s10 out_dir=runs/rq1_v2 "stdp={alpha: 0.03, mode: three_factor, center: true, homeo: 0.15}"
+runs/rq1_v2/rq1v2_rands0.03_s10/eval.json :: python train.py --config configs/rq1_v2.yaml --set seed=10 run_name=rq1v2_rands0.03_s10 out_dir=runs/rq1_v2 "stdp={alpha: 0.03, mode: random, homeo: 0.15}"
+# P2: memory-fair RQ5, SNN trunk fetch3, small buffers (2000/task ~ memory-matched to isolation)
+runs/continual_snn_budget/fetch3_sleep_buf200_s1/results.json :: python continual.py --suite fetch3 --method sleep --config configs/cl_snn.yaml --seed 1 --out runs/continual_snn_budget --mk buffer_per_task=200 --tag _buf200
+runs/continual_snn_budget/fetch3_replay_buf200_s1/results.json :: python continual.py --suite fetch3 --method replay --config configs/cl_snn.yaml --seed 1 --out runs/continual_snn_budget --mk buffer_per_task=200 --tag _buf200
+runs/continual_snn_budget/fetch3_sleep_buf2000_s1/results.json :: python continual.py --suite fetch3 --method sleep --config configs/cl_snn.yaml --seed 1 --out runs/continual_snn_budget --mk buffer_per_task=2000 --tag _buf2000
+runs/continual_snn_budget/fetch3_replay_buf2000_s1/results.json :: python continual.py --suite fetch3 --method replay --config configs/cl_snn.yaml --seed 1 --out runs/continual_snn_budget --mk buffer_per_task=2000 --tag _buf2000
+runs/continual_snn_budget/fetch3_sleep_buf200_s2/results.json :: python continual.py --suite fetch3 --method sleep --config configs/cl_snn.yaml --seed 2 --out runs/continual_snn_budget --mk buffer_per_task=200 --tag _buf200
+runs/continual_snn_budget/fetch3_replay_buf200_s2/results.json :: python continual.py --suite fetch3 --method replay --config configs/cl_snn.yaml --seed 2 --out runs/continual_snn_budget --mk buffer_per_task=200 --tag _buf200
+runs/continual_snn_budget/fetch3_sleep_buf2000_s2/results.json :: python continual.py --suite fetch3 --method sleep --config configs/cl_snn.yaml --seed 2 --out runs/continual_snn_budget --mk buffer_per_task=2000 --tag _buf2000
+runs/continual_snn_budget/fetch3_replay_buf2000_s2/results.json :: python continual.py --suite fetch3 --method replay --config configs/cl_snn.yaml --seed 2 --out runs/continual_snn_budget --mk buffer_per_task=2000 --tag _buf2000
+runs/continual_snn_budget/fetch3_sleep_buf200_s3/results.json :: python continual.py --suite fetch3 --method sleep --config configs/cl_snn.yaml --seed 3 --out runs/continual_snn_budget --mk buffer_per_task=200 --tag _buf200
+runs/continual_snn_budget/fetch3_replay_buf200_s3/results.json :: python continual.py --suite fetch3 --method replay --config configs/cl_snn.yaml --seed 3 --out runs/continual_snn_budget --mk buffer_per_task=200 --tag _buf200
+runs/continual_snn_budget/fetch3_sleep_buf2000_s3/results.json :: python continual.py --suite fetch3 --method sleep --config configs/cl_snn.yaml --seed 3 --out runs/continual_snn_budget --mk buffer_per_task=2000 --tag _buf2000
+runs/continual_snn_budget/fetch3_replay_buf2000_s3/results.json :: python continual.py --suite fetch3 --method replay --config configs/cl_snn.yaml --seed 3 --out runs/continual_snn_budget --mk buffer_per_task=2000 --tag _buf2000

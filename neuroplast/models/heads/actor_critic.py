@@ -24,5 +24,11 @@ class ActorCriticHeads(nn.Module):
         self.critic = nn.Sequential(layer_init(nn.Linear(in_dim, hidden)), nn.Tanh(),
                                     layer_init(nn.Linear(hidden, 1), std=1.0))
 
-    def forward(self, z):
-        return self.actor(z), self.critic(z).squeeze(-1)
+    def forward(self, z, dfa=None, box=None, rows=None):
+        if dfa is None or isinstance(self.actor, nn.Linear):
+            return self.actor(z), self.critic(z).squeeze(-1)
+        # DFA: each hidden layer's gradient is replaced by B e (random feedback);
+        # the output layers keep their exact (local, delta-rule) gradients.
+        ha = dfa.hidden(self.actor[1](self.actor[0](z)), "ha", box, 1.0, rows)
+        hc = dfa.hidden(self.critic[1](self.critic[0](z)), "hc", box, 1.0, rows)
+        return self.actor[2](ha), self.critic[2](hc).squeeze(-1)

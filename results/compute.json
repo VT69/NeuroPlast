@@ -4,47 +4,63 @@
   "params": 159864,
   "enc_ops_k_per_decision": 156.1275,
   "enc_energy_nj_per_decision": 1653.3503999999998,
-  "rollout_ms_per_16": 1.146639149999995,
-  "train_step_ms_per_256": 16.231333399999937
+  "rollout_ms_per_16": 1.1283046000000185,
+  "train_step_ms_per_256": 15.585629
  },
  {
   "variant": "A: SNN e2e (surrogate BPTT)",
   "params": 160104,
   "enc_ops_k_per_decision": 160.411,
   "enc_energy_nj_per_decision": 144.3699,
-  "rollout_ms_per_16": 4.342295700000021,
-  "train_step_ms_per_256": 68.7696334
+  "rollout_ms_per_16": 4.8230904500000005,
+  "train_step_ms_per_256": 80.28039900000002
  },
  {
   "variant": "A+mem: SNN + Transformer (window 4)",
   "params": 293352,
   "enc_ops_k_per_decision": 149.53140625,
   "enc_energy_nj_per_decision": 134.578265625,
-  "rollout_ms_per_16": 5.321797549999996,
-  "train_step_ms_per_256": 69.94267179999989
+  "rollout_ms_per_16": 5.968393899999991,
+  "train_step_ms_per_256": 92.88150220000003
  },
  {
   "variant": "A+STDP: hybrid rule (stabilised, alpha 0.3)",
   "params": 160104,
   "enc_ops_k_per_decision": 264.8235,
   "enc_energy_nj_per_decision": 238.34115,
-  "rollout_ms_per_16": 3.722307849999984,
-  "train_step_ms_per_256": 132.38476180000004
+  "rollout_ms_per_16": 4.850967899999992,
+  "train_step_ms_per_256": 163.79227759999998
  },
  {
   "variant": "B: local-only SNN encoder + backprop heads",
   "params": 160104,
   "enc_ops_k_per_decision": 158.353,
   "enc_energy_nj_per_decision": 142.51770000000002,
-  "rollout_ms_per_16": 3.4860859500000174,
-  "train_step_ms_per_256": 160.64910680000006
+  "rollout_ms_per_16": 4.4193950999999565,
+  "train_step_ms_per_256": 152.07052199999998
  },
  {
   "variant": "C: DFA SNN + linear readouts (no backprop)",
   "params": 144104,
   "enc_ops_k_per_decision": 340.117,
   "enc_energy_nj_per_decision": 306.1053,
-  "rollout_ms_per_16": 4.818944699999994,
-  "train_step_ms_per_256": 78.37669220000016
+  "rollout_ms_per_16": 4.317814700000033,
+  "train_step_ms_per_256": 68.33227159999993
+ },
+ {
+  "variant": "Cmlp: DFA SNN + MLP heads (no backprop)",
+  "params": 160104,
+  "enc_ops_k_per_decision": 340.439,
+  "enc_energy_nj_per_decision": 306.3951,
+  "rollout_ms_per_16": 4.57990865000002,
+  "train_step_ms_per_256": 72.92634200000006
+ },
+ {
+  "variant": "Cenc: DFA on SNN synapses + homeostasis, heads exact",
+  "params": 160104,
+  "enc_ops_k_per_decision": 256.749,
+  "enc_energy_nj_per_decision": 231.07410000000002,
+  "rollout_ms_per_16": 4.356516999999993,
+  "train_step_ms_per_256": 77.7643084000001
  }
 ]

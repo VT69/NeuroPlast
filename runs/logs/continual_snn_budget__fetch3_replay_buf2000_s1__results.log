@@ -1,0 +1,16 @@
+[fetch3_replay_buf2000_s1 t0] [fetch3_replay_buf2000_s1/task0] upd 5/73 frames 10240 fps 631 ret 0.278 len 102.8 ent 1.892 act 0.117
+[fetch3_replay_buf2000_s1 t0] [fetch3_replay_buf2000_s1/task0] upd 10/73 frames 20480 fps 639 ret 0.332 len 69.6 ent 1.804 act 0.123
+[fetch3_replay_buf2000_s1 t0] [fetch3_replay_buf2000_s1/task0] upd 15/73 frames 30720 fps 589 ret 0.309 len 81.4 ent 1.854 act 0.141
+[fetch3_replay_buf2000_s1 t0] [fetch3_replay_buf2000_s1/task0] upd 20/73 frames 40960 fps 605 ret 0.360 len 105.3 ent 1.737 act 0.135
+[fetch3_replay_buf2000_s1 t0] [fetch3_replay_buf2000_s1/task0] upd 25/73 frames 51200 fps 608 ret 0.406 len 100.4 ent 1.675 act 0.138
+[fetch3_replay_buf2000_s1 t0] [fetch3_replay_buf2000_s1/task0] upd 30/73 frames 61440 fps 608 ret 0.586 len 86.7 ent 1.602 act 0.140
+[fetch3_replay_buf2000_s1 t0] [fetch3_replay_buf2000_s1/task0] upd 35/73 frames 71680 fps 617 ret 0.666 len 73.8 ent 1.612 act 0.137
+[fetch3_replay_buf2000_s1 t0] [fetch3_replay_buf2000_s1/task0] upd 40/73 frames 81920 fps 613 ret 0.728 len 60.5 ent 1.563 act 0.143
+[fetch3_replay_buf2000_s1 t0] [fetch3_replay_buf2000_s1/task0] upd 45/73 frames 92160 fps 616 ret 0.763 len 58.7 ent 1.521 act 0.145
+[fetch3_replay_buf2000_s1 t0] [fetch3_replay_buf2000_s1/task0] upd 50/73 frames 102400 fps 619 ret 0.804 len 48.2 ent 1.474 act 0.149
+[fetch3_replay_buf2000_s1 t0] [fetch3_replay_buf2000_s1/task0] upd 55/73 frames 112640 fps 627 ret 0.843 len 38.6 ent 1.316 act 0.151
+[fetch3_replay_buf2000_s1 t0] [fetch3_replay_buf2000_s1/task0] upd 60/73 frames 122880 fps 644 ret 0.800 len 42.2 ent 1.319 act 0.150
+[fetch3_replay_buf2000_s1 t0] [fetch3_replay_buf2000_s1/task0] upd 65/73 frames 133120 fps 645 ret 0.806 len 46.7 ent 1.319 act 0.148
+[fetch3_replay_buf2000_s1 t0] [fetch3_replay_buf2000_s1/task0] upd 70/73 frames 143360 fps 641 ret 0.799 len 44.9 ent 1.321 act 0.148
+[fetch3_replay_buf2000_s1 t0] [fetch3_replay_buf2000_s1/task0] upd 73/73 frames 149504 fps 635 ret 0.849 len 37.2 ent 1.293 act 0.151
+[fetch3_replay_buf2000_s1] after task 0: R = [0.899, 0.199, 0.111]

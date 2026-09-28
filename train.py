@@ -61,7 +61,9 @@ class Config:
     task_id: int = 0
     multihead: bool = False
     hidden: int = 64              # head MLP width; 0 = linear readouts
-    dfa: bool = False             # variant C: DFA/e-prop-style training, no backprop between layers
+    dfa: bool = False             # DFA/e-prop-style training, no backprop between layers (any head width)
+    frame_stack: int = 1          # >1: stack the last k frames as encoder input channels (memory baseline)
+    dfa_scope: str = "all"        # "all": no backprop anywhere; "encoder": DFA only on the SNN synapses
     # hybrid learning rule (RQ1): see neuroplast/learning/hybrid.py
     stdp: dict = field(default_factory=dict)
     # bookkeeping
@@ -84,7 +86,8 @@ def load_config(path=None, overrides=()):
 def build_agent(cfg: Config) -> Agent:
     return Agent(encoder=cfg.encoder, enc_kwargs=cfg.enc_kwargs, memory=cfg.memory, window=cfg.window,
                  mem_kwargs=cfg.mem_kwargs, feat_dim=cfg.feat_dim, n_tasks=cfg.n_tasks,
-                 multihead=cfg.multihead, hidden=cfg.hidden, dfa=cfg.dfa)
+                 multihead=cfg.multihead, hidden=cfg.hidden, dfa=cfg.dfa, dfa_scope=cfg.dfa_scope,
+                 frame_stack=cfg.frame_stack)
 
 
 def train(cfg: Config, agent: Agent | None = None, hooks=(), log_prefix="", run_dir=None, quiet=False):
@@ -108,7 +111,7 @@ def train(cfg: Config, agent: Agent | None = None, hooks=(), log_prefix="", run_
         if hasattr(h, "setup"):
             h.setup(agent)
     opt = torch.optim.Adam(agent.parameters(), lr=cfg.lr, eps=1e-5)
-    K = max(cfg.window if cfg.memory else 1, 1)
+    K = agent.window  # frames of history the agent consumes (memory window or frame stack)
     envs = VecEnv(cfg.env_id, cfg.num_envs, seed=cfg.seed * 10_000, history=K, env_kwargs=cfg.env_kwargs)
     N, S = cfg.num_envs, cfg.num_steps
     obs_buf = torch.zeros((S, N, K, 7, 7, 3), dtype=torch.uint8)

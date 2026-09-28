@@ -1,0 +1,18 @@
+43 jobs pending
+START runs/s3_probes/probe5_task0_s1/eval.json
+END rc=0 745s runs/s3_probes/probe5_task0_s1/eval.json
+START runs/rq1_v2/rq1v2_homeo_s4/eval.json
+END rc=0 555s runs/rq1_v2/rq1v2_homeo_s4/eval.json
+START runs/rq1_v2/rq1v2_rands0.03_s5/eval.json
+END rc=0 660s runs/rq1_v2/rq1v2_rands0.03_s5/eval.json
+START runs/rq1_v2/rq1v2_bp_s7/eval.json
+END rc=0 630s runs/rq1_v2/rq1v2_bp_s7/eval.json
+START runs/rq1_v2/rq1v2_rands0.03_s7/eval.json
+END rc=0 720s runs/rq1_v2/rq1v2_rands0.03_s7/eval.json
+START runs/rq1_v2/rq1v2_rands0.03_s8/eval.json
+END rc=0 500s runs/rq1_v2/rq1v2_rands0.03_s8/eval.json
+START runs/rq1_v2/rq1v2_homeo_s9/eval.json
+END rc=0 575s runs/rq1_v2/rq1v2_homeo_s9/eval.json
+START runs/rq1_v2/rq1v2_homeo_s10/eval.json
+END rc=0 505s runs/rq1_v2/rq1v2_homeo_s10/eval.json
+START runs/continual_snn_budget/fetch3_replay_buf200_s1/results.json

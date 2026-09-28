@@ -80,6 +80,8 @@ class HybridSTDP:
             return adv
         # memory agent: the encoder saw every valid frame of each sample's window
         counts = batch["mask"][:, -window:].sum(1)
+        if int(counts.sum()) != n_frames:
+            return "mismatch"  # last recorded forward wasn't this PPO minibatch (e.g. a replay pass)
         return adv.repeat_interleave(counts)
 
     @torch.no_grad()
@@ -94,6 +96,9 @@ class HybridSTDP:
             return
         n_frames = rec[0][0][0].shape[0]
         mod = self._modulator(batch, n_frames, agent.window)
+        if isinstance(mod, str):
+            self.skipped = getattr(self, "skipped", 0) + 1
+            return
         for i in self.idx:
             layer = self.enc.layers[i]
             pre, post = rec[i]

@@ -104,7 +104,12 @@ def rq3(path="runs/rq3_encoders/results.jsonl", tag=""):
 
 # ----------------------------------------------------------------------- continual
 CL_ROOTS = {"runs/continual": "CNN trunk", "runs/continual_snn": "SNN trunk (T=4)",
-            "runs/continual_budget": "CNN trunk, small replay buffers"}
+            "runs/continual_budget": "CNN trunk, small replay buffers",
+            "runs/continual_hybrid": "Full hybrid: SNN (T=4) + Transformer memory (window 4)",
+            "runs/continual5_cnn": "CNN trunk, 5-task sequence",
+            "runs/continual5_snn": "SNN trunk, 5-task sequence",
+            "runs/continual_snn_budget": "SNN trunk, small replay buffers (session 3)",
+            "runs/continual5_snn_450k": "SNN trunk, 5-task sequence, 450k frames/task (session 3 isolation budget)"}
 
 
 def continual():
@@ -262,19 +267,31 @@ def _cl_acc(root, method):
     return accs
 
 
+def _cl_frames(root, method):
+    for p in glob.glob(os.path.join(root, f"fetch3_{method}_s*", "results.json")):
+        if os.path.basename(os.path.dirname(p)).rsplit("_s", 1)[0] == f"fetch3_{method}":
+            return json.load(open(p))["cfg"]["total_frames"]
+    return None
+
+
 def rq4():
     """Robustness per unit of compute, per architecture variant (joins RQ1/continual/compute outputs)."""
     if not os.path.exists(os.path.join(OUT, "compute.json")):
         return
     comp = {r["variant"].split(":")[0]: r for r in json.load(open(os.path.join(OUT, "compute.json")))}
-    V = [  # variant key in compute.json, label, RQ1 (5x5) arm, RQ1 v2 (6x6) arm, continual root, best CL method
+    V = [  # variant key in compute.json, label, RQ1 (5x5) arm, RQ1 v2 (6x6) arm, continual root, CL method
         ("CNN", "CNN (reference)", "cnn", None, "runs/continual", "sleep"),
         ("A", "A: SNN, surrogate-gradient BPTT", "bp", "bp", "runs/continual_snn", "sleep"),
-        ("A+mem", "A + Transformer memory (full hybrid)", "HYBRID", None, None, None),
-        ("A+STDP", "A + stabilised 3-factor STDP (a=0.03/0.3)", None, "tfs0.03", "runs/continual_snn", "sleep_stdps0.003"),
+        ("A", "A + local homeostasis", None, "homeo", "runs/continual_snn", "sleep_homeo"),
+        ("A+mem", "Full hybrid: A + Transformer memory", "HYBRID", None, "runs/continual_hybrid", "sleep"),
+        ("A+STDP", "A + stabilised 3-factor STDP", None, "tfs0.03", "runs/continual_snn", "sleep_stdps0.003"),
         ("B", "B: local-only SNN encoder", "tf1_local", "tfs0.3_local", None, None),
-        ("C", "C: DFA SNN, no backprop", "dfa", None, None, None),
+        ("Cenc", "DFA on SNN synapses (heads exact)", "dfae", "dfae", None, None),
+        ("Cenc", "DFA on SNN + homeostasis (heads exact)", None, "dfae_homeo", "runs/continual_snn", "sleep_dfaeh"),
+        ("Cmlp", "C: DFA everywhere, MLP heads (no backprop)", "dfaall", None, None, None),
+        ("C", "C: DFA, linear heads (session 1)", "dfa", None, None, None),
     ]
+    cnn_ms = comp["CNN"]["train_step_ms_per_256"]
     rows = []
     for key, label, a5, a6, root, clm in V:
         c = comp.get(key, {})
@@ -287,6 +304,7 @@ def rq4():
             r5 = _arm_runs("runs/rq1", a5) if a5 else []
         r6 = _arm_runs("runs/rq1_v2", a6) if a6 else []
         cl = _cl_acc(root, clm) if root else []
+        fpt = _cl_frames(root, clm) if root else None
         solve = [e > 0.5 for e, _ in r5 + r6]
         step_ms = c.get("train_step_ms_per_256", float("nan"))
         rows.append({"variant": label,
@@ -296,13 +314,17 @@ def rq4():
                      "continual ACC (fetch3)": (ms(cl) + f" [{clm}]") if cl else "-",
                      "train ms/step (CPU)": f"{step_ms:.0f}",
                      "params": c.get("params", "-"),
-                     "continual ACC per train-second": (f"{np.mean(cl) / (step_ms / 1e3):.1f}" if cl else "-")})
+                     "continual train compute (x CNN@150k)": (f"{step_ms * fpt / (cnn_ms * 150_000):.1f}" if cl else "-"),
+                     "continual ACC per unit compute": (f"{np.mean(cl) / (step_ms * fpt / (cnn_ms * 150_000)):.3f}"
+                                                        if cl else "-")})
     with open(os.path.join(OUT, "rq4.md"), "w") as f:
         f.write("# RQ4: robustness per unit of compute\n\nJoins runs/rq1 (DoorKey-5x5), runs/rq1_v2 (DoorKey-6x6), "
                 "the continual sweeps and results/compute.json (CPU process time per PPO step, batch 256, 1 thread). "
+                "'continual train compute' = per-step cost x frames per task, relative to the CNN at 150k frames/task "
+                "(the full hybrid uses 400k/task, the others 150k); replay/sleep overheads are not included. "
                 "Inference energy per decision is in results/rq3_doorkey6.md (SNN: 15-200 nJ depending on sparsity, CNN: "
-                "1653 nJ dense / 130-940 nJ event-driven). 'continual ACC per train-second' = final continual ACC / "
-                "CPU-seconds per training step (higher = more robust per unit of training compute).\n\n")
+                "1653 nJ dense / 130-940 nJ event-driven). 'continual ACC per unit compute' = final continual ACC / that relative compute "
+                "(higher = more robust per unit of training compute).\n\n")
         f.write(pd.DataFrame(rows).to_markdown(index=False) + "\n")
     print(pd.DataFrame(rows).to_markdown(index=False))
 

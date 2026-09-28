@@ -1,0 +1,8 @@
+# session 3 queue 3: P5 memory-benchmark pilot (MiniGrid-MemoryS7, 1M frames, 1 seed each; sizing only)
+# step 1: is it solvable with simple memory? CNN single frame vs CNN frame stack 4 / 8
+runs/s3_mem_pilot/mem_cnn_fs1_s1/eval.json :: python train.py --config configs/mem_pilot.yaml --set seed=1 run_name=mem_cnn_fs1_s1 out_dir=runs/s3_mem_pilot encoder=cnn
+runs/s3_mem_pilot/mem_cnn_fs4_s1/eval.json :: python train.py --config configs/mem_pilot.yaml --set seed=1 run_name=mem_cnn_fs4_s1 out_dir=runs/s3_mem_pilot encoder=cnn frame_stack=4
+runs/s3_mem_pilot/mem_cnn_fs8_s1/eval.json :: python train.py --config configs/mem_pilot.yaml --set seed=1 run_name=mem_cnn_fs8_s1 out_dir=runs/s3_mem_pilot encoder=cnn frame_stack=8
+# step 2 (if time): SNN + frame stack 8 vs SNN + Transformer window 8 (non-attention vs attention memory)
+runs/s3_mem_pilot/mem_snn_fs8_s1/eval.json :: python train.py --config configs/mem_pilot.yaml --set seed=1 run_name=mem_snn_fs8_s1 out_dir=runs/s3_mem_pilot encoder=snn "enc_kwargs={T: 4}" frame_stack=8
+runs/s3_mem_pilot/mem_snn_tf8_s1/eval.json :: python train.py --config configs/mem_pilot.yaml --set seed=1 run_name=mem_snn_tf8_s1 out_dir=runs/s3_mem_pilot encoder=snn "enc_kwargs={T: 4}" memory=true window=8 lr=0.0003

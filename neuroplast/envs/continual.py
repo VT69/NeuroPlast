@@ -10,6 +10,10 @@ This guarantees interference under naive fine-tuning (the same state demands
 different actions), while navigation + pickup is a shared skill that allows
 forward transfer (RQ5).
 
+`fetch5`: same room with 5 objects (+ purple ball, yellow key), task k = pick up
+object k. A longer sequence (and more distractors) to check whether RQ2/RQ5
+findings survive beyond 3 tasks.
+
 `natural3`: stock MiniGrid tasks with visually distinct observations
 (DoorKey-5x5 -> LavaGapS5 -> Dynamic-Obstacles-5x5). A weaker-interference,
 more "natural" sequence to check the conclusions aren't an artefact of the
@@ -24,12 +28,15 @@ from minigrid.minigrid_env import MiniGridEnv
 
 from neuroplast.envs.minigrid_env import register_custom
 
-FETCH_OBJECTS = [("ball", "red"), ("key", "green"), ("box", "blue")]
+FETCH_OBJECTS = [("ball", "red"), ("key", "green"), ("box", "blue"),
+                 ("ball", "purple"), ("key", "yellow")]  # fetch3 uses the first 3, fetch5 all 5
 
 
 class FetchObjEnv(MiniGridEnv):
-    def __init__(self, target: int = 0, size: int = 8, max_steps: int | None = None, **kwargs):
+    def __init__(self, target: int = 0, size: int = 8, max_steps: int | None = None, n_objects: int = 3,
+                 **kwargs):
         self.target = target
+        self.n_objects = n_objects
         mission_space = MissionSpace(mission_func=lambda: "fetch the target object")
         super().__init__(mission_space=mission_space, grid_size=size, see_through_walls=True,
                          max_steps=max_steps or 4 * size * size, **kwargs)
@@ -38,7 +45,7 @@ class FetchObjEnv(MiniGridEnv):
         self.grid = Grid(width, height)
         self.grid.wall_rect(0, 0, width, height)
         self.objs = []
-        for kind, color in FETCH_OBJECTS:
+        for kind, color in FETCH_OBJECTS[:self.n_objects]:
             obj = {"ball": Ball, "key": Key, "box": Box}[kind](color)
             self.place_obj(obj)
             self.objs.append(obj)
@@ -57,8 +64,12 @@ class FetchObjEnv(MiniGridEnv):
 
 for _k in range(3):
     register_custom(f"FetchObj-{_k}")(lambda _k=_k, **kw: FetchObjEnv(target=_k, **kw))
+for _k in range(5):
+    register_custom(f"FetchObj5-{_k}")(lambda _k=_k, **kw: FetchObjEnv(target=_k, n_objects=5, **kw))
 
 SUITES = {
     "fetch3": ["FetchObj-0", "FetchObj-1", "FetchObj-2"],
+    # session 2: 5 tasks, same room, 5 distinct objects (so each task has 4 distractors)
+    "fetch5": [f"FetchObj5-{k}" for k in range(5)],
     "natural3": ["MiniGrid-DoorKey-5x5-v0", "MiniGrid-LavaGapS5-v0", "MiniGrid-Dynamic-Obstacles-5x5-v0"],
 }

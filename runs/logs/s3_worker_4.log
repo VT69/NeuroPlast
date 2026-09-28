@@ -1,0 +1,14 @@
+43 jobs pending
+START runs/s3_probes/probe5_task4_s2/eval.json
+END rc=0 715s runs/s3_probes/probe5_task4_s2/eval.json
+START runs/rq1_v2/rq1v2_rands0.03_s2/eval.json
+END rc=0 485s runs/rq1_v2/rq1v2_rands0.03_s2/eval.json
+START runs/rq1_v2/rq1v2_homeo_s5/eval.json
+END rc=0 630s runs/rq1_v2/rq1v2_homeo_s5/eval.json
+START runs/rq1_v2/rq1v2_tfs0.03_s6/eval.json
+END rc=0 750s runs/rq1_v2/rq1v2_tfs0.03_s6/eval.json
+START runs/rq1_v2/rq1v2_tfs0.03_s7/eval.json
+END rc=0 1240s runs/rq1_v2/rq1v2_tfs0.03_s7/eval.json
+START runs/rq1_v2/rq1v2_tfs0.03_s9/eval.json
+END rc=0 895s runs/rq1_v2/rq1v2_tfs0.03_s9/eval.json
+START runs/continual_snn_budget/fetch3_sleep_buf200_s1/results.json

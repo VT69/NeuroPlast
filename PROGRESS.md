@@ -3,7 +3,255 @@
 Living log, updated as work happens. Newest status at the top; decisions log
 and detailed notes below.
 
-## Current status (end of session 1, 2026-09-27 ~02:30)
+## Session 3 (2026-09-28) — controls & statistical confidence (partially complete)
+No new mechanisms. Colab unavailable, so extra seeds ran here.
+Machine: 4 cores, 15 GB RAM, 20 GB free disk -> 4 workers, OMP_NUM_THREADS=1.
+Budget ~9 h x 4 cores = ~36 core-h. Runtime estimates are session-1/2 means measured under
+the same ~4-jobs-on-4-cores load.
+
+Repo note: GitHub `main` (5f2aae4) has the session-2 work inside a `neuroplast_session2_code_results/`
+subfolder (plus the zip itself); the repo root there is still session-1 code. This working copy (pushed as
+branch `session-3`) has the session-2 code at the root (correct) + bc8f633's CLAUDE.md and
+docs/LITERATURE_CONTEXT.md. The old branch `claude/keen-lamport-wrnfpj` still needs deleting on GitHub
+(the proxy refused the delete with 403). §38.4 of the literature doc said backprop+homeostasis was never
+run: it was (3 seeds, session 2); tonight took it to 10 (correction note in §38.8).
+
+### Plan, ordered by scientific value per core-hour
+| # | block | jobs | est. core-h | status |
+|---|---|---|---|---|
+| P3a | isolation-budget probes: single-task SNN on FetchObj5 tasks, 600k frames (sizes P3b) | 4 | 1.1 | **done** -> budget 450k/task |
+| P1 | RQ1 DoorKey-6x6 to 10 seeds: bp, bp+homeo, bp+stabilised STDP a=0.03, bp+random a=0.03+homeo (matched control) | 27 | 4.8 | **done**, n=10/arm, analysed below |
+| P2 | memory-fair RQ5: analysis (no compute) + SNN fetch3 sleep/replay at buffers 200 and 2000/task, 3 seeds | 12 | 3.6 | analysis **done**; 4 seed-1 runs in progress at commit time, 8 queued |
+| P3b | fetch5 SNN isolation + sleep at 450k frames/task, 3 seeds | 6 | ~8 | not run |
+| P5 | memory pilot: membrane-reset check (code), MiniGrid-MemoryS7 + CNN frame-stack baseline | 5 | ~2 | code check **done**; 0/5 runs |
+| P4 | hybrid sleep + replay, seeds 4-6, same protocol (lr 3e-4, 400k/task) | 6 | ~11 | not run |
+Why P2-P5 didn't finish: a platform permission-checker outage (~12:45 onward) blocked every shell action for
+hours, and the container was paused for most of that time, freezing the four workers mid-job (each log ended
+on a START with no END, which first looked like a kill). They were **not** killed: when the container resumed
+they carried on by themselves, and at commit time they are running the four P2 seed-1 jobs (SNN fetch3
+sleep/replay at buffers 200 and 2000). Per the user's instruction they were neither restarted nor stopped.
+Those four in-flight run directories (`runs/continual_snn_budget/`) are left out of the `session-3` commit
+(half-written). Every job that finished exited rc=0, no crashes. The remaining queue is below.
+
+### P1 RQ1 — FINAL, pre-registered (n=10/arm, DoorKey-6x6, 400k frames; `results/rq1_stats.md`)
+solved = final eval return > 0.5. Fisher = two-sided exact test on solve counts; Welch = two-sided on AUC
+(mean train return) and final eval return; Holm across the four contrasts, separately per statistic.
+| arm | solved | AUC | final eval | frames to 0.9 (solvers) |
+|---|---|---|---|---|
+| bp | 8/10 | 0.416 ± 0.232 | 0.766 ± 0.398 | 251k |
+| homeo (bp + homeostasis) | **10/10** | **0.616 ± 0.113** | **0.917 ± 0.137** | 179k |
+| tfs0.03 (bp + stabilised STDP, incl. homeostasis) | 8/10 | 0.515 ± 0.300 | 0.765 ± 0.395 | 178k |
+| rands0.03 (bp + same-RMS random update + homeostasis) | 8/10 | 0.482 ± 0.323 | 0.742 ± 0.400 | 160k |
+
+| contrast | Fisher p (Holm) | ΔAUC | Welch AUC p (Holm) | Welch eval p (Holm) |
+|---|---|---|---|---|
+| (a) tfs0.03 vs homeo: does STDP add beyond homeostasis? | 0.474 (1.000) | -0.101 | 0.338 (0.724) | 0.273 (0.864) |
+| (b) tfs0.03 vs rands0.03: beyond matched random perturbation? | 1.000 (1.000) | +0.033 | 0.818 (0.818) | 0.899 (0.899) |
+| (c) homeo vs bp: does homeostasis help backprop? | 0.474 (1.000) | +0.200 | 0.029 (0.117) | 0.280 (0.864) |
+| (d) rands0.03 vs homeo: does perturbation add beyond homeostasis? | 0.474 (1.000) | -0.134 | 0.241 (0.724) | 0.216 (0.864) |
+**All four pre-registered contrasts are null after Holm correction, on every statistic.** The only raw
+p < 0.05 is (c) on AUC (homeostasis learns faster than plain backprop, +0.20 AUC, p=0.029), which does not
+survive Holm (0.117). Point estimates: homeostasis is best on every column (10/10 solved, lowest variance);
+STDP is indistinguishable from a same-size random update (b: p=0.82) and, if anything, slightly below
+homeostasis alone. Plain-backprop failures are seeds 3 and 9; STDP's are 3 and 7; random's include 7.
+At n=10, bimodal outcomes give limited power: a solve-rate difference of 10/10 vs 8/10 can't be
+significant by Fisher (minimum p=0.47), so only continuous metrics could reach significance here.
+The session-2 "homeostasis helps backprop" hint (p=0.09 at n=3) moved to raw p=0.029 at n=10: suggestive,
+not confirmed. Context arms (not pre-registered, n=3-5) are in `results/rq1_stats.md`; the DFA ones repeat
+session 2: DFA alone 1/5 solved, DFA+homeostasis 3/3.
+
+### Pre-registered comparisons and statistics (written before running)
+* **RQ1** (DoorKey-6x6, 400k frames, n=10/arm; arms bp, homeo, tfs0.03, rands0.03):
+  outcomes are bimodal, so the primary statistic is the solve rate (final eval return > 0.5), Fisher's
+  exact test (two-sided); secondary is AUC (mean train return) and final eval return, Welch t-test.
+  Primary contrasts: (a) tfs0.03 vs homeo (does STDP add beyond homeostasis?); (b) tfs0.03 vs
+  rands0.03 (beyond matched random perturbation?); (c) homeo vs bp (does homeostasis help backprop,
+  or only DFA?); (d) rands0.03 vs homeo (does generic perturbation add beyond homeostasis?).
+  Holm correction across (a)-(d) reported alongside raw p.
+* **RQ5 memory-fair**: total memory = fp32 parameters + stored replay states at measured size (188 B/state
+  plain trunks, 632 B/state hybrid; minimum format, the implementation's 2x cache noted separately);
+  sleep also holds a transient 5000-state reservoir + a network snapshot during training (reported as peak).
+  Tests: sleep/replay at small buffers vs isolation on ACC, Welch + exact permutation + bootstrap CI.
+* **Isolation budget** (P3b): at a budget where fresh SNNs learn each task, sleep vs isolation ACC
+  (Welch + permutation), sleep FWT vs 0 (one-sample t); per-task "learned" = R[k][k] >= 0.8, counts per arm.
+* **Hybrid** (P4): sleep vs replay ACC and FORGET, Welch, with n = 5-6.
+* Pilots (P3a, P5): sizing only, no conclusions.
+
+### P3a probes (sizing): fresh single-task SNN on fetch5 tasks, 600k frames (`runs/s3_probes`)
+| probe | 150k | 300k | 450k | 600k | first >= 0.8 |
+|---|---|---|---|---|---|
+| task 0, seed 1 | 0.36 | 0.49 | 0.73 | 0.85 | 595k |
+| task 2, seed 1 | 0.68 | 0.86 | 0.91 | 0.91 | 129k |
+| task 3, seed 1 | 0.62 | 0.87 | 0.80 | 0.88 | 219k |
+| task 4, seed 2 | 0.63 | 0.82 | 0.89 | 0.91 | 188k |
+150k/task (the session-2 protocol) was clearly too short for isolation. **Decision: 450k frames/task for all
+fetch5 SNN arms in P3b** (3/4 probes >= 0.8 by then; 600k would be more reliable but ~11 vs ~8 core-h and would
+push out P4). Caveat carried into the result: a fresh net can still be slow on some tasks at 450k (task 0 above).
+
+### P5 check (no compute): SNN membrane state resets every environment step
+`SNNEncoder.forward` initialises every layer's membrane to zero on each call (`state = [(None, None)] * 4`), and
+each environment step is one call; verified empirically (same frame gives identical output regardless of the
+preceding frames). The SNN integrates only over its T=4 internal steps within a frame. **So "SNN, single frame" in
+the section-27 ablation is a memoryless baseline, not implicit temporal memory.** Persistent membrane state would
+be a new mechanism (not tonight). Added a frame-stack memory baseline (`frame_stack=k`: last k one-hot frames as
+input channels, pre-episode padding zeroed; `tests/test_agent.py`) and MiniGrid-MemoryS7 (random policy: 24%
+success, max 245 steps). Pilot queue: `jobs/s3_q3.txt`.
+
+### P2 result (no new compute): memory-fair RQ5 changes an earlier claim
+Measured replay-buffer cost (TaskBuffer, `scripts/memory_fair.py`): **188 B per stored state** on the
+CNN/SNN trunks (uint8 7x7x3 observation 147 B + mask 1 + task id 8 + teacher logits 28 + value 4) and
+**632 B** for the hybrid (4-frame window). The code keeps a second concatenated copy (2x RAM; an
+implementation artefact, reported separately). Full table: `results/rq5_memory.md`, figures
+`results/figs/rq5_memory_fetch3.png` / `_fetch5.png`.
+| setting | isolation total MB (ACC) | sleep @5000/task total MB (ACC) | ACC per MB iso vs sleep |
+|---|---|---|---|
+| CNN fetch3 | 1.92 (0.979) | 3.60 (0.978) | 0.51 vs 0.27 |
+| SNN fetch3 | 1.92 (0.833) | 3.60 (0.889) | 0.43 vs 0.25 |
+| Hybrid fetch3 | 3.52 (0.832) | 10.79 (0.873) | 0.24 vs 0.08 |
+| CNN fetch5 | 3.20 (0.976) | 5.62 (0.928) | 0.31 vs 0.17 |
+| CNN fetch3, sleep @200/task | 1.92 (0.979) | **0.89 (0.964)** | 0.51 vs **1.08** |
+**Flag:** the session-1/2 claim "shared weights are 2.5-3.5x more efficient than isolation" is true *per
+parameter* only. Counting the replay buffer, at the default 5000 states/task isolation uses *less* total
+memory and is ~2x more ACC-per-MB efficient everywhere. Shared weights win per total memory only with small
+buffers (CNN: 200/task -> 0.964 ACC at 0.89 MB). The SNN-trunk small-buffer arms (P2 runs, queued) decide
+whether that holds where transfer exists.
+
+## Session 2 (2026-09-27/28 night) — complete (~05:40)
+Priorities (from the user): (1) full hybrid SNN+Transformer+sleep on the continual
+benchmark; (2) significance of RQ5 sleep-vs-isolation; (3) DFA as the global term of the
+hybrid rule; (4) longer task sequences. Colab (run by the user) covers seeds 4-10 of
+rq1_v2 / cl_budget / cl_snn / cl_cnn, so those are not duplicated here.
+- [x] (1) **RESULT — full hybrid (SNN T=4 + Transformer window 4 + sleep) on fetch3**, 3 seeds,
+      lr 3e-4, 400k frames/task (`runs/continual_hybrid`, `results/continual.md`, `results/rq5_stats.md`):
+      | method | ACC | FORGET | FWT | params |
+      |---|---|---|---|---|
+      | naive | 0.452 ± 0.016 | 0.536 | | 328k |
+      | replay | 0.834 ± 0.015 | 0.024 | | 328k |
+      | **sleep** | **0.873 ± 0.022** | **0.004** | +0.42 ± 0.24 | 328k |
+      | isolation | 0.832 ± 0.037 | 0.006 | 0 (ref) | 880k |
+      | sleep + wake homeostasis | 0.840 ± 0.051 (3 seeds) | 0.017 | | 328k |
+      | sleep + wake stabilised STDP | 0.896 (1 seed) | 0.025 | | 328k |
+      * Sleep vs naive: ACC p=2e-5, forgetting p=0.004. Sleep removes catastrophic forgetting
+        in the integrated architecture.
+      * Sleep vs replay: +0.039, Welch p=0.07. Every sleep seed (0.854-0.897) beats every
+        replay seed (0.818-0.844), but with 3 vs 3 the exact permutation p can't go below 0.10.
+        This is the only trunk where sleep trends ahead of replay (CNN/SNN trunks: ties).
+      * Sleep vs isolation: +0.041 ACC (Welch p=0.19, bootstrap CI [+0.003, +0.083]); ACC per
+        100k params 0.266 vs 0.095 (p<0.001); FWT +0.42 (p=0.10). Same story as the SNN trunk:
+        clear per-parameter win, raw-ACC edge suggestive only.
+      * Adding a wake-time local rule on top of sleep doesn't help in the continual setting:
+        homeostasis 0.840 ± 0.051 (3 seeds) and stabilised STDP 0.896 (1 seed) vs 0.873 ± 0.022.
+      Protocol history: `jobs/cl_hybrid.txt`: naive / replay / isolation / sleep / sleep+wake-STDP
+      (stabilised 3-factor, alpha 0.03) on SNN T=4 + Transformer window 4, fetch3, 3 seeds.
+      **First attempt stopped**: at 150k frames/task the full hybrid doesn't learn the
+      tasks at all (isolation, i.e. fresh nets with nothing to forget, reached only 0.77 /
+      0.34 / 0.25; entropy still ~1.4-1.5). The SNN trunk without the Transformer reaches
+      ~0.9 in 150k. Forgetting metrics on unlearned tasks are meaningless, so those two runs
+      are archived in `runs/continual_hybrid_150k_undertrained/` and the protocol is being
+      fixed. Single-task probes on FetchObj-0, 400k frames (eval return / train return at 150k):
+      | probe | eval @400k | train @150k |
+      |---|---|---|
+      | p1 default (window 4, lr 1e-3) | 0.74 | 0.24 |
+      | p2 lr 3e-4 | 0.79 | 0.47 |
+      | p3 window 1 (Transformer on 1 token) | 0.90 | 0.44 |
+      | p4 no final LayerNorm | 0.80 | 0.38 |
+      | p5 no final LN + lr 3e-4 | stopped | 0.21 @100k |
+      | p6 window 2, no final LN | stopped | 0.49 |
+      Diagnosis so far: the Transformer's final LayerNorm hands the heads unit-variance
+      features (vs spike rates in [0,1]); with the heads' orthogonal init, 17% of head tanh
+      units start saturated (0% without the LN). New option
+      `mem_kwargs={final_norm: false}` (default unchanged).
+      But removing the LN did not reliably speed learning (p4/p5), so it is *not* used.
+      **Decision**: keep the architecture as designed (window-4 working memory, final LN) and
+      change the protocol so the tasks can be learned: lr 3e-4, 400k frames/task
+      (`configs/cl_hybrid_v2.yaml`). Relaunched -> `runs/continual_hybrid/` (15 runs).
+      Scheduling decisions (~01:20): the sleep + wake-STDP arm (`_wtfs`) runs at ~60 fps under
+      load (~3 h/run), and tonight's RQ1 controls showed homeostasis (not STDP) is the active
+      ingredient. So `_wtfs` runs for seed 1 only, and seeds 1-3 get `_whomeo` (sleep + wake-time
+      homeostasis, alpha 0) via `jobs/cl_hybrid2.txt`. The SNN fetch5 sweep was paused to free
+      CPU for the hybrid; it resumes afterwards from the same worker if time allows.
+      Takeaway worth keeping regardless of the continual result: **on these Markov tasks
+      the Transformer makes PPO ~3x less sample-efficient** (window 1 learns much faster
+      than window 4), so it only pays for itself on tasks that actually need memory.
+- [x] (2) Done: the ACC advantage is NOT significant; see correction under RQ5 below.
+- [~] (3) DFA as the global signal. Implemented + tested (5 DFA tests), sweep running
+      (`jobs/rq1_dfa.txt`, `jobs/cl_dfa.txt`). Decisions:
+      * DFA now works with MLP heads (random feedback into the heads' hidden layers too,
+        per-row error routing for mixed-task replay batches). Removes session 1's
+        confound (DFA had linear heads, backprop had MLP heads).
+      * Probe (DoorKey-5x5, 150k frames, 1 seed): DFA *everywhere* (`dfa_scope=all`)
+        had barely started (return 0.05) while DFA on the SNN synapses only
+        (`dfa_scope=encoder`, heads by exact gradients) was at 0.95. **Correction**: with
+        the full 300k budget and 3 seeds, DFA-everywhere solves 3/3 (eval 0.954 ± 0.004,
+        AUC 0.54 vs backprop 0.66, p=0.30) and DFA-encoder 2/3 (0.68 ± 0.47, AUC 0.40,
+        p=0.30). The 150k probe was just too short; DFA is slower, not broken.
+      * **DoorKey-6x6 (encoder learning matters), 2-3 seeds so far:** DFA alone on the SNN
+        fails 0/3 (eval 0.017; AUC 0.023 vs backprop 0.41, p=0.02), worse than a *frozen*
+        encoder (2/3). DFA + stabilised three-factor STDP (alpha 0.03) solves 3/3 (eval
+        0.946 ± 0.002, AUC 0.57; backprop 4/5, AUC 0.41). alpha 0.3 fails (0/2).
+        Mechanism clue: DFA alone drives SNN firing rates up (0.16 -> 0.28-0.35 and
+        rising: runaway again); with the stabilised rule rates stay ~0.15. **So the rescue
+        may be the homeostasis, not STDP.** Controls (`jobs/rq1_dfa_ctrl.txt`) — COMPLETE:
+        | SNN rule (DoorKey-6x6, 400k) | solved | AUC |
+        |---|---|---|
+        | backprop | 4/5 | 0.41 ± 0.24 |
+        | backprop + homeostasis | 3/3 | 0.67 ± 0.12 (p=0.09 vs backprop) |
+        | backprop + homeo + STDP (tfs0.03) | 4/5 | 0.49 ± 0.31 |
+        | DFA | 1/5 | 0.08 ± 0.12 |
+        | DFA + homeostasis | 3/3 | 0.63 ± 0.03 (p=0.0003 vs DFA) |
+        | DFA + homeo + STDP (alpha 0.03) | 4/4 | 0.56 ± 0.08 |
+        | DFA + homeo + random updates (same RMS) | 3/3 | 0.58 ± 0.12 |
+        | DFA + homeo + STDP (alpha 0.3) | 0/4 | 0.21 ± 0.11 |
+        **Conclusion: homeostasis is the active ingredient; STDP adds nothing.** DFA+homeo
+        vs DFA+homeo+STDP p=0.14 (homeostasis alone scores higher); STDP vs random updates
+        p=0.80; larger STDP (0.3) breaks learning even with homeostasis. With homeostasis,
+        DFA (no weight transport) matches backprop on the SNN (0.63 vs 0.67, p=0.68).
+        This refines last night's RQ1 answer: "stabilised STDP helps a bit" was really
+        "homeostasis helps"; the Hebbian/STDP direction itself is no better than noise.
+      * So the hybrid rule is implemented as CLAUDE.md defines it, on the SNN's
+        synapses: dW_snn = alpha*STDP + beta*DFA (`dfa=true dfa_scope=encoder` +
+        `stdp={...}`). The non-spiking readout heads keep exact gradients.
+        `dfa_scope=all` stays as the fully backprop-free variant C.
+- RQ4 with tonight's variants (`results/rq4.md`, compute = per-step cost x frames, relative
+  to the CNN at 150k frames/task): continual ACC per unit training compute: CNN 0.98, SNN (A)
+  + sleep 0.21, SNN + homeostasis + sleep 0.21, SNN + stabilised STDP + sleep 0.11, full hybrid
+  + sleep ~0.08 (needs 400k frames/task), DFA + homeostasis + sleep 0.09 (ACC only 0.43 at
+  150k/task: it learns each new task slowly — diagonal 0.75 / 0.60 / 0.24 — and still forgets
+  0.15). DFA costs the same per step as backprop (73-78 vs 80 ms) but is much less
+  sample-efficient in the continual setting, so the plain CNN stays the most robust per unit
+  compute by ~4x over any spiking variant.
+- [~] (4) `fetch5` suite added (same room, 5 distinct objects, random success 21% vs
+      37% on fetch3; fetch3 unchanged). **CNN trunk, 3 seeds, complete** (`runs/continual5_cnn`):
+      | method | ACC | FORGET | FWT | params |
+      |---|---|---|---|---|
+      | naive | 0.416 ± 0.098 | 0.612 | -0.87 | 229k |
+      | replay | 0.926 ± 0.049 | 0.006 | -0.67 | 229k |
+      | sleep | 0.928 ± 0.065 | 0.003 | -0.53 | 229k |
+      | isolation | 0.976 ± 0.000 | 0 | 0 (ref) | 799k |
+      * RQ2 holds at 5 tasks: sleep = replay (p=0.97), both ~zero forgetting, naive forgets 61%.
+      * RQ5 shifts with length: isolation now has *higher* raw ACC (sleep - isolation = -0.047,
+        Welch p=0.33, bootstrap CI [-0.122, -0.001]). Per parameter, shared weights still win
+        3.3x (0.406 vs 0.122 ACC/100k params, p=0.003), and that ratio grows with task count.
+      * The ACC gap is **plasticity, not forgetting**: return right after learning each task
+        (R diagonal) is 0.98 for every isolation task but falls to 0.81-0.88 on task 3 for
+        the shared nets (sleep 0.81, replay 0.83, naive 0.88), and FWT is negative
+        everywhere. Shared nets don't forget; they learn later tasks less well.
+      **SNN trunk** (trimmed for time to sleep / isolation / naive x seeds 1-2; `runs/continual5_snn`):
+      | method | ACC | FORGET | FWT | params |
+      |---|---|---|---|---|
+      | naive | 0.405 ± 0.058 | 0.435 | | 229k |
+      | sleep | 0.778 ± 0.007 | 0.034 | +0.34 ± 0.07 | 229k |
+      | isolation | 0.475 ± 0.023 | 0.025 | 0 (ref) | 801k |
+      Opposite of the CNN: fresh isolated SNNs mostly fail to learn a task in 150k frames
+      (e.g. 0.32 / 0.22 / 0.39 on tasks 3-5), while the shared SNN with sleep learns them
+      (0.80 / 0.67 / 0.88), so sleep beats isolation by +0.30 ACC (Welch p=0.02, n=2 per arm;
+      treat as preliminary) with 3.5x fewer parameters. That is the forward transfer RQ5 asks
+      about. Caveat: it's transfer of *sample efficiency*; with a bigger per-task budget,
+      isolation would close some of the gap.
+- Infra note: run `pytest` with `OMP_NUM_THREADS=1` while training jobs are running
+  (4-thread torch + busy cores = spin-wait; 24 tests take 14 s single-threaded).
+
+## Status at end of session 1 (2026-09-27 ~02:30)
 All six items on the priority list are done, plus first-pass answers on all five RQs.
 - [x] 1. Scaffold + deps + MiniGrid smoke test (21 unit tests, `pytest tests/`)
 - [x] 2. CNN + PPO baseline: DoorKey-5x5 / LavaGapS5 / DoorKey-6x6, 100% eval success
@@ -14,75 +262,98 @@ All six items on the priority list are done, plus first-pass answers on all five
 - [x] Beyond the list: variant B (local-only encoder), variant C (DFA / e-prop, no backprop),
       stabilised STDP, sleep+STDP, small-buffer RQ2, compute benchmark (RQ4), Colab sweep notebook
 
-## Answers so far (3 seeds unless noted; tables in `results/`, p = Welch t-test)
-**RQ1: does a local STDP term alongside backprop help?** *Not detectably; naive STDP clearly hurts.*
-- Vanilla trace STDP (two- or three-factor) makes learning worse on DoorKey-5x5 (never
-  solves at alpha=1; p≈0.02 vs backprop). It's also worse than a random update of the
-  same size. Mechanism: runaway excitation (firing rate 0.15 -> 0.5-0.77), because a
-  static frame shown every timestep makes pairings overwhelmingly potentiating.
-- Stabilised STDP (covariance-centred + local homeostasis) removes the harm. On
-  DoorKey-6x6, where encoder learning matters (frozen encoder ~2x slower), the three-factor
-  version at alpha=0.03 has the best mean (AUC 0.49 vs 0.41, 195k vs 254k frames to 0.9;
-  5 seeds). But p=0.67, and the random-perturbation control is as good as backprop. So no
-  evidence yet that it's STDP-specific. Outcomes on 6x6 are bimodal (a seed either
-  solves or never does), so this needs ~10 seeds per arm: queued in the Colab notebook.
-- Hebbian (unmodulated) STDP fails even when stabilised; local-only encoders
-  (variant B) never solve (0/6 seeds).
-**RQ2: does sleep consolidation beat replay / EWC?** *Beats EWC and naive clearly; ties replay.*
-- CNN trunk: sleep ACC 0.978 ± 0.001 vs replay 0.970 ± 0.009 (p=0.28), EWC best 0.816,
-  naive 0.555 (forgets 63%). Sleep and replay use a similar replay budget (538k vs 591k states).
-- Small buffers: 200/task sleep 0.964 vs replay 0.946 (p=0.48); 50/task 0.846 vs 0.885
-  (p=0.60). No significant difference either way. Qualitatively, sleep *recovers*
-  previously forgotten performance in later phases, which replay never does.
-- SNN trunk: sleep 0.889 ± 0.003 vs replay 0.814 ± 0.162 (p=0.51; one replay seed failed
-  to learn task 0 at all). Forgetting 0.006 vs 0.023. Sleep is the most *reliable* arm.
-- STDP inside sleep: vanilla is catastrophic (ACC 0.16-0.20, wipes every task). Stabilised
-  is harmless but adds nothing (0.866-0.881 vs 0.889 without it). The benefit of sleep
-  comes from offline distillation + rehearsal, not from the local rule.
-- EWC: stability-plasticity trade-off. It never forgets, but it can't learn new tasks
-  (lambda 10 -> 1000: ACC 0.82 -> 0.55).
-**RQ3: does the SNN encoder beat the CNN on accuracy vs spike sparsity?** *Qualified yes.*
-- At matched event-driven op counts above ~33k ops/frame: equal, or the CNN is slightly
-  better (value R^2 0.995 vs 0.98 at ~30k ops).
-- Below that, only the SNN works: the L1-penalised CNN dies at once past lambda 15. The SNN
-  keeps teacher-level closed-loop return down to ~16k ops (~2x fewer).
-- The big energy gap (~5-10x) comes from the accumulate-vs-multiply cost assumption
-  (0.9 vs 4.6 pJ), i.e. neuromorphic hardware only. On CPU the SNN costs ~4x more to train.
-- T=2 dominates T=4 dominates T=8. Caveat: other CNN sparsifiers not tried.
-**RQ4: which variant is most robust per unit of compute?** *The plain CNN, by a wide margin;
-among spiking variants, A (surrogate-gradient SNN) + sleep.* (`results/rq4.md`)
-- Continual ACC per CPU-second of training: CNN 60, A 12.9, A+STDP 6.7.
-- Variant B never solves. Variant C (DFA, no backprop) solves DoorKey-5x5 in 2/3 seeds. That
-  matches backprop with the same linear-readout architecture (which also collapsed in 1/3),
-  at the same cost as backprop.
-- The full hybrid (A + Transformer) solves DoorKey-5x5, but none of these tasks needs memory,
-  so the Transformer only adds cost here.
-**RQ5: shared weights vs parameter isolation.**
-- Per parameter, shared weights + sleep/replay win clearly: ACC/100k params 0.50 vs 0.20
-  (CNN) and 0.46 vs 0.17 (SNN). Isolation uses 2.5x the parameters for 3 tasks, and that
-  grows linearly with more tasks.
-- Transfer: on the SNN trunk, shared weights transfer (FWT sleep +0.20 ± 0.08). Shared
-  sleep reaches *higher* ACC than isolation (0.889 vs 0.833), because isolation's fresh
-  networks sometimes fail to learn in 150k frames.
-- On the CNN trunk there's no reliable forward transfer (FWT ≈ 0 ± 0.14). Each task is
-  learned from scratch in ~60k frames anyway, so fetch3 is too easy to show transfer there.
+## Answers so far (after session 3; tables in `results/`, p = Welch t-test unless noted)
+**RQ1: does a local Hebbian/STDP term alongside the global rule help?** *No evidence that it does. At
+n=10 with pre-registered tests, nothing is significant after Holm; STDP is indistinguishable from a
+same-size random update.*
+- Vanilla STDP hurts (runaway excitation; p≈0.02 on DoorKey-5x5, session 1). Large stabilised STDP
+  (alpha 0.3) also breaks learning.
+- Session 3, DoorKey-6x6, n=10/arm: bp 8/10 solved, bp+homeostasis 10/10, bp+stabilised STDP 8/10,
+  bp+matched random 8/10. STDP vs random: p=0.82 (AUC). STDP vs homeostasis alone: ΔAUC -0.10, p=0.34.
+  Homeostasis vs plain backprop: ΔAUC +0.20, raw p=0.029, **Holm 0.117: not significant**.
+- With DFA as the global term (no weight transport), homeostasis is what makes it work (3/3 solved vs 1/5,
+  AUC 0.63 vs 0.08, p=0.0003, session 2, not re-tested at n=10). This is the strongest local-plasticity
+  effect in the project, but it's about homeostasis, not STDP.
+**RQ2: does sleep beat replay / EWC?** *Beats EWC and naive everywhere; ties replay on the CNN/SNN
+trunks; trends ahead of it on the full hybrid (not significant).* (unchanged from session 2; P4's extra
+hybrid seeds did not run)
+- CNN trunk: sleep 0.978 vs replay 0.970 (p=0.28). SNN trunk: 0.889 vs 0.814 (p=0.51).
+- Full hybrid (SNN + Transformer): sleep 0.873 vs replay 0.834 (p=0.07, n=3; every sleep seed >
+  every replay seed); forgetting 0.004 vs naive 0.54.
+- 5 tasks (CNN): sleep 0.928 = replay 0.926 (p=0.97), both ~0 forgetting; naive 0.416.
+- Small buffers: no significant difference. EWC: stability-plasticity trade-off.
+- STDP inside sleep: vanilla catastrophic, stabilised harmless and useless.
+**RQ3: SNN vs CNN on accuracy vs sparsity.** *Qualified yes* (unchanged; `results/rq3_doorkey6.md`):
+equal at matched ops above ~33k ops/frame; below that only the SNN works (~2x fewer ops);
+the big energy gap assumes neuromorphic per-op costs.
+**RQ4: most robust per unit of compute?** *The plain CNN, ~4x ahead of any spiking variant*
+(unchanged; `results/rq4.md`). Among spiking variants: SNN + sleep (0.21 per unit), then STDP (0.11),
+DFA + homeostasis (0.09) and the full hybrid (0.08). Local-only encoders (B) never solve.
+**RQ5: shared weights vs isolation.** *Shared weights win per parameter, but per total memory
+(parameters + replay buffer) only at small buffers. At the default 5000 states/task, isolation is ~2x
+more ACC per MB everywhere we measured.* (`results/rq5_memory.md`, `results/rq5_stats.md`)
+- Per parameter (unchanged): ACC per 100k params, shared vs isolation: CNN 0.50 vs 0.20; SNN 0.46 vs 0.17;
+  hybrid 0.27 vs 0.10; 5-task CNN 0.41 vs 0.12 (all p<0.01).
+- Per total memory, the session-1/2 "2.5-3.5x more efficient" claim reverses. The replay buffer costs
+  188 B/state (632 B for the hybrid), so 5000/task is 2.8 MB on fetch3 against 0.78 MB of shared weights.
+  ACC per MB, isolation vs sleep@5000: CNN 0.51 vs 0.27; SNN 0.43 vs 0.25; hybrid 0.24 vs 0.08;
+  5-task CNN 0.31 vs 0.17; 5-task SNN 0.15 vs 0.14 (near parity only because isolation fails at 150k/task).
+- Small buffers restore the shared-weight advantage on the CNN: sleep at 200/task gets 0.964 ACC in 0.89 MB
+  (1.08/MB vs isolation 0.51/MB). Not yet measured on the SNN trunk (P2 runs didn't finish), which is where
+  transfer exists, so the key memory-fair comparison is still open.
+- Transfer depends on the trunk: positive where learning from scratch is slow (SNN +0.20, p=0.05; hybrid
+  +0.42, p=0.10; 5-task SNN, where shared sleep beats isolation 0.778 vs 0.475, p=0.02, n=2, but at a
+  150k/task budget that is too short for isolation: P3a probes show a fresh SNN needs ~450k). ~0 on the
+  3-task CNN, negative on the 5-task CNN (plasticity cost).
+**Memory / Transformer question.** *Open.* The SNN resets its membrane every environment step, so
+"SNN, single frame" is memoryless. On the Markov fetch tasks the Transformer costs ~3x sample efficiency
+and has nothing to remember. The MiniGrid-MemoryS7 pilot, with a frame-stack baseline, is set up (random
+policy 24% success) but did not run.
+
+## Evidence hierarchy (strength of each claim as of session 3)
+| claim | evidence | strength |
+|---|---|---|
+| Plain CNN is the most compute-efficient (RQ4) | ~4x margin, consistent over tasks | **strong** |
+| Sleep/replay prevent forgetting vs naive/EWC (RQ2) | large effects, all trunks, 3-5 tasks | **strong** |
+| Shared weights > isolation per parameter (RQ5) | all p<0.01 | **strong** (but see next row) |
+| Isolation > shared weights per total memory at default buffers (RQ5) | arithmetic on measured sizes; no stats needed | **strong**; small-buffer SNN side untested |
+| Vanilla / large STDP hurts (RQ1) | p≈0.02, mechanism identified (runaway excitation) | moderate |
+| Homeostasis makes DFA work (weight-transport-free) | 3/3 vs 1/5, AUC p=0.0003, n=3-5 | moderate (small n, not pre-registered) |
+| SNN beats CNN only at very low op budgets (RQ3) | 2 seeds/point, clean frontier | moderate |
+| Homeostasis helps backprop (RQ1) | n=10, raw p=0.029 on AUC, Holm 0.117; solve rate 10/10 vs 8/10 (p=0.47) | **preliminary, not significant** |
+| Sleep > replay on the full hybrid (RQ2) | p=0.07, n=3 | preliminary |
+| Positive transfer on slow-learning trunks (RQ5) | p=0.05-0.10, n=2-3; 5-task SNN confounded by short budget | preliminary |
+| STDP adds anything beyond homeostasis or random updates (RQ1) | n=10, p=0.34 / 0.82 | **unsupported (null)** |
+| Transformer memory earns its cost | never tested on a memory task | untested |
+
+## Remaining work (queues written, resumable; not run this session)
+Resume with 4 workers, e.g. `for i in 1 2 3 4; do nohup scripts/worker.sh $i jobs/s3_q1.txt jobs/s3_q2.txt
+jobs/s3_q3.txt jobs/s3_q4.txt & done` (with `OMP_NUM_THREADS=1`), then
+`python scripts/rq1_stats.py && python scripts/memory_fair.py && python scripts/rq5_stats.py && python scripts/analyze.py all`.
+Finished jobs are skipped; a run whose results.json has no final metrics is rerun. If this container's workers
+finish some P2 runs before it is reclaimed, those results exist only here until they are committed.
+| order | block | queue | runs | est. core-h | answers |
+|---|---|---|---|---|---|
+| 1 | P2: SNN fetch3 sleep/replay at 200 and 2000 states/task, 3 seeds (seed 1 running here) | `jobs/s3_q1.txt` (tail) | 12 | ~3.6 | does shared-weight SNN win per total memory where transfer exists? (RQ5) |
+| 2 | P3b: fetch5 SNN isolation + sleep at 450k frames/task, 3 seeds | `jobs/s3_q2.txt` | 6 | ~8 | is the 5-task SNN sleep > isolation result real once isolation gets a fair budget? (RQ5) |
+| 3 | P5: MiniGrid-MemoryS7 pilot (CNN frame-stack 1/4/8, SNN fs8, SNN+Transformer) | `jobs/s3_q3.txt` | 5 | ~2 | does any memory mechanism help on a task that needs memory? (sizing only) |
+| 4 | P4: hybrid sleep + replay, seeds 4-6 | `jobs/s3_q4.txt` | 6 | ~11 | sleep vs replay on the full hybrid (RQ2, currently p=0.07, n=3) |
+| | **total** | | 29 | **~25** | ~6-7 h on 4 cores |
+Beyond the queue (not written yet): DFA+homeostasis vs DFA to n=10 (~3 core-h; it's the strongest RQ1-adjacent
+effect and still n=3-5); a homeostasis-target sweep; persistent membrane state as a real SNN memory mechanism
+(a new mechanism, so a separate decision).
 
 ## What to look at first when you're back
-1. The "Answers so far" section above, then `results/continual.md`, `results/rq1_v2.md`,
-   `results/rq3_doorkey6.md`, `results/rq4.md`, and the figures in `results/figs/`.
-2. **The biggest open question is RQ1 on DoorKey-6x6, and it's seed-starved.** Run
-   `notebooks/final_sweep_colab.ipynb` (CPU runtime, "Run all"; it resumes after
-   disconnects) for seeds 4-10. A GPU/TPU won't speed it up: time goes to env stepping
-   and tiny networks.
-3. **Design issues I'd fix next:**
-   - fetch3 is too easy for the CNN to show transfer; a harder/longer sequence
-     (e.g. 5 tasks, or DoorKey/KeyCorridor variants) would test RQ5 transfer properly.
-   - Memory never matters in these tasks. Use MiniGrid-Memory if the Transformer should
-     earn its keep.
-   - A CNN sparsifier stronger than L1 (k-WTA) would tighten the RQ3 caveat.
-4. Things that went wrong (and fixes) are logged below: PPO collapse, OpenMP thread
-   oversubscription, pkill self-kill, the RQ3 value-scale bug, and vanilla-STDP runaway
-   excitation.
+1. Session 3 at the top: the final RQ1 table (all null after Holm) and the RQ5 memory-fair reversal. Then
+   "Answers so far" and the evidence hierarchy above.
+2. `results/rq1_stats.md` (RQ1, all arms incl. context arms), `results/rq5_memory.md` +
+   `results/figs/rq5_memory_fetch3.png` (memory-fair RQ5), `results/rq5_stats.md`, `results/continual.md`.
+3. `docs/LITERATURE_CONTEXT.md` §38.8: dated correction note (§38.4 was wrong; §38.3's buffer estimate replaced
+   by the measured 188/632 B; §§22/23/34's RQ5 claims superseded by the memory-fair analysis).
+4. Run the remaining queue (~25 core-h, above). P2 first: it decides whether RQ5's "shared weights win
+   per memory at small buffers" holds on the SNN trunk.
+5. Git housekeeping: this tree is on branch `session-3` (based on origin/main bc8f633, authored as you).
+   Replace main from it when ready; delete `claude/keen-lamport-wrnfpj` on GitHub.
 
 ## Environment / how to run
 - Dev box for this session: cloud container, 4 CPU cores, 15 GB RAM, **no GPU**.
