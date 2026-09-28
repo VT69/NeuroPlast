@@ -47,3 +47,4 @@ START runs/s3_mem_pilot/mem_snn_tf8_s1/eval.json
 END rc=0 1920s runs/s3_mem_pilot/mem_snn_tf8_s1/eval.json
 6 jobs pending
 START runs/continual_hybrid/fetch3_sleep_s5/results.json
+END rc=0 5710s runs/continual_hybrid/fetch3_sleep_s5/results.json

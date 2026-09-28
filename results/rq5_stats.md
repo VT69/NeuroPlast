@@ -23,15 +23,15 @@ per-seed ACC: sleep s1=0.978, s2=0.977, s3=0.978; isolation s1=0.979, s2=0.978, 
 
 per-seed ACC: sleep s1=0.890, s2=0.891, s3=0.885; isolation s1=0.838, s2=0.757, s3=0.904
 
-## Full hybrid (SNN + Transformer), fetch3 (`runs/continual_hybrid`): sleep n=3, isolation n=3
+## Full hybrid (SNN + Transformer), fetch3 (`runs/continual_hybrid`): sleep n=6, isolation n=3
 
 | metric | sleep | isolation | diff | Welch p | perm p | 95% CI of diff |
 |---|---|---|---|---|---|---|
-| ACC | 0.873 ± 0.022 | 0.832 ± 0.037 | +0.041 | 0.194 | 0.20 | [+0.003, +0.083] |
-| ACC / 100k params | 0.266 ± 0.007 | 0.095 ± 0.004 | +0.172 | 1.53e-05 | 0.10 | [+0.165, +0.179] |
+| ACC | 0.887 ± 0.045 | 0.832 ± 0.037 | +0.054 | 0.112 | 0.13 | [+0.010, +0.104] |
+| ACC / 100k params | 0.270 ± 0.014 | 0.095 ± 0.004 | +0.176 | 3.96e-08 | 0.01 | [+0.165, +0.187] |
 | FWT (sleep vs 0) | 0.423 ± 0.244 | 0 (reference) | +0.423 | 0.095 (1-sample) | - | - |
 
-per-seed ACC: sleep s1=0.897, s2=0.854, s3=0.868; isolation s1=0.790, s2=0.848, s3=0.859
+per-seed ACC: sleep s1=0.897, s2=0.854, s3=0.868, s4=0.946, s5=0.926, s6=0.829; isolation s1=0.790, s2=0.848, s3=0.859
 
 ## CNN trunk, fetch5 (`runs/continual5_cnn`): sleep n=3, isolation n=3
 
