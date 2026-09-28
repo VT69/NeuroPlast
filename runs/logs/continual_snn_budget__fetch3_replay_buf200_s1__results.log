@@ -40,3 +40,10 @@
 [fetch3_replay_buf200_s1 t2] [fetch3_replay_buf200_s1/task2] upd 40/73 frames 81920 fps 460 ret 0.686 len 59.1 ent 1.486 act 0.164
 [fetch3_replay_buf200_s1 t2] [fetch3_replay_buf200_s1/task2] upd 45/73 frames 92160 fps 466 ret 0.605 len 78.7 ent 1.488 act 0.167
 [fetch3_replay_buf200_s1 t2] [fetch3_replay_buf200_s1/task2] upd 50/73 frames 102400 fps 474 ret 0.711 len 49.0 ent 1.456 act 0.180
+[fetch3_replay_buf200_s1 t2] [fetch3_replay_buf200_s1/task2] upd 55/73 frames 112640 fps 470 ret 0.827 len 35.2 ent 1.428 act 0.172
+[fetch3_replay_buf200_s1 t2] [fetch3_replay_buf200_s1/task2] upd 60/73 frames 122880 fps 465 ret 0.858 len 31.6 ent 1.341 act 0.172
+[fetch3_replay_buf200_s1 t2] [fetch3_replay_buf200_s1/task2] upd 65/73 frames 133120 fps 461 ret 0.817 len 41.2 ent 1.305 act 0.170
+[fetch3_replay_buf200_s1 t2] [fetch3_replay_buf200_s1/task2] upd 70/73 frames 143360 fps 464 ret 0.803 len 41.2 ent 1.295 act 0.171
+[fetch3_replay_buf200_s1 t2] [fetch3_replay_buf200_s1/task2] upd 73/73 frames 149504 fps 463 ret 0.852 len 33.8 ent 1.277 act 0.169
+[fetch3_replay_buf200_s1] after task 2: R = [0.842, 0.954, 0.871]
+FINAL {"ACC": 0.8893046882251898, "BWT": -0.0335800788551569, "FORGET": 0.0335800788551569} params 194552

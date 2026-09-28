@@ -12,3 +12,21 @@ END rc=0 1240s runs/rq1_v2/rq1v2_tfs0.03_s7/eval.json
 START runs/rq1_v2/rq1v2_tfs0.03_s9/eval.json
 END rc=0 895s runs/rq1_v2/rq1v2_tfs0.03_s9/eval.json
 START runs/continual_snn_budget/fetch3_sleep_buf200_s1/results.json
+END rc=0 1160s runs/continual_snn_budget/fetch3_sleep_buf200_s1/results.json
+START runs/continual_snn_budget/fetch3_replay_buf200_s2/results.json
+=== restart 2026-09-28T13:04:24Z ===
+10 jobs pending
+START runs/continual_snn_budget/fetch3_replay_buf200_s2/results.json
+=== restart 2026-09-28T13:28:51Z ===
+10 jobs pending
+START runs/continual_snn_budget/fetch3_replay_buf200_s2/results.json
+=== restart 2026-09-28T13:46:38Z ===
+10 jobs pending
+START runs/continual_snn_budget/fetch3_replay_buf200_s2/results.json
+END rc=0 900s runs/continual_snn_budget/fetch3_replay_buf200_s2/results.json
+START runs/continual_snn_budget/fetch3_sleep_buf2000_s2/results.json
+END rc=0 1135s runs/continual_snn_budget/fetch3_sleep_buf2000_s2/results.json
+START runs/continual_snn_budget/fetch3_replay_buf2000_s3/results.json
+END rc=0 935s runs/continual_snn_budget/fetch3_replay_buf2000_s3/results.json
+6 jobs pending
+START runs/continual5_snn_450k/fetch5_sleep_s2/results.json

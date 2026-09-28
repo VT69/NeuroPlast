@@ -21,7 +21,7 @@ run: it was (3 seeds, session 2); tonight took it to 10 (correction note in §38
 |---|---|---|---|---|
 | P3a | isolation-budget probes: single-task SNN on FetchObj5 tasks, 600k frames (sizes P3b) | 4 | 1.1 | **done** -> budget 450k/task |
 | P1 | RQ1 DoorKey-6x6 to 10 seeds: bp, bp+homeo, bp+stabilised STDP a=0.03, bp+random a=0.03+homeo (matched control) | 27 | 4.8 | **done**, n=10/arm, analysed below |
-| P2 | memory-fair RQ5: analysis (no compute) + SNN fetch3 sleep/replay at buffers 200 and 2000/task, 3 seeds | 12 | 3.6 | analysis **done**; 4 seed-1 runs in progress at commit time, 8 queued |
+| P2 | memory-fair RQ5: analysis (no compute) + SNN fetch3 sleep/replay at buffers 200 and 2000/task, 3 seeds | 12 | 3.6 | **done** ~14:36 UTC (12/12), result below |
 | P3b | fetch5 SNN isolation + sleep at 450k frames/task, 3 seeds | 6 | ~8 | not run |
 | P5 | memory pilot: membrane-reset check (code), MiniGrid-MemoryS7 + CNN frame-stack baseline | 5 | ~2 | code check **done**; 0/5 runs |
 | P4 | hybrid sleep + replay, seeds 4-6, same protocol (lr 3e-4, 400k/task) | 6 | ~11 | not run |
@@ -32,6 +32,22 @@ they carried on by themselves, and at commit time they are running the four P2 s
 sleep/replay at buffers 200 and 2000). Per the user's instruction they were neither restarted nor stopped.
 Those four in-flight run directories (`runs/continual_snn_budget/`) are left out of the `session-3` commit
 (half-written). Every job that finished exited rc=0, no crashes. The remaining queue is below.
+**Update 2026-09-28 13:04 UTC:** the container restarted and the workers were gone. P2 buf200 seed 1 (sleep and
+replay) had finished. At the user's request, 4 one-slot workers were restarted on
+`jobs/s3_q1.txt -> s3_q2 -> s3_q3 -> s3_q4` (logs appended to `runs/logs/s3_worker_{1..4}.log`, 10 P2 jobs left
+in q1). Expected wall time is ~6-7 h if the container stays up. The finished runs exist only in this container
+until they're committed.
+**Monitoring (user's standing instructions):** check every ~15 min, restart workers if gone, commit + push each
+finished block (P2, P3b, P5, P4) to `session-3` as the user, record the SNN per-memory result right after P2.
+Helper: `python scripts/_s3_monitor.py [--restart | --commit "msg"]` (git-excluded). 13:25 UTC check: the
+permission classifier was down again (shell and scheduling blocked), so the 15-min check-ins stopped re-arming;
+worker logs showed the 4 P2 jobs running since 13:04, P2 at 2/12. 13:28: the container had restarted again
+(workers gone; the 4 in-flight P2 jobs were near the end of task 3 and lost that progress). Workers restarted,
+check-ins re-armed. Note: a restarted continual run starts from task 0, not from its last finished task.
+13:46: workers gone again; the container had rebooted at 13:46:15 (the moment the check-in fired) and the last
+run write was 13:34, ~5 min after the session went idle. **Diagnosis: the container is reclaimed a few minutes
+after the Claude session goes idle, so 15-min wake-ups can never let a 15-20 min job finish.** Fix: a Monitor
+with a 4-min heartbeat keeps the session active while workers run (30-min send_later as fallback).
 
 ### P1 RQ1 — FINAL, pre-registered (n=10/arm, DoorKey-6x6, 400k frames; `results/rq1_stats.md`)
 solved = final eval return > 0.5. Fisher = two-sided exact test on solve counts; Welch = two-sided on AUC
@@ -113,8 +129,28 @@ implementation artefact, reported separately). Full table: `results/rq5_memory.m
 **Flag:** the session-1/2 claim "shared weights are 2.5-3.5x more efficient than isolation" is true *per
 parameter* only. Counting the replay buffer, at the default 5000 states/task isolation uses *less* total
 memory and is ~2x more ACC-per-MB efficient everywhere. Shared weights win per total memory only with small
-buffers (CNN: 200/task -> 0.964 ACC at 0.89 MB). The SNN-trunk small-buffer arms (P2 runs, queued) decide
-whether that holds where transfer exists.
+buffers (CNN: 200/task -> 0.964 ACC at 0.89 MB). The SNN-trunk small-buffer arms (P2 runs) decide
+whether that holds where transfer exists: see next section.
+
+### P2 result (our result, n=3/arm): SNN trunk, fetch3, small buffers vs isolation (`results/rq5_stats.md`)
+Pre-registered test: arm vs isolation on ACC (Welch + exact permutation + bootstrap CI), plus ACC per MB of total
+memory. Isolation: 1.92 MB, ACC 0.833 ± 0.073. Same protocol as all session-1/2 SNN fetch3 arms (150k frames/task).
+| arm | total MB | ACC | ACC diff vs iso (Welch p / perm p / 95% CI) | ACC per MB (iso 0.433) | FORGET |
+|---|---|---|---|---|---|
+| sleep @200/task | 0.89 | 0.838 ± 0.016 | +0.005 (0.92 / 1.00 / [-0.07, +0.07]) | **0.940** (p=0.0003) | 0.04-0.08 |
+| replay @200/task | 0.89 | 0.792 ± 0.183 | -0.041 (0.75 / 0.90 / [-0.25, +0.11]) | 0.889 (p=0.057) | 0.03-0.11 |
+| sleep @2000/task (memory-matched to isolation) | 1.91 | 0.847 ± 0.083 | +0.014 (0.84 / 1.00 / [-0.08, +0.11]) | 0.444 (p=0.76) | 0.00-0.08 |
+| replay @2000/task (memory-matched) | 1.91 | 0.828 ± 0.167 | -0.005 (0.96 / 1.00 / [-0.18, +0.14]) | 0.434 (p=0.99) | 0.00-0.05 |
+**Reading.** (1) On the SNN trunk, shared-weight sleep with 200 states/task matches isolation's ACC (0.838 vs 0.833,
+p=0.92) in 46% of the memory, so ~2.2x the ACC per MB; the per-MB gain is mostly arithmetic (memory is fixed per
+arm), the test that matters is the ACC tie. (2) At matched total memory (2000/task, 1.91 vs 1.92 MB) sleep, replay
+and isolation are indistinguishable (all p>=0.84): the positive transfer seen per parameter (FWT +0.20) does
+**not** turn into a raw-ACC advantage at equal memory. (3) Sleep is much more consistent than replay at 200/task
+(SD 0.016 vs 0.183; replay seed 3 collapses to 0.58), but sleep vs replay is not significant at n=3.
+(4) Seed 3 is the weak seed for both 2000/task arms (0.75, 0.64); isolation's weak seed is s2 (0.76): SNN runs are
+high-variance, and n=3 can only detect large effects (a tie here means "no large difference", not equivalence).
+Compared with the CNN: small buffers cost the CNN a little ACC (sleep@200 -0.015, CI excludes 0) while the SNN
+loses none, consistent with the SNN being the trunk where sharing helps.
 
 ## Session 2 (2026-09-27/28 night) — complete (~05:40)
 Priorities (from the user): (1) full hybrid SNN+Transformer+sleep on the continual
@@ -298,9 +334,12 @@ more ACC per MB everywhere we measured.* (`results/rq5_memory.md`, `results/rq5_
   188 B/state (632 B for the hybrid), so 5000/task is 2.8 MB on fetch3 against 0.78 MB of shared weights.
   ACC per MB, isolation vs sleep@5000: CNN 0.51 vs 0.27; SNN 0.43 vs 0.25; hybrid 0.24 vs 0.08;
   5-task CNN 0.31 vs 0.17; 5-task SNN 0.15 vs 0.14 (near parity only because isolation fails at 150k/task).
-- Small buffers restore the shared-weight advantage on the CNN: sleep at 200/task gets 0.964 ACC in 0.89 MB
-  (1.08/MB vs isolation 0.51/MB). Not yet measured on the SNN trunk (P2 runs didn't finish), which is where
-  transfer exists, so the key memory-fair comparison is still open.
+- Small buffers restore the shared-weight advantage. CNN: sleep at 200/task gets 0.964 ACC in 0.89 MB
+  (1.08/MB vs isolation 0.51/MB; a small ACC cost, -0.015). SNN (session 3, n=3): sleep at 200/task matches
+  isolation's ACC (0.838 vs 0.833, p=0.92) in 0.89 vs 1.92 MB (0.94 vs 0.43 ACC/MB).
+- At *matched* total memory (SNN, 2000 states/task = 1.91 MB vs isolation 1.92 MB), sleep 0.847, replay 0.828,
+  isolation 0.833: no difference (p>=0.84, n=3). Shared weights' advantage is memory efficiency at small
+  buffers, not higher accuracy at equal memory.
 - Transfer depends on the trunk: positive where learning from scratch is slow (SNN +0.20, p=0.05; hybrid
   +0.42, p=0.10; 5-task SNN, where shared sleep beats isolation 0.778 vs 0.475, p=0.02, n=2, but at a
   150k/task budget that is too short for isolation: P3a probes show a fresh SNN needs ~450k). ~0 on the
@@ -316,7 +355,9 @@ policy 24% success) but did not run.
 | Plain CNN is the most compute-efficient (RQ4) | ~4x margin, consistent over tasks | **strong** |
 | Sleep/replay prevent forgetting vs naive/EWC (RQ2) | large effects, all trunks, 3-5 tasks | **strong** |
 | Shared weights > isolation per parameter (RQ5) | all p<0.01 | **strong** (but see next row) |
-| Isolation > shared weights per total memory at default buffers (RQ5) | arithmetic on measured sizes; no stats needed | **strong**; small-buffer SNN side untested |
+| Isolation > shared weights per total memory at default buffers (RQ5) | arithmetic on measured sizes; no stats needed | **strong** |
+| Shared-weight sleep at small buffers matches isolation ACC in <half the memory (RQ5) | CNN n=3 (small ACC cost); SNN n=3, ACC tie p=0.92 | moderate (n=3; a tie, not equivalence) |
+| Shared weights beat isolation on ACC at matched total memory (RQ5) | SNN n=3, p>=0.84 | **unsupported (null)** |
 | Vanilla / large STDP hurts (RQ1) | p≈0.02, mechanism identified (runaway excitation) | moderate |
 | Homeostasis makes DFA work (weight-transport-free) | 3/3 vs 1/5, AUC p=0.0003, n=3-5 | moderate (small n, not pre-registered) |
 | SNN beats CNN only at very low op budgets (RQ3) | 2 seeds/point, clean frontier | moderate |
@@ -326,7 +367,7 @@ policy 24% success) but did not run.
 | STDP adds anything beyond homeostasis or random updates (RQ1) | n=10, p=0.34 / 0.82 | **unsupported (null)** |
 | Transformer memory earns its cost | never tested on a memory task | untested |
 
-## Remaining work (queues written, resumable; not run this session)
+## Remaining work (queues written, resumable; running in this container, see session-3 status notes)
 Resume with 4 workers, e.g. `for i in 1 2 3 4; do nohup scripts/worker.sh $i jobs/s3_q1.txt jobs/s3_q2.txt
 jobs/s3_q3.txt jobs/s3_q4.txt & done` (with `OMP_NUM_THREADS=1`), then
 `python scripts/rq1_stats.py && python scripts/memory_fair.py && python scripts/rq5_stats.py && python scripts/analyze.py all`.
@@ -334,11 +375,11 @@ Finished jobs are skipped; a run whose results.json has no final metrics is reru
 finish some P2 runs before it is reclaimed, those results exist only here until they are committed.
 | order | block | queue | runs | est. core-h | answers |
 |---|---|---|---|---|---|
-| 1 | P2: SNN fetch3 sleep/replay at 200 and 2000 states/task, 3 seeds (seed 1 running here) | `jobs/s3_q1.txt` (tail) | 12 | ~3.6 | does shared-weight SNN win per total memory where transfer exists? (RQ5) |
+| 1 | ~~P2: SNN fetch3 sleep/replay at 200 and 2000 states/task, 3 seeds~~ **done ~14:36** | `jobs/s3_q1.txt` (tail) | 12 | ~3.6 | answered above (RQ5) |
 | 2 | P3b: fetch5 SNN isolation + sleep at 450k frames/task, 3 seeds | `jobs/s3_q2.txt` | 6 | ~8 | is the 5-task SNN sleep > isolation result real once isolation gets a fair budget? (RQ5) |
 | 3 | P5: MiniGrid-MemoryS7 pilot (CNN frame-stack 1/4/8, SNN fs8, SNN+Transformer) | `jobs/s3_q3.txt` | 5 | ~2 | does any memory mechanism help on a task that needs memory? (sizing only) |
 | 4 | P4: hybrid sleep + replay, seeds 4-6 | `jobs/s3_q4.txt` | 6 | ~11 | sleep vs replay on the full hybrid (RQ2, currently p=0.07, n=3) |
-| | **total** | | 29 | **~25** | ~6-7 h on 4 cores |
+| | **total left** | | 17 | **~21** | ~5-6 h on 4 cores |
 Beyond the queue (not written yet): DFA+homeostasis vs DFA to n=10 (~3 core-h; it's the strongest RQ1-adjacent
 effect and still n=3-5); a homeostasis-target sweep; persistent membrane state as a real SNN memory mechanism
 (a new mechanism, so a separate decision).
@@ -350,8 +391,8 @@ effect and still n=3-5); a homeostasis-target sweep; persistent membrane state a
    `results/figs/rq5_memory_fetch3.png` (memory-fair RQ5), `results/rq5_stats.md`, `results/continual.md`.
 3. `docs/LITERATURE_CONTEXT.md` §38.8: dated correction note (§38.4 was wrong; §38.3's buffer estimate replaced
    by the measured 188/632 B; §§22/23/34's RQ5 claims superseded by the memory-fair analysis).
-4. Run the remaining queue (~25 core-h, above). P2 first: it decides whether RQ5's "shared weights win
-   per memory at small buffers" holds on the SNN trunk.
+4. P2 (done): on the SNN trunk, sleep at 200 states/task ties isolation's ACC in 46% of the memory; at matched
+   memory nothing differs. Remaining queue: P3b, P5, P4 (~21 core-h, above).
 5. Git housekeeping: this tree is on branch `session-3` (based on origin/main bc8f633, authored as you; the in-flight P2 dirs are not included).
    Replace main from it when ready (the old Claude branch is already deleted).
 

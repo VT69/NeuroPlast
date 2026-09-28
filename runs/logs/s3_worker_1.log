@@ -16,3 +16,19 @@ END rc=0 575s runs/rq1_v2/rq1v2_homeo_s9/eval.json
 START runs/rq1_v2/rq1v2_homeo_s10/eval.json
 END rc=0 505s runs/rq1_v2/rq1v2_homeo_s10/eval.json
 START runs/continual_snn_budget/fetch3_replay_buf200_s1/results.json
+END rc=0 890s runs/continual_snn_budget/fetch3_replay_buf200_s1/results.json
+START runs/continual_snn_budget/fetch3_sleep_buf200_s2/results.json
+=== restart 2026-09-28T13:04:15Z ===
+10 jobs pending
+START runs/continual_snn_budget/fetch3_sleep_buf2000_s1/results.json
+=== restart 2026-09-28T13:28:42Z ===
+10 jobs pending
+START runs/continual_snn_budget/fetch3_sleep_buf2000_s1/results.json
+=== restart 2026-09-28T13:46:29Z ===
+10 jobs pending
+START runs/continual_snn_budget/fetch3_sleep_buf2000_s1/results.json
+END rc=0 1135s runs/continual_snn_budget/fetch3_sleep_buf2000_s1/results.json
+START runs/continual_snn_budget/fetch3_sleep_buf200_s3/results.json
+END rc=0 1170s runs/continual_snn_budget/fetch3_sleep_buf200_s3/results.json
+6 jobs pending
+START runs/continual5_snn_450k/fetch5_sleep_s1/results.json

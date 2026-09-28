@@ -18,3 +18,17 @@ END rc=0 555s runs/rq1_v2/rq1v2_rands0.03_s9/eval.json
 START runs/rq1_v2/rq1v2_tfs0.03_s10/eval.json
 END rc=0 715s runs/rq1_v2/rq1v2_tfs0.03_s10/eval.json
 START runs/continual_snn_budget/fetch3_sleep_buf2000_s1/results.json
+=== restart 2026-09-28T13:04:21Z ===
+10 jobs pending
+START runs/continual_snn_budget/fetch3_sleep_buf200_s2/results.json
+=== restart 2026-09-28T13:28:48Z ===
+10 jobs pending
+START runs/continual_snn_budget/fetch3_sleep_buf200_s2/results.json
+=== restart 2026-09-28T13:46:35Z ===
+10 jobs pending
+START runs/continual_snn_budget/fetch3_sleep_buf200_s2/results.json
+END rc=0 1165s runs/continual_snn_budget/fetch3_sleep_buf200_s2/results.json
+START runs/continual_snn_budget/fetch3_replay_buf200_s3/results.json
+END rc=0 950s runs/continual_snn_budget/fetch3_replay_buf200_s3/results.json
+6 jobs pending
+START runs/continual5_snn_450k/fetch5_isolation_s1/results.json

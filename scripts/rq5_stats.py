@@ -105,10 +105,52 @@ def main():
         # per-seed detail so outliers are visible
         lines.append("\nper-seed ACC: sleep " + ", ".join(f"s{k}={v['metrics']['ACC']:.3f}" for k, v in sorted(sl.items()))
                      + "; isolation " + ", ".join(f"s{k}={v['metrics']['ACC']:.3f}" for k, v in sorted(iso.items())))
+    lines += memory_fair_section()
     os.makedirs("results", exist_ok=True)
     with open("results/rq5_stats.md", "w") as f:
         f.write("\n".join(lines) + "\n")
     print("\n".join(lines))
+
+
+MEM_ROOTS = [("runs/continual_budget", "runs/continual", "CNN"), ("runs/continual_snn_budget", "runs/continual_snn", "SNN")]
+BYTES_PER_STATE = 188  # measured TaskBuffer cost, K=1 trunks (scripts/memory_fair.py)
+
+
+def total_mb(r, buf_per_task):
+    return (r["params"] * 4 + buf_per_task * len(r["tasks"]) * BYTES_PER_STATE) / 1e6
+
+
+def memory_fair_section(suite="fetch3"):
+    """Pre-registered session-3 test: shared weights at small buffers vs isolation, on ACC and ACC per MB of
+    total memory (params + replay buffer)."""
+    out = ["\n## Memory-fair RQ5 (session 3): small-buffer shared weights vs isolation, fetch3\n",
+           "Total memory = fp32 params + buffer_per_task x tasks x 188 B. Same tests as above; "
+           "diff = arm − isolation.\n",
+           "| trunk | arm | n | total MB (arm vs iso) | ACC arm | ACC iso | ACC diff | Welch p | perm p | 95% CI | "
+           "ACC/MB arm | ACC/MB iso | ACC/MB Welch p |",
+           "|---|---|---|---|---|---|---|---|---|---|---|---|---|"]
+    for broot, iroot, trunk in MEM_ROOTS:
+        iso = load(iroot, "isolation", suite)
+        if len(iso) < 2:
+            continue
+        acc_i = [r["metrics"]["ACC"] for r in iso.values()]
+        mem_i = total_mb(next(iter(iso.values())), 0)
+        eff_i = [a / mem_i for a in acc_i]
+        for buf in (50, 200, 2000):
+            for method in ("sleep", "replay"):
+                arm = load(broot, f"{method}_buf{buf}", suite)
+                if len(arm) < 2:
+                    continue
+                acc_a = [r["metrics"]["ACC"] for r in arm.values()]
+                mem_a = total_mb(next(iter(arm.values())), buf)
+                eff_a = [a / mem_a for a in acc_a]
+                ci = boot_ci(acc_a, acc_i)
+                out.append(f"| {trunk} | {method} @{buf}/task | {len(arm)} vs {len(iso)} | {mem_a:.2f} vs {mem_i:.2f} | "
+                           f"{fmt(acc_a)} | {fmt(acc_i)} | {np.mean(acc_a) - np.mean(acc_i):+.3f} | "
+                           f"{stats.ttest_ind(acc_a, acc_i, equal_var=False).pvalue:.3g} | {perm_p(acc_a, acc_i):.2f} | "
+                           f"[{ci[0]:+.3f}, {ci[1]:+.3f}] | {np.mean(eff_a):.3f} | {np.mean(eff_i):.3f} | "
+                           f"{stats.ttest_ind(eff_a, eff_i, equal_var=False).pvalue:.3g} |")
+    return out
 
 
 if __name__ == "__main__":
