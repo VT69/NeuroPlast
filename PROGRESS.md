@@ -9,11 +9,11 @@ Machine: 4 cores, 15 GB RAM, 20 GB free disk -> 4 workers, OMP_NUM_THREADS=1.
 Budget ~9 h x 4 cores = ~36 core-h. Runtime estimates are session-1/2 means measured under
 the same ~4-jobs-on-4-cores load.
 
-Repo note: GitHub `main` (5f2aae4) has the session-2 work inside a `neuroplast_session2_code_results/`
+Repo note: GitHub `main` (bc8f633; session 2 was 5f2aae4) has the session-2 work inside a `neuroplast_session2_code_results/`
 subfolder (plus the zip itself); the repo root there is still session-1 code. This working copy (pushed as
 branch `session-3`) has the session-2 code at the root (correct) + bc8f633's CLAUDE.md and
-docs/LITERATURE_CONTEXT.md. The old branch `claude/keen-lamport-wrnfpj` still needs deleting on GitHub
-(the proxy refused the delete with 403). §38.4 of the literature doc said backprop+homeostasis was never
+docs/LITERATURE_CONTEXT.md; relative to main it drops `neuroplast_session2_code_results/`, its zip and the
+old empty `src/`. The old branch `claude/keen-lamport-wrnfpj` is already gone from GitHub. §38.4 of the literature doc said backprop+homeostasis was never
 run: it was (3 seeds, session 2); tonight took it to 10 (correction note in §38.8).
 
 ### Plan, ordered by scientific value per core-hour
@@ -352,8 +352,8 @@ effect and still n=3-5); a homeostasis-target sweep; persistent membrane state a
    by the measured 188/632 B; §§22/23/34's RQ5 claims superseded by the memory-fair analysis).
 4. Run the remaining queue (~25 core-h, above). P2 first: it decides whether RQ5's "shared weights win
    per memory at small buffers" holds on the SNN trunk.
-5. Git housekeeping: this tree is on branch `session-3` (based on origin/main bc8f633, authored as you).
-   Replace main from it when ready; delete `claude/keen-lamport-wrnfpj` on GitHub.
+5. Git housekeeping: this tree is on branch `session-3` (based on origin/main bc8f633, authored as you; the in-flight P2 dirs are not included).
+   Replace main from it when ready (the old Claude branch is already deleted).
 
 ## Environment / how to run
 - Dev box for this session: cloud container, 4 CPU cores, 15 GB RAM, **no GPU**.
