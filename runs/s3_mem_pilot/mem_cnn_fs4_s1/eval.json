@@ -1,0 +1,7 @@
+{
+ "return_mean": 0.9653918313980102,
+ "success": 0.995,
+ "len_mean": 8.105,
+ "train_frames": 999424,
+ "final_train_return": 0.9601714223623276
+}

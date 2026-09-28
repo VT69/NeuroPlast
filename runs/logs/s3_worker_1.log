@@ -32,3 +32,15 @@ START runs/continual_snn_budget/fetch3_sleep_buf200_s3/results.json
 END rc=0 1170s runs/continual_snn_budget/fetch3_sleep_buf200_s3/results.json
 6 jobs pending
 START runs/continual5_snn_450k/fetch5_sleep_s1/results.json
+END rc=0 5240s runs/continual5_snn_450k/fetch5_sleep_s1/results.json
+5 jobs pending
+START runs/s3_mem_pilot/mem_cnn_fs1_s1/eval.json
+END rc=0 520s runs/s3_mem_pilot/mem_cnn_fs1_s1/eval.json
+START runs/s3_mem_pilot/mem_cnn_fs8_s1/eval.json
+END rc=0 1005s runs/s3_mem_pilot/mem_cnn_fs8_s1/eval.json
+6 jobs pending
+START runs/continual_hybrid/fetch3_sleep_s4/results.json
+=== restart 2026-09-28T16:29:45Z ===
+0 jobs pending
+1 jobs pending
+START runs/continual5_snn_450k/fetch5_sleep_s3/results.json

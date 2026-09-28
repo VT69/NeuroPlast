@@ -23,7 +23,7 @@ run: it was (3 seeds, session 2); tonight took it to 10 (correction note in §38
 | P1 | RQ1 DoorKey-6x6 to 10 seeds: bp, bp+homeo, bp+stabilised STDP a=0.03, bp+random a=0.03+homeo (matched control) | 27 | 4.8 | **done**, n=10/arm, analysed below |
 | P2 | memory-fair RQ5: analysis (no compute) + SNN fetch3 sleep/replay at buffers 200 and 2000/task, 3 seeds | 12 | 3.6 | **done** ~14:36 UTC (12/12), result below |
 | P3b | fetch5 SNN isolation + sleep at 450k frames/task, 3 seeds | 6 | ~8 | not run |
-| P5 | memory pilot: membrane-reset check (code), MiniGrid-MemoryS7 + CNN frame-stack baseline | 5 | ~2 | code check **done**; 0/5 runs |
+| P5 | memory pilot: membrane-reset check (code), MiniGrid-MemoryS7 + CNN frame-stack baseline | 5 | ~2 | **done** ~17:05 UTC (5/5), result below |
 | P4 | hybrid sleep + replay, seeds 4-6, same protocol (lr 3e-4, 400k/task) | 6 | ~11 | not run |
 Why P2-P5 didn't finish: a platform permission-checker outage (~12:45 onward) blocked every shell action for
 hours, and the container was paused for most of that time, freezing the four workers mid-job (each log ended
@@ -48,6 +48,9 @@ check-ins re-armed. Note: a restarted continual run starts from task 0, not from
 run write was 13:34, ~5 min after the session went idle. **Diagnosis: the container is reclaimed a few minutes
 after the Claude session goes idle, so 15-min wake-ups can never let a 15-20 min job finish.** Fix: a Monitor
 with a 4-min heartbeat keeps the session active while workers run (30-min send_later as fallback).
+It worked from 13:46 to ~16:05 (P2 finished, P3b 5/6, P5 3/5). ~16:05-16:29 the container was reclaimed again:
+a scheduling call sat waiting for manual approval (~25 min, auto mode off), the session counted as idle, and the
+in-flight P3b sleep seed 3 (~1 h into ~87 min) and P5 runs were lost. Workers restarted 16:29.
 
 ### P1 RQ1 — FINAL, pre-registered (n=10/arm, DoorKey-6x6, 400k frames; `results/rq1_stats.md`)
 solved = final eval return > 0.5. Fisher = two-sided exact test on solve counts; Welch = two-sided on AUC
@@ -75,6 +78,27 @@ significant by Fisher (minimum p=0.47), so only continuous metrics could reach s
 The session-2 "homeostasis helps backprop" hint (p=0.09 at n=3) moved to raw p=0.029 at n=10: suggestive,
 not confirmed. Context arms (not pre-registered, n=3-5) are in `results/rq1_stats.md`; the DFA ones repeat
 session 2: DFA alone 1/5 solved, DFA+homeostasis 3/3.
+
+### P5 result (pilot, 1 seed/arm, sizing only): MiniGrid-MemoryS7, 1M frames (`runs/s3_mem_pilot`)
+Random policy: 24% success. Deterministic eval, 200 episodes.
+| arm | memory mechanism | lr | eval success | train return @250k / 500k / 1M |
+|---|---|---|---|---|
+| CNN, 1 frame | none | 1e-3 | 0.915 | 0.47 / 0.88 / 0.91 |
+| CNN, frame stack 4 | last 4 frames as channels | 1e-3 | **0.995** | 0.58 / 0.90 / 0.96 |
+| CNN, frame stack 8 | last 8 frames | 1e-3 | 0.835 | 0.72 / 0.88 / 0.84 |
+| SNN, frame stack 8 | last 8 frames | 1e-3 | 0.465 | 0.48 / 0.41 / 0.54 |
+| SNN + Transformer, window 8 | attention over 8 encoded frames | 3e-4 | 0.970 | 0.47 / 0.47 / 0.96 |
+**Reading (our result, n=1, no statistics).** (1) **MemoryS7 does not isolate memory**: a memoryless CNN reaches
+91.5% (a policy that can't recall the cue should be near 50% at the choice point). Interpretation: in the 7-wide
+map the agent can carry the cue in its own position/heading ("memory in the environment"), or the cue is still
+in view near the decision point. So a Transformer benefit can't be shown cleanly on S7. (2) Memory still helps a
+little: frame stack 4 takes the CNN from 0.915 to 0.995. (3) On the SNN, channel-stacking 8 frames fails (0.47),
+while the Transformer over 8 SNN-encoded frames solves it (0.97), but only after 500k frames and with a different
+lr (3e-4 vs 1e-3: the protocol confound carried over from session 2's hybrid). Hypothesis: attention integrates
+multi-frame spiking input better than wide channel stacks; untested at n>1 or matched lr.
+**Next step for the Transformer question:** a map where the memoryless baseline is at chance (MemoryS11/S13; check
+with a 1-frame CNN first), 3 seeds per arm, matched lr (3e-4 for all arms, or a small lr sweep per arm), arms:
+1-frame, frame stack 4, SNN+Transformer, CNN+Transformer.
 
 ### Pre-registered comparisons and statistics (written before running)
 * **RQ1** (DoorKey-6x6, 400k frames, n=10/arm; arms bp, homeo, tfs0.03, rands0.03):
@@ -344,10 +368,12 @@ more ACC per MB everywhere we measured.* (`results/rq5_memory.md`, `results/rq5_
   +0.42, p=0.10; 5-task SNN, where shared sleep beats isolation 0.778 vs 0.475, p=0.02, n=2, but at a
   150k/task budget that is too short for isolation: P3a probes show a fresh SNN needs ~450k). ~0 on the
   3-task CNN, negative on the 5-task CNN (plasticity cost).
-**Memory / Transformer question.** *Open.* The SNN resets its membrane every environment step, so
-"SNN, single frame" is memoryless. On the Markov fetch tasks the Transformer costs ~3x sample efficiency
-and has nothing to remember. The MiniGrid-MemoryS7 pilot, with a frame-stack baseline, is set up (random
-policy 24% success) but did not run.
+**Memory / Transformer question.** *Open; the pilot benchmark turned out not to need memory.* The SNN resets
+its membrane every environment step, so "SNN, single frame" is memoryless. On the Markov fetch tasks the
+Transformer costs ~3x sample efficiency and has nothing to remember. P5 pilot (MiniGrid-MemoryS7, 1 seed): a
+memoryless CNN already gets 91.5% (frame stack 4: 99.5%), so S7 can't isolate memory. On the SNN, frame
+stacking fails (47%) while SNN+Transformer reaches 97% (different lr; n=1). Needs a harder memory map, 3 seeds,
+matched lr.
 
 ## Evidence hierarchy (strength of each claim as of session 3)
 | claim | evidence | strength |
@@ -365,7 +391,7 @@ policy 24% success) but did not run.
 | Sleep > replay on the full hybrid (RQ2) | p=0.07, n=3 | preliminary |
 | Positive transfer on slow-learning trunks (RQ5) | p=0.05-0.10, n=2-3; 5-task SNN confounded by short budget | preliminary |
 | STDP adds anything beyond homeostasis or random updates (RQ1) | n=10, p=0.34 / 0.82 | **unsupported (null)** |
-| Transformer memory earns its cost | never tested on a memory task | untested |
+| Transformer memory earns its cost | pilot only (n=1, MemoryS7 barely needs memory; lr confound) | untested |
 
 ## Remaining work (queues written, resumable; running in this container, see session-3 status notes)
 Resume with 4 workers, e.g. `for i in 1 2 3 4; do nohup scripts/worker.sh $i jobs/s3_q1.txt jobs/s3_q2.txt
@@ -377,7 +403,7 @@ finish some P2 runs before it is reclaimed, those results exist only here until 
 |---|---|---|---|---|---|
 | 1 | ~~P2: SNN fetch3 sleep/replay at 200 and 2000 states/task, 3 seeds~~ **done ~14:36** | `jobs/s3_q1.txt` (tail) | 12 | ~3.6 | answered above (RQ5) |
 | 2 | P3b: fetch5 SNN isolation + sleep at 450k frames/task, 3 seeds | `jobs/s3_q2.txt` | 6 | ~8 | is the 5-task SNN sleep > isolation result real once isolation gets a fair budget? (RQ5) |
-| 3 | P5: MiniGrid-MemoryS7 pilot (CNN frame-stack 1/4/8, SNN fs8, SNN+Transformer) | `jobs/s3_q3.txt` | 5 | ~2 | does any memory mechanism help on a task that needs memory? (sizing only) |
+| 3 | ~~P5: MiniGrid-MemoryS7 pilot (CNN frame-stack 1/4/8, SNN fs8, SNN+Transformer)~~ **done ~17:05** | `jobs/s3_q3.txt` | 5 | ~2 | see P5 result: S7 is too easy for a memory test |
 | 4 | P4: hybrid sleep + replay, seeds 4-6 | `jobs/s3_q4.txt` | 6 | ~11 | sleep vs replay on the full hybrid (RQ2, currently p=0.07, n=3) |
 | | **total left** | | 17 | **~21** | ~5-6 h on 4 cores |
 Beyond the queue (not written yet): DFA+homeostasis vs DFA to n=10 (~3 core-h; it's the strongest RQ1-adjacent

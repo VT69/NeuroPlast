@@ -1,0 +1,4 @@
+[fetch3_replay_s4 t0] [fetch3_replay_s4/task0] upd 5/195 frames 10240 fps 550 ret 0.174 len 136.6 ent 1.907 act 0.103
+[fetch3_replay_s4 t0] [fetch3_replay_s4/task0] upd 10/195 frames 20480 fps 560 ret 0.112 len 155.2 ent 1.788 act 0.104
+[fetch3_replay_s4 t0] [fetch3_replay_s4/task0] upd 15/195 frames 30720 fps 565 ret 0.130 len 161.2 ent 1.843 act 0.106
+[fetch3_replay_s4 t0] [fetch3_replay_s4/task0] upd 20/195 frames 40960 fps 558 ret 0.273 len 136.9 ent 1.833 act 0.108

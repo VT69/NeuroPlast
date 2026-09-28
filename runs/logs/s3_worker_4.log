@@ -30,3 +30,12 @@ START runs/continual_snn_budget/fetch3_replay_buf2000_s3/results.json
 END rc=0 935s runs/continual_snn_budget/fetch3_replay_buf2000_s3/results.json
 6 jobs pending
 START runs/continual5_snn_450k/fetch5_sleep_s2/results.json
+END rc=0 5175s runs/continual5_snn_450k/fetch5_sleep_s2/results.json
+4 jobs pending
+START runs/s3_mem_pilot/mem_snn_fs8_s1/eval.json
+=== restart 2026-09-28T16:29:54Z ===
+0 jobs pending
+1 jobs pending
+2 jobs pending
+6 jobs pending
+START runs/continual_hybrid/fetch3_sleep_s4/results.json
