@@ -53,6 +53,16 @@ per-seed ACC: sleep s1=0.957, s2=0.974, s3=0.854; isolation s1=0.976, s2=0.975, 
 
 per-seed ACC: sleep s1=0.773, s2=0.783; isolation s1=0.458, s2=0.492
 
+## SNN trunk, fetch5, 450k/task (session 3 isolation budget) (`runs/continual5_snn_450k`): sleep n=3, isolation n=3
+
+| metric | sleep | isolation | diff | Welch p | perm p | 95% CI of diff |
+|---|---|---|---|---|---|---|
+| ACC | 0.915 ± 0.014 | 0.871 ± 0.026 | +0.044 | 0.0777 | 0.20 | [+0.015, +0.069] |
+| ACC / 100k params | 0.400 ± 0.006 | 0.109 ± 0.003 | +0.291 | 3.84e-06 | 0.10 | [+0.284, +0.297] |
+| FWT (sleep vs 0) | 0.306 ± 0.170 | 0 (reference) | +0.306 | 0.0891 (1-sample) | - | - |
+
+per-seed ACC: sleep s1=0.924, s2=0.921, s3=0.900; isolation s1=0.900, s2=0.863, s3=0.850
+
 ## Memory-fair RQ5 (session 3): small-buffer shared weights vs isolation, fetch3
 
 Total memory = fp32 params + buffer_per_task x tasks x 188 B. Same tests as above; diff = arm − isolation.

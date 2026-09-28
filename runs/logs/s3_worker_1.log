@@ -44,3 +44,7 @@ START runs/continual_hybrid/fetch3_sleep_s4/results.json
 0 jobs pending
 1 jobs pending
 START runs/continual5_snn_450k/fetch5_sleep_s3/results.json
+END rc=0 5360s runs/continual5_snn_450k/fetch5_sleep_s3/results.json
+0 jobs pending
+5 jobs pending
+START runs/continual_hybrid/fetch3_sleep_s6/results.json

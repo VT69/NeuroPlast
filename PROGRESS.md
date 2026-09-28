@@ -22,7 +22,7 @@ run: it was (3 seeds, session 2); tonight took it to 10 (correction note in §38
 | P3a | isolation-budget probes: single-task SNN on FetchObj5 tasks, 600k frames (sizes P3b) | 4 | 1.1 | **done** -> budget 450k/task |
 | P1 | RQ1 DoorKey-6x6 to 10 seeds: bp, bp+homeo, bp+stabilised STDP a=0.03, bp+random a=0.03+homeo (matched control) | 27 | 4.8 | **done**, n=10/arm, analysed below |
 | P2 | memory-fair RQ5: analysis (no compute) + SNN fetch3 sleep/replay at buffers 200 and 2000/task, 3 seeds | 12 | 3.6 | **done** ~14:36 UTC (12/12), result below |
-| P3b | fetch5 SNN isolation + sleep at 450k frames/task, 3 seeds | 6 | ~8 | not run |
+| P3b | fetch5 SNN isolation + sleep at 450k frames/task, 3 seeds | 6 | ~8 | **done** ~17:59 UTC (6/6), result below |
 | P5 | memory pilot: membrane-reset check (code), MiniGrid-MemoryS7 + CNN frame-stack baseline | 5 | ~2 | **done** ~17:05 UTC (5/5), result below |
 | P4 | hybrid sleep + replay, seeds 4-6, same protocol (lr 3e-4, 400k/task) | 6 | ~11 | not run |
 Why P2-P5 didn't finish: a platform permission-checker outage (~12:45 onward) blocked every shell action for
@@ -79,8 +79,27 @@ The session-2 "homeostasis helps backprop" hint (p=0.09 at n=3) moved to raw p=0
 not confirmed. Context arms (not pre-registered, n=3-5) are in `results/rq1_stats.md`; the DFA ones repeat
 session 2: DFA alone 1/5 solved, DFA+homeostasis 3/3.
 
+### P3b result (our result, n=3/arm): fetch5 SNN at a fair isolation budget, 450k frames/task (`runs/continual5_snn_450k`)
+Pre-registered: sleep vs isolation ACC (Welch + permutation), sleep FWT vs 0 (one-sample t), tasks learned
+(R[k][k] >= 0.8) per arm. Same config for both arms (cl_snn.yaml, 450k frames/task; sleep buffer 5000/task).
+| metric | sleep (shared) | isolation | test |
+|---|---|---|---|
+| ACC | 0.915 ± 0.014 | 0.871 ± 0.026 | +0.044, Welch p=0.078, perm p=0.20 (min 0.10), bootstrap CI [+0.015, +0.069] |
+| ACC per 100k params | 0.400 | 0.109 | p<0.001 |
+| ACC per MB total memory | 0.163 (5.62 MB) | **0.272** (3.20 MB) | isolation ahead, as in P2 |
+| FWT | +0.31 ± 0.17 | 0 (reference) | one-sample p=0.089 |
+| tasks learned (>= 0.8) | 14/15 | 12/15 | - |
+| FORGET | 0.007-0.017 | 0.00-0.03 (eval noise: isolation can't forget) | - |
+Session 2 at 150k/task had sleep 0.778 vs isolation 0.475 (p=0.02, n=2). **Reading.** (1) Most of that
+gap was the short budget: at 450k/task isolation rises to 0.871 and the gap shrinks from +0.30 to +0.04,
+which is no longer significant by the pre-registered tests (Welch 0.078, perm 0.20; the bootstrap CI excludes 0
+but is unreliable at n=3). (2) What remains is consistent with positive transfer: later tasks are learned better
+by the shared net (task 4: 0.95-0.97 vs 0.69-0.82 for fresh nets; FWT +0.31, p=0.089). Task 0 is slow for both
+arms (0.73-0.86), as the P3a probes predicted. (3) Per total memory at the default 5000-state buffer, isolation is
+still ahead (0.27 vs 0.16 ACC/MB); a small-buffer fetch5 SNN arm was not run.
+
 ### P5 result (pilot, 1 seed/arm, sizing only): MiniGrid-MemoryS7, 1M frames (`runs/s3_mem_pilot`)
-Random policy: 24% success. Deterministic eval, 200 episodes.
+Random policy: 24% success. Eval: 200 episodes, stochastic (sampled) policy, as in all other NeuroPlast evals.
 | arm | memory mechanism | lr | eval success | train return @250k / 500k / 1M |
 |---|---|---|---|---|
 | CNN, 1 frame | none | 1e-3 | 0.915 | 0.47 / 0.88 / 0.91 |
@@ -365,9 +384,11 @@ more ACC per MB everywhere we measured.* (`results/rq5_memory.md`, `results/rq5_
   isolation 0.833: no difference (p>=0.84, n=3). Shared weights' advantage is memory efficiency at small
   buffers, not higher accuracy at equal memory.
 - Transfer depends on the trunk: positive where learning from scratch is slow (SNN +0.20, p=0.05; hybrid
-  +0.42, p=0.10; 5-task SNN, where shared sleep beats isolation 0.778 vs 0.475, p=0.02, n=2, but at a
-  150k/task budget that is too short for isolation: P3a probes show a fresh SNN needs ~450k). ~0 on the
-  3-task CNN, negative on the 5-task CNN (plasticity cost).
+  +0.42, p=0.10; 5-task SNN +0.31, p=0.089), ~0 on the 3-task CNN, negative on the 5-task CNN (plasticity
+  cost).
+- The 5-task SNN "shared sleep beats isolation 0.778 vs 0.475 (p=0.02)" result was mostly a budget artefact.
+  With a fair 450k frames/task (session 3, n=3), isolation reaches 0.871 and sleep 0.915: +0.044, Welch
+  p=0.078, perm p=0.20, not significant. Sleep learns 14/15 tasks to >= 0.8 vs 12/15.
 **Memory / Transformer question.** *Open; the pilot benchmark turned out not to need memory.* The SNN resets
 its membrane every environment step, so "SNN, single frame" is memoryless. On the Markov fetch tasks the
 Transformer costs ~3x sample efficiency and has nothing to remember. P5 pilot (MiniGrid-MemoryS7, 1 seed): a
@@ -389,7 +410,8 @@ matched lr.
 | SNN beats CNN only at very low op budgets (RQ3) | 2 seeds/point, clean frontier | moderate |
 | Homeostasis helps backprop (RQ1) | n=10, raw p=0.029 on AUC, Holm 0.117; solve rate 10/10 vs 8/10 (p=0.47) | **preliminary, not significant** |
 | Sleep > replay on the full hybrid (RQ2) | p=0.07, n=3 | preliminary |
-| Positive transfer on slow-learning trunks (RQ5) | p=0.05-0.10, n=2-3; 5-task SNN confounded by short budget | preliminary |
+| Positive transfer on slow-learning trunks (RQ5) | FWT p=0.05-0.10 on SNN/hybrid/5-task SNN, n=3 | preliminary |
+| Shared-weight sleep beats isolation on raw ACC, 5-task SNN (RQ5) | fair budget: +0.044, p=0.078 (perm 0.20), n=3; the p=0.02 result was a short-budget artefact | **not significant** (was: preliminary) |
 | STDP adds anything beyond homeostasis or random updates (RQ1) | n=10, p=0.34 / 0.82 | **unsupported (null)** |
 | Transformer memory earns its cost | pilot only (n=1, MemoryS7 barely needs memory; lr confound) | untested |
 
@@ -402,10 +424,10 @@ finish some P2 runs before it is reclaimed, those results exist only here until 
 | order | block | queue | runs | est. core-h | answers |
 |---|---|---|---|---|---|
 | 1 | ~~P2: SNN fetch3 sleep/replay at 200 and 2000 states/task, 3 seeds~~ **done ~14:36** | `jobs/s3_q1.txt` (tail) | 12 | ~3.6 | answered above (RQ5) |
-| 2 | P3b: fetch5 SNN isolation + sleep at 450k frames/task, 3 seeds | `jobs/s3_q2.txt` | 6 | ~8 | is the 5-task SNN sleep > isolation result real once isolation gets a fair budget? (RQ5) |
+| 2 | ~~P3b: fetch5 SNN isolation + sleep at 450k frames/task, 3 seeds~~ **done ~17:59** | `jobs/s3_q2.txt` | 6 | ~8 | mostly no: gap +0.30 -> +0.04, p=0.078 |
 | 3 | ~~P5: MiniGrid-MemoryS7 pilot (CNN frame-stack 1/4/8, SNN fs8, SNN+Transformer)~~ **done ~17:05** | `jobs/s3_q3.txt` | 5 | ~2 | see P5 result: S7 is too easy for a memory test |
 | 4 | P4: hybrid sleep + replay, seeds 4-6 | `jobs/s3_q4.txt` | 6 | ~11 | sleep vs replay on the full hybrid (RQ2, currently p=0.07, n=3) |
-| | **total left** | | 17 | **~21** | ~5-6 h on 4 cores |
+| | **total left** | | 6 (P4) | **~11** | ~3 h on 4 cores |
 Beyond the queue (not written yet): DFA+homeostasis vs DFA to n=10 (~3 core-h; it's the strongest RQ1-adjacent
 effect and still n=3-5); a homeostasis-target sweep; persistent membrane state as a real SNN memory mechanism
 (a new mechanism, so a separate decision).
