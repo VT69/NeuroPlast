@@ -1,0 +1,27 @@
+15 jobs pending
+START runs/continual_hybrid/fetch3_naive_s1/results.json
+START runs/continual_hybrid/fetch3_isolation_s1/results.json
+START runs/continual_hybrid/fetch3_replay_s1/results.json
+END rc=0 1705s runs/continual_hybrid/fetch3_naive_s1/results.json
+START runs/continual_hybrid/fetch3_sleep_s1/results.json
+END rc=0 1900s runs/continual_hybrid/fetch3_isolation_s1/results.json
+START runs/continual_hybrid/fetch3_sleep_wtfs_s1/results.json
+END rc=0 2920s runs/continual_hybrid/fetch3_replay_s1/results.json
+START runs/continual_hybrid/fetch3_naive_s2/results.json
+END rc=0 1890s runs/continual_hybrid/fetch3_naive_s2/results.json
+START runs/continual_hybrid/fetch3_isolation_s2/results.json
+END rc=0 2770s runs/continual_hybrid/fetch3_isolation_s2/results.json
+START runs/continual_hybrid/fetch3_replay_s2/results.json
+END rc=0 7811s runs/continual_hybrid/fetch3_sleep_s1/results.json
+START runs/continual_hybrid/fetch3_sleep_s2/results.json
+END rc=0 11293s runs/continual_hybrid/fetch3_sleep_wtfs_s1/results.json
+START runs/continual_hybrid/fetch3_naive_s3/results.json
+END rc=0 6918s runs/continual_hybrid/fetch3_replay_s2/results.json
+START runs/continual_hybrid/fetch3_isolation_s3/results.json
+END rc=0 3220s runs/continual_hybrid/fetch3_naive_s3/results.json
+START runs/continual_hybrid/fetch3_replay_s3/results.json
+END rc=0 3180s runs/continual_hybrid/fetch3_isolation_s3/results.json
+START runs/continual_hybrid/fetch3_sleep_s3/results.json
+END rc=0 10747s runs/continual_hybrid/fetch3_sleep_s2/results.json
+END rc=0 5321s runs/continual_hybrid/fetch3_replay_s3/results.json
+END rc=0 6976s runs/continual_hybrid/fetch3_sleep_s3/results.json

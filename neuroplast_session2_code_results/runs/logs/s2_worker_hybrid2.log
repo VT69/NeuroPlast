@@ -1,0 +1,8 @@
+3 jobs pending
+START runs/continual_hybrid/fetch3_sleep_whomeo_s1/results.json
+END rc=0 5745s runs/continual_hybrid/fetch3_sleep_whomeo_s1/results.json
+START runs/continual_hybrid/fetch3_sleep_whomeo_s2/results.json
+END rc=0 6155s runs/continual_hybrid/fetch3_sleep_whomeo_s2/results.json
+5 jobs pending
+START runs/continual5_snn/fetch5_sleep_s2/results.json
+END rc=0 2055s runs/continual5_snn/fetch5_sleep_s2/results.json

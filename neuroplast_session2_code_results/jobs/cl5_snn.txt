@@ -1,0 +1,8 @@
+# continual sweep, snn trunk, fetch5 (5 tasks x 150k frames)
+# session 2: trimmed to sleep/isolation/naive x seeds 1-2 for time (~1-1.5 h per SNN fetch5 run)
+runs/continual5_snn/fetch5_sleep_s1/results.json :: python continual.py --suite fetch5 --method sleep --config configs/cl_snn.yaml --seed 1 --out runs/continual5_snn
+runs/continual5_snn/fetch5_isolation_s1/results.json :: python continual.py --suite fetch5 --method isolation --config configs/cl_snn.yaml --seed 1 --out runs/continual5_snn
+runs/continual5_snn/fetch5_naive_s1/results.json :: python continual.py --suite fetch5 --method naive --config configs/cl_snn.yaml --seed 1 --out runs/continual5_snn
+runs/continual5_snn/fetch5_sleep_s2/results.json :: python continual.py --suite fetch5 --method sleep --config configs/cl_snn.yaml --seed 2 --out runs/continual5_snn
+runs/continual5_snn/fetch5_isolation_s2/results.json :: python continual.py --suite fetch5 --method isolation --config configs/cl_snn.yaml --seed 2 --out runs/continual5_snn
+runs/continual5_snn/fetch5_naive_s2/results.json :: python continual.py --suite fetch5 --method naive --config configs/cl_snn.yaml --seed 2 --out runs/continual5_snn

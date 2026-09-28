@@ -1,0 +1,7 @@
+# continual, SNN trunk + sleep: DFA+homeostasis vs backprop+homeostasis, fetch3 (session 2)
+runs/continual_snn/fetch3_sleep_dfaeh_s1/results.json :: python continual.py --suite fetch3 --method sleep --config configs/cl_snn.yaml --seed 1 --out runs/continual_snn --tag _dfaeh --set dfa=true dfa_scope=encoder "stdp={alpha: 0.0, homeo: 0.15}"
+runs/continual_snn/fetch3_sleep_homeo_s1/results.json :: python continual.py --suite fetch3 --method sleep --config configs/cl_snn.yaml --seed 1 --out runs/continual_snn --tag _homeo --set "stdp={alpha: 0.0, homeo: 0.15}"
+runs/continual_snn/fetch3_sleep_dfaeh_s2/results.json :: python continual.py --suite fetch3 --method sleep --config configs/cl_snn.yaml --seed 2 --out runs/continual_snn --tag _dfaeh --set dfa=true dfa_scope=encoder "stdp={alpha: 0.0, homeo: 0.15}"
+runs/continual_snn/fetch3_sleep_homeo_s2/results.json :: python continual.py --suite fetch3 --method sleep --config configs/cl_snn.yaml --seed 2 --out runs/continual_snn --tag _homeo --set "stdp={alpha: 0.0, homeo: 0.15}"
+runs/continual_snn/fetch3_sleep_dfaeh_s3/results.json :: python continual.py --suite fetch3 --method sleep --config configs/cl_snn.yaml --seed 3 --out runs/continual_snn --tag _dfaeh --set dfa=true dfa_scope=encoder "stdp={alpha: 0.0, homeo: 0.15}"
+runs/continual_snn/fetch3_sleep_homeo_s3/results.json :: python continual.py --suite fetch3 --method sleep --config configs/cl_snn.yaml --seed 3 --out runs/continual_snn --tag _homeo --set "stdp={alpha: 0.0, homeo: 0.15}"

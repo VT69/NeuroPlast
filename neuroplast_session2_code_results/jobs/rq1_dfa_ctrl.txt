@@ -1,0 +1,10 @@
+# RQ1 v2 controls for the DFA+STDP interaction (session 2), DoorKey-6x6
+runs/rq1_v2/rq1v2_dfae_homeo_s1/eval.json :: python train.py --config configs/rq1_v2.yaml --set seed=1 run_name=rq1v2_dfae_homeo_s1 out_dir=runs/rq1_v2 dfa=true dfa_scope=encoder "stdp={alpha: 0.0, homeo: 0.15}"
+runs/rq1_v2/rq1v2_dfae_rands0.03_s1/eval.json :: python train.py --config configs/rq1_v2.yaml --set seed=1 run_name=rq1v2_dfae_rands0.03_s1 out_dir=runs/rq1_v2 dfa=true dfa_scope=encoder "stdp={alpha: 0.03, mode: random, homeo: 0.15}"
+runs/rq1_v2/rq1v2_homeo_s1/eval.json :: python train.py --config configs/rq1_v2.yaml --set seed=1 run_name=rq1v2_homeo_s1 out_dir=runs/rq1_v2 "stdp={alpha: 0.0, homeo: 0.15}"
+runs/rq1_v2/rq1v2_dfae_homeo_s2/eval.json :: python train.py --config configs/rq1_v2.yaml --set seed=2 run_name=rq1v2_dfae_homeo_s2 out_dir=runs/rq1_v2 dfa=true dfa_scope=encoder "stdp={alpha: 0.0, homeo: 0.15}"
+runs/rq1_v2/rq1v2_dfae_rands0.03_s2/eval.json :: python train.py --config configs/rq1_v2.yaml --set seed=2 run_name=rq1v2_dfae_rands0.03_s2 out_dir=runs/rq1_v2 dfa=true dfa_scope=encoder "stdp={alpha: 0.03, mode: random, homeo: 0.15}"
+runs/rq1_v2/rq1v2_homeo_s2/eval.json :: python train.py --config configs/rq1_v2.yaml --set seed=2 run_name=rq1v2_homeo_s2 out_dir=runs/rq1_v2 "stdp={alpha: 0.0, homeo: 0.15}"
+runs/rq1_v2/rq1v2_dfae_homeo_s3/eval.json :: python train.py --config configs/rq1_v2.yaml --set seed=3 run_name=rq1v2_dfae_homeo_s3 out_dir=runs/rq1_v2 dfa=true dfa_scope=encoder "stdp={alpha: 0.0, homeo: 0.15}"
+runs/rq1_v2/rq1v2_dfae_rands0.03_s3/eval.json :: python train.py --config configs/rq1_v2.yaml --set seed=3 run_name=rq1v2_dfae_rands0.03_s3 out_dir=runs/rq1_v2 dfa=true dfa_scope=encoder "stdp={alpha: 0.03, mode: random, homeo: 0.15}"
+runs/rq1_v2/rq1v2_homeo_s3/eval.json :: python train.py --config configs/rq1_v2.yaml --set seed=3 run_name=rq1v2_homeo_s3 out_dir=runs/rq1_v2 "stdp={alpha: 0.0, homeo: 0.15}"

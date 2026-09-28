@@ -1,0 +1,19 @@
+9 jobs pending
+START runs/rq1_v2/rq1v2_dfae_homeo_s1/eval.json
+END rc=0 570s runs/rq1_v2/rq1v2_dfae_homeo_s1/eval.json
+START runs/rq1_v2/rq1v2_dfae_rands0.03_s1/eval.json
+END rc=0 680s runs/rq1_v2/rq1v2_dfae_rands0.03_s1/eval.json
+START runs/rq1_v2/rq1v2_homeo_s1/eval.json
+END rc=0 490s runs/rq1_v2/rq1v2_homeo_s1/eval.json
+START runs/rq1_v2/rq1v2_dfae_homeo_s2/eval.json
+END rc=0 645s runs/rq1_v2/rq1v2_dfae_homeo_s2/eval.json
+START runs/rq1_v2/rq1v2_dfae_rands0.03_s2/eval.json
+END rc=0 525s runs/rq1_v2/rq1v2_dfae_rands0.03_s2/eval.json
+START runs/rq1_v2/rq1v2_homeo_s2/eval.json
+END rc=0 500s runs/rq1_v2/rq1v2_homeo_s2/eval.json
+START runs/rq1_v2/rq1v2_dfae_homeo_s3/eval.json
+END rc=0 565s runs/rq1_v2/rq1v2_dfae_homeo_s3/eval.json
+START runs/rq1_v2/rq1v2_dfae_rands0.03_s3/eval.json
+END rc=0 515s runs/rq1_v2/rq1v2_dfae_rands0.03_s3/eval.json
+START runs/rq1_v2/rq1v2_homeo_s3/eval.json
+END rc=0 560s runs/rq1_v2/rq1v2_homeo_s3/eval.json

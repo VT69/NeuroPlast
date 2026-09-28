@@ -1,0 +1,7 @@
+6 jobs pending
+START runs/continual5_snn/fetch5_sleep_s1/results.json
+END rc=0 2035s runs/continual5_snn/fetch5_sleep_s1/results.json
+START runs/continual5_snn/fetch5_isolation_s1/results.json
+END rc=0 1235s runs/continual5_snn/fetch5_isolation_s1/results.json
+START runs/continual5_snn/fetch5_isolation_s2/results.json
+END rc=0 1285s runs/continual5_snn/fetch5_isolation_s2/results.json

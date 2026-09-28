@@ -1,0 +1,4 @@
+# full hybrid + sleep + wake-time homeostasis only (session 2; replaces _wtfs for seeds 2-3)
+runs/continual_hybrid/fetch3_sleep_whomeo_s1/results.json :: python continual.py --suite fetch3 --method sleep --config configs/cl_hybrid_v2.yaml --seed 1 --out runs/continual_hybrid --tag _whomeo --set "stdp={alpha: 0.0, homeo: 0.15}"
+runs/continual_hybrid/fetch3_sleep_whomeo_s2/results.json :: python continual.py --suite fetch3 --method sleep --config configs/cl_hybrid_v2.yaml --seed 2 --out runs/continual_hybrid --tag _whomeo --set "stdp={alpha: 0.0, homeo: 0.15}"
+runs/continual_hybrid/fetch3_sleep_whomeo_s3/results.json :: python continual.py --suite fetch3 --method sleep --config configs/cl_hybrid_v2.yaml --seed 3 --out runs/continual_hybrid --tag _whomeo --set "stdp={alpha: 0.0, homeo: 0.15}"

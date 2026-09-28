@@ -1,0 +1,56 @@
+21 jobs pending
+START runs/rq1/rq1_dfae_s1/eval.json
+END rc=0 520s runs/rq1/rq1_dfae_s1/eval.json
+START runs/rq1/rq1_dfaall_s1/eval.json
+END rc=0 485s runs/rq1/rq1_dfaall_s1/eval.json
+START runs/rq1/rq1_dfae_s2/eval.json
+END rc=0 530s runs/rq1/rq1_dfae_s2/eval.json
+START runs/rq1/rq1_dfaall_s2/eval.json
+END rc=0 505s runs/rq1/rq1_dfaall_s2/eval.json
+START runs/rq1/rq1_dfae_s3/eval.json
+END rc=0 405s runs/rq1/rq1_dfae_s3/eval.json
+START runs/rq1/rq1_dfaall_s3/eval.json
+END rc=0 465s runs/rq1/rq1_dfaall_s3/eval.json
+START runs/rq1_v2/rq1v2_dfae_s1/eval.json
+END rc=0 690s runs/rq1_v2/rq1v2_dfae_s1/eval.json
+START runs/rq1_v2/rq1v2_dfae_tfs0.03_s1/eval.json
+END rc=0 915s runs/rq1_v2/rq1v2_dfae_tfs0.03_s1/eval.json
+START runs/rq1_v2/rq1v2_dfae_tfs0.3_s1/eval.json
+END rc=0 1080s runs/rq1_v2/rq1v2_dfae_tfs0.3_s1/eval.json
+START runs/rq1_v2/rq1v2_dfae_s2/eval.json
+END rc=0 705s runs/rq1_v2/rq1v2_dfae_s2/eval.json
+START runs/rq1_v2/rq1v2_dfae_tfs0.03_s2/eval.json
+END rc=0 1010s runs/rq1_v2/rq1v2_dfae_tfs0.03_s2/eval.json
+START runs/rq1_v2/rq1v2_dfae_tfs0.3_s2/eval.json
+END rc=0 890s runs/rq1_v2/rq1v2_dfae_tfs0.3_s2/eval.json
+START runs/rq1_v2/rq1v2_dfae_s3/eval.json
+END rc=0 710s runs/rq1_v2/rq1v2_dfae_s3/eval.json
+START runs/rq1_v2/rq1v2_dfae_tfs0.03_s3/eval.json
+END rc=0 740s runs/rq1_v2/rq1v2_dfae_tfs0.03_s3/eval.json
+START runs/rq1_v2/rq1v2_dfae_tfs0.3_s3/eval.json
+END rc=0 1070s runs/rq1_v2/rq1v2_dfae_tfs0.3_s3/eval.json
+START runs/rq1_v2/rq1v2_dfae_s4/eval.json
+END rc=0 720s runs/rq1_v2/rq1v2_dfae_s4/eval.json
+START runs/rq1_v2/rq1v2_dfae_tfs0.03_s4/eval.json
+END rc=0 1045s runs/rq1_v2/rq1v2_dfae_tfs0.03_s4/eval.json
+START runs/rq1_v2/rq1v2_dfae_tfs0.3_s4/eval.json
+END rc=0 1160s runs/rq1_v2/rq1v2_dfae_tfs0.3_s4/eval.json
+START runs/rq1_v2/rq1v2_dfae_s5/eval.json
+END rc=0 700s runs/rq1_v2/rq1v2_dfae_s5/eval.json
+START runs/rq1_v2/rq1v2_dfae_tfs0.03_s5/eval.json
+END rc=0 940s runs/rq1_v2/rq1v2_dfae_tfs0.03_s5/eval.json
+START runs/rq1_v2/rq1v2_dfae_tfs0.3_s5/eval.json
+END rc=0 1260s runs/rq1_v2/rq1v2_dfae_tfs0.3_s5/eval.json
+6 jobs pending
+START runs/continual_snn/fetch3_sleep_dfaeh_s1/results.json
+END rc=0 1250s runs/continual_snn/fetch3_sleep_dfaeh_s1/results.json
+START runs/continual_snn/fetch3_sleep_homeo_s1/results.json
+END rc=0 1055s runs/continual_snn/fetch3_sleep_homeo_s1/results.json
+START runs/continual_snn/fetch3_sleep_dfaeh_s2/results.json
+END rc=0 1295s runs/continual_snn/fetch3_sleep_dfaeh_s2/results.json
+START runs/continual_snn/fetch3_sleep_homeo_s2/results.json
+END rc=0 1120s runs/continual_snn/fetch3_sleep_homeo_s2/results.json
+START runs/continual_snn/fetch3_sleep_dfaeh_s3/results.json
+END rc=0 1290s runs/continual_snn/fetch3_sleep_dfaeh_s3/results.json
+START runs/continual_snn/fetch3_sleep_homeo_s3/results.json
+END rc=0 1085s runs/continual_snn/fetch3_sleep_homeo_s3/results.json

@@ -1,0 +1,17 @@
+# continual sweep, FULL HYBRID (SNN T=4 + Transformer window 4), fetch3 (150k frames/task)
+# session 2: _wtfs seeds 2-3 skipped (pid-1 locks), replaced by _whomeo in jobs/cl_hybrid2.txt
+runs/continual_hybrid/fetch3_naive_s1/results.json :: python continual.py --suite fetch3 --method naive --config configs/cl_hybrid_v2.yaml --seed 1 --out runs/continual_hybrid
+runs/continual_hybrid/fetch3_isolation_s1/results.json :: python continual.py --suite fetch3 --method isolation --config configs/cl_hybrid_v2.yaml --seed 1 --out runs/continual_hybrid
+runs/continual_hybrid/fetch3_replay_s1/results.json :: python continual.py --suite fetch3 --method replay --config configs/cl_hybrid_v2.yaml --seed 1 --out runs/continual_hybrid
+runs/continual_hybrid/fetch3_sleep_s1/results.json :: python continual.py --suite fetch3 --method sleep --config configs/cl_hybrid_v2.yaml --seed 1 --out runs/continual_hybrid
+runs/continual_hybrid/fetch3_sleep_wtfs_s1/results.json :: python continual.py --suite fetch3 --method sleep --config configs/cl_hybrid_v2.yaml --seed 1 --out runs/continual_hybrid --tag _wtfs --set "stdp={alpha: 0.03, mode: three_factor, center: true, homeo: 0.15}"
+runs/continual_hybrid/fetch3_naive_s2/results.json :: python continual.py --suite fetch3 --method naive --config configs/cl_hybrid_v2.yaml --seed 2 --out runs/continual_hybrid
+runs/continual_hybrid/fetch3_isolation_s2/results.json :: python continual.py --suite fetch3 --method isolation --config configs/cl_hybrid_v2.yaml --seed 2 --out runs/continual_hybrid
+runs/continual_hybrid/fetch3_replay_s2/results.json :: python continual.py --suite fetch3 --method replay --config configs/cl_hybrid_v2.yaml --seed 2 --out runs/continual_hybrid
+runs/continual_hybrid/fetch3_sleep_s2/results.json :: python continual.py --suite fetch3 --method sleep --config configs/cl_hybrid_v2.yaml --seed 2 --out runs/continual_hybrid
+runs/continual_hybrid/fetch3_sleep_wtfs_s2/results.json :: python continual.py --suite fetch3 --method sleep --config configs/cl_hybrid_v2.yaml --seed 2 --out runs/continual_hybrid --tag _wtfs --set "stdp={alpha: 0.03, mode: three_factor, center: true, homeo: 0.15}"
+runs/continual_hybrid/fetch3_naive_s3/results.json :: python continual.py --suite fetch3 --method naive --config configs/cl_hybrid_v2.yaml --seed 3 --out runs/continual_hybrid
+runs/continual_hybrid/fetch3_isolation_s3/results.json :: python continual.py --suite fetch3 --method isolation --config configs/cl_hybrid_v2.yaml --seed 3 --out runs/continual_hybrid
+runs/continual_hybrid/fetch3_replay_s3/results.json :: python continual.py --suite fetch3 --method replay --config configs/cl_hybrid_v2.yaml --seed 3 --out runs/continual_hybrid
+runs/continual_hybrid/fetch3_sleep_s3/results.json :: python continual.py --suite fetch3 --method sleep --config configs/cl_hybrid_v2.yaml --seed 3 --out runs/continual_hybrid
+runs/continual_hybrid/fetch3_sleep_wtfs_s3/results.json :: python continual.py --suite fetch3 --method sleep --config configs/cl_hybrid_v2.yaml --seed 3 --out runs/continual_hybrid --tag _wtfs --set "stdp={alpha: 0.03, mode: three_factor, center: true, homeo: 0.15}"

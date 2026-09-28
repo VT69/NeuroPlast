@@ -1,0 +1,13 @@
+# continual sweep, cnn trunk, fetch5 (5 tasks x 150k frames)
+runs/continual5_cnn/fetch5_naive_s1/results.json :: python continual.py --suite fetch5 --method naive --config configs/cl_cnn.yaml --seed 1 --out runs/continual5_cnn
+runs/continual5_cnn/fetch5_isolation_s1/results.json :: python continual.py --suite fetch5 --method isolation --config configs/cl_cnn.yaml --seed 1 --out runs/continual5_cnn
+runs/continual5_cnn/fetch5_sleep_s1/results.json :: python continual.py --suite fetch5 --method sleep --config configs/cl_cnn.yaml --seed 1 --out runs/continual5_cnn
+runs/continual5_cnn/fetch5_replay_s1/results.json :: python continual.py --suite fetch5 --method replay --config configs/cl_cnn.yaml --seed 1 --out runs/continual5_cnn
+runs/continual5_cnn/fetch5_naive_s2/results.json :: python continual.py --suite fetch5 --method naive --config configs/cl_cnn.yaml --seed 2 --out runs/continual5_cnn
+runs/continual5_cnn/fetch5_isolation_s2/results.json :: python continual.py --suite fetch5 --method isolation --config configs/cl_cnn.yaml --seed 2 --out runs/continual5_cnn
+runs/continual5_cnn/fetch5_sleep_s2/results.json :: python continual.py --suite fetch5 --method sleep --config configs/cl_cnn.yaml --seed 2 --out runs/continual5_cnn
+runs/continual5_cnn/fetch5_replay_s2/results.json :: python continual.py --suite fetch5 --method replay --config configs/cl_cnn.yaml --seed 2 --out runs/continual5_cnn
+runs/continual5_cnn/fetch5_naive_s3/results.json :: python continual.py --suite fetch5 --method naive --config configs/cl_cnn.yaml --seed 3 --out runs/continual5_cnn
+runs/continual5_cnn/fetch5_isolation_s3/results.json :: python continual.py --suite fetch5 --method isolation --config configs/cl_cnn.yaml --seed 3 --out runs/continual5_cnn
+runs/continual5_cnn/fetch5_sleep_s3/results.json :: python continual.py --suite fetch5 --method sleep --config configs/cl_cnn.yaml --seed 3 --out runs/continual5_cnn
+runs/continual5_cnn/fetch5_replay_s3/results.json :: python continual.py --suite fetch5 --method replay --config configs/cl_cnn.yaml --seed 3 --out runs/continual5_cnn

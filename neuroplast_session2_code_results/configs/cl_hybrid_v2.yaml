@@ -1,0 +1,11 @@
+# Continual learning, FULL HYBRID agent (session 2 protocol):
+# SNN encoder (T=4) + Transformer working memory (window 4) + actor/critic heads.
+# The session-1 cl_hybrid.yaml protocol (lr 1e-3, 150k frames/task) left the tasks
+# unlearned (isolation 0.77/0.34/0.25), see PROGRESS.md; single-task probes picked
+# lr 3e-4 and 400k frames/task (FetchObj-0: eval 0.79 at 400k).
+encoder: snn
+enc_kwargs: {T: 4}
+memory: true
+window: 4
+lr: 0.0003
+total_frames: 400000   # per task

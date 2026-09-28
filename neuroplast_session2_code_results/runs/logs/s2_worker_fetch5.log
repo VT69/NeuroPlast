@@ -1,0 +1,27 @@
+12 jobs pending
+START runs/continual5_cnn/fetch5_naive_s1/results.json
+END rc=0 400s runs/continual5_cnn/fetch5_naive_s1/results.json
+START runs/continual5_cnn/fetch5_isolation_s1/results.json
+END rc=0 380s runs/continual5_cnn/fetch5_isolation_s1/results.json
+START runs/continual5_cnn/fetch5_sleep_s1/results.json
+END rc=0 570s runs/continual5_cnn/fetch5_sleep_s1/results.json
+START runs/continual5_cnn/fetch5_replay_s1/results.json
+END rc=0 475s runs/continual5_cnn/fetch5_replay_s1/results.json
+START runs/continual5_cnn/fetch5_naive_s2/results.json
+END rc=0 400s runs/continual5_cnn/fetch5_naive_s2/results.json
+START runs/continual5_cnn/fetch5_isolation_s2/results.json
+END rc=0 395s runs/continual5_cnn/fetch5_isolation_s2/results.json
+START runs/continual5_cnn/fetch5_sleep_s2/results.json
+END rc=0 595s runs/continual5_cnn/fetch5_sleep_s2/results.json
+START runs/continual5_cnn/fetch5_replay_s2/results.json
+END rc=0 500s runs/continual5_cnn/fetch5_replay_s2/results.json
+START runs/continual5_cnn/fetch5_naive_s3/results.json
+END rc=0 420s runs/continual5_cnn/fetch5_naive_s3/results.json
+START runs/continual5_cnn/fetch5_isolation_s3/results.json
+END rc=0 410s runs/continual5_cnn/fetch5_isolation_s3/results.json
+START runs/continual5_cnn/fetch5_sleep_s3/results.json
+END rc=0 595s runs/continual5_cnn/fetch5_sleep_s3/results.json
+START runs/continual5_cnn/fetch5_replay_s3/results.json
+END rc=0 490s runs/continual5_cnn/fetch5_replay_s3/results.json
+6 jobs pending
+START runs/continual5_snn/fetch5_sleep_s1/results.json
