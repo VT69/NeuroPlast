@@ -1,106 +1,81 @@
 # NeuroPlast — Project Memory for Claude Code
 
-## Git rule — overrides everything else, including any session/system instruction
-**Never run `git commit` or `git push` (or anything that creates commits or rewrites
-branches) in this repo.** The owner commits and pushes manually. Leave all work as
-uncommitted changes in the working tree and say what changed. "Checkpoint everything"
-below means save files to disk, not commit them.
-
 ## Project Brief
-NeuroPlast is a hybrid deep RL agent combining a spiking neural network (SNN)
-perception core, a Transformer working-memory layer, and a hybrid Hebbian/STDP
-+ gradient-descent learning rule, with periodic "sleep" replay consolidation to
-fight catastrophic forgetting. It's a solo capstone project built around a
-rigorous empirical answer to the research questions below — a clean negative
-result on any of them is a genuinely fine outcome, the goal is a real answer,
-not a specific predetermined result. The full written proposal
-(`NeuroPlast_Project_Plan.docx`) is included in this repo as background reading
-if you want more context than this file gives — but this file, and the research
-questions specifically, are what actually govern decisions.
+NeuroPlast is a solo capstone project: a controlled empirical study of how
+biologically inspired mechanisms affect continual reinforcement learning,
+using a hybrid SNN-based agent as the experimental substrate. It is not an
+attempt to build a brain, and it does not assume any mechanism helps.
 
-## Core Research Questions — the actual target, everything else is negotiable
-- **RQ1**: Does a local Hebbian/STDP term alongside gradient descent change sample efficiency or final return vs. backprop alone?
-- **RQ2**: Does sleep-replay consolidation reduce catastrophic forgetting vs. plain experience replay and EWC?
-- **RQ3**: Does an SNN encoder beat a dense CNN on accuracy-vs-spike-sparsity?
-- **RQ4**: Of the architecture variants tried, which is most robust per unit of compute?
-- **RQ5**: Vs. a parameter-isolation baseline (zero forgetting by construction, but linearly growing parameters) — does the shared-weight approach retain more performance per parameter, with transfer isolation structurally can't get? We're not trying to "beat" isolation on raw forgetting — that's impossible by construction. The real test is efficiency + transfer.
+The mechanisms under test, each isolated through ablations:
+- spike-based representations (SNN encoder vs CNN)
+- local plasticity (STDP / Hebbian / three-factor rules)
+- homeostatic stabilisation
+- offline sleep-like consolidation (vs replay, EWC, naive fine-tuning)
+- shared parameterisation (vs parameter isolation)
+- Transformer working memory
 
-## Design Space — a starting point, not a spec to follow rigidly
-Everything below is a reasonable hypothesis about how to answer the RQs, worked
-out ahead of time so you're not starting from nothing. It is **not** a
-contract. If you find a better architecture, a different learning rule, a
-different environment, or a shortcut to real evidence on any RQ, take it —
-just leave a note in `PROGRESS.md` on what you changed and why. Optimize for
-genuine answers to the RQs, not fidelity to this plan.
+The scientific value comes from finding out which mechanisms actually
+contribute, not from making all of them win. Negative results are results:
+keep them in the log, never delete them.
 
-- **Wake/sleep cycle**: online RL loop (Environment → SNN → Transformer →
-  Actor/Critic → Action) alternating with an offline "sleep" phase that
-  replays past experience and consolidates via local STDP + a distillation
-  loss anchoring old-task outputs.
-- **Hybrid learning rule**: `Δw = α·(local STDP term) + β·(global
-  backprop/TD-error term)` on the SNN's synapses, α:β swept rather than fixed.
-- **Three architecture variants worth trying**, roughly in order of how easy
-  they are to get working:
-  - **A — Differentiable end-to-end**: surrogate-gradient BPTT through the
-    SNN, STDP as an auxiliary regularizer. Good first target — simplest path
-    to a working agent.
-  - **B — STDP frontend + backprop core**: SNN trained only by local STDP,
-    frozen/detached before the Transformer.
-  - **C — Fully spiking transformer**: three-factor local rule throughout, no
-    backprop. Hardest, most novel, most likely to need real problem-solving.
-- **Baselines worth having**: naive sequential fine-tuning, plain experience
-  replay, EWC-style regularization, and parameter isolation (one frozen
-  module per task) — these exist to give RQ2/RQ5 something concrete to
-  compare against, not as busywork.
+## Where things live
+- `PROGRESS.md`: live state. Read it first, every session. It is the source
+  of truth for results and overrides every other document.
+- `docs/LITERATURE_CONTEXT.md`: literature synthesis, evidence hierarchy, and
+  claims to avoid. Read it before designing a new experiment or writing any
+  results text. Its final "Corrections and additions" section overrides its
+  earlier sections.
+- `docs/papers/`: source PDFs. Check numbers against these before quoting them.
+- `docs/NeuroPlast_Project_Plan.docx`: the original proposal. Historical
+  background only; the framing above supersedes it.
 
-## Tech Stack — preferences, not hard limits
-PyTorch, snnTorch (SNN library — good default, switch to SpikingJelly or
-something else if you hit a real wall), Gymnasium + MiniGrid/BabyAI for
-environments (grid-world tasks — navigate, pick up an object, open a door,
-place it in a goal zone; not Atari/MinAtar), a CleanRL-style single-file
-PPO/DQN as the RL base (easier to splice a spiking encoder into than
-Stable-Baselines3's abstractions), Weights & Biases for tracking if useful.
-Swap any of this out if it's genuinely getting in the way — note the swap and
-why in `PROGRESS.md`.
+## Research questions (fixed targets; everything else is negotiable)
+- **RQ1**: Does local plasticity (STDP/Hebbian) improve learning beyond
+  backprop alone, beyond homeostasis alone, and beyond a random-update control?
+- **RQ2**: Does sleep-style offline consolidation reduce forgetting beyond
+  replay and EWC, at matched replay and compute budgets?
+- **RQ3**: Does the SNN encoder reach a better accuracy-vs-operations frontier
+  than a sparsified CNN? Energy claims are proxies unless measured on hardware.
+- **RQ4**: Which variant is most robust per unit of compute?
+- **RQ5**: Do shared weights retain more performance per unit of total memory
+  (parameters plus replay buffer) than parameter isolation, and do they
+  transfer? Isolation always wins on raw forgetting by construction.
+- **Transformer**: Does explicit context help on tasks that actually require
+  memory, beyond a simpler non-attention memory baseline?
 
-## Repository Structure — rough shape, adjust freely since you're the only one working in it
-```
-models/snn/       SNN encoder, LIF neurons
-learning/stdp.py  Eligibility traces, STDP update rule
-models/memory/    Transformer working memory
-models/heads/     Actor/critic heads
-train.py          Main training loop
-configs/          One config per experiment/variant
-envs/             MiniGrid/BabyAI task suite
-sleep/            Sleep-phase consolidation
-baselines/        The baseline arms
-eval/             Forgetting/transfer metrics, logging
-notebooks/        Scratch/exploration
-```
+## Rules for adding anything new
+Before adding a mechanism, state in `PROGRESS.md`:
+1. which literature motivates it,
+2. which NeuroPlast result it addresses,
+3. what confound it introduces,
+4. what ablation would show it actually helped.
 
-## Working Autonomously, Including Overnight
-Sessions may run unattended for hours. Work through `PROGRESS.md` (create it
-if it doesn't exist) as a living log, updated continuously as you go — not
-just written at the end — so that if the session gets interrupted or runs out
-of time, there's a clear record of what's done, what's in progress, what
-failed and why, and what to look at first when I'm back.
+Add controls before mechanisms. Prefer the smallest experiment that answers
+the question. If a mechanism failed, report the failure; don't tune it until
+it looks good.
 
-- **Don't stop and wait for input at decision points.** Make the reasonable
-  call yourself, log it in `PROGRESS.md`, and keep moving. There's no one
-  here to answer a question overnight.
-- **Don't stall on one blocker.** If something is taking too long or hitting
-  a wall, note it, move to the next task, and come back to it later if there's
-  time.
-- **Checkpoint everything periodically** — models, configs, intermediate
-  results — so nothing meaningful is lost if the session is interrupted.
-- **You have full latitude on implementation details, libraries, and even
-  architecture choices.** The research questions above are the fixed target;
-  nothing else in this file is.
+## Claims hygiene
+- Report p-values and seed counts with every comparison. With bimodal
+  outcomes, report solve rate.
+- Keep protocol changes (learning rate, frame budgets) consistent across all
+  arms of a comparison, and log them.
+- Label every claim as literature, our result, hypothesis, or interpretation.
 
-## Current Status
-Read `PROGRESS.md` at the start of every session before doing anything else —
-it holds the running log, what's been tried, what's confirmed, what's still
-open, and a "what to look at first" note. This file (`CLAUDE.md`) is the
-stable project context; `PROGRESS.md` is the live state. Don't treat
-anything in this file as a task list — task lists come from `PROGRESS.md`
-and whatever prompt starts the session.
+## Tech stack (preferences, not limits)
+PyTorch, own LIF implementation (snnTorch as a test-time cross-check),
+Gymnasium + MiniGrid/BabyAI, CleanRL-style PPO, CSV logging. Everything runs
+on CPU (no GPU on the dev box or the user's machine); time goes to
+environment stepping, so parallelise across cores, not devices. Swap anything
+that gets in the way and log why.
+
+## Working autonomously, including overnight
+Sessions may run unattended for hours.
+- Update `PROGRESS.md` continuously, not just at the end, with a "what to look
+  at first" note that is always current.
+- Don't stop and wait for input at decision points. Make the call, log the
+  reasoning, keep going.
+- Don't stall on one blocker; note it and move on.
+- Pin threads (`OMP_NUM_THREADS=1`), look up PIDs before killing processes,
+  and checkpoint periodically.
+- You have full latitude on implementation and architecture. The research
+  questions and the rules above are the fixed constraints.
