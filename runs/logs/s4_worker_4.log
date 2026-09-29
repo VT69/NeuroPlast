@@ -1,3 +1,5 @@
 === restart 2026-09-29T18:37:55Z ===
 26 jobs pending
 START runs/s4_mem_probe/probe_S13_cnn_fs12_s1/eval.json
+END rc=0 3125s runs/s4_mem_probe/probe_S13_cnn_fs12_s1/eval.json
+START runs/rq1_v2/rq1v2_dfae_homeo_s6/eval.json

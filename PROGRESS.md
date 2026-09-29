@@ -59,6 +59,27 @@ sleep (see code changes). Rerun seed 1 of fetch3 naive and sleep (CNN, cl_cnn.ya
 final-agent checkpoint (check: R should reproduce the original seed-1 runs), then record GIFs of each agent on every
 task (sampled policy, same env seeds for both agents) into `demo/assets/` with an index.
 
+### Block 3 result: no memory benchmark established within budget (pre-registered outcome), 19:35 UTC
+Probe (1 seed, lr 3e-4, 2M frames, eval = 200 episodes, sampled policy; chance at the junction = 0.50):
+| map | CNN single frame | CNN frame stack 12 | fs12 train return, 75% -> 100% of frames | episode length |
+|---|---|---|---|---|
+| MemoryS11 | 0.430 | 0.465 | 0.491 -> 0.509 (+0.018) | 9-10 steps |
+| MemoryS13 | 0.485 | 0.460 | 0.491 -> 0.477 (-0.014) | 12-13 steps |
+**Decision by the pre-registered rule:** neither map qualifies (fs12 would need >= fs1 + 0.25) and fs12 is not
+still rising (<= 0.05 over the last 25%, the same threshold as the frames rule, since "still rising" had no
+number), so the **main arms were not run** and the planned test (SNN+Transformer vs SNN fs12) does not exist.
+**Reading (our result, n=1 per cell).** The memoryless floor works as intended: at chance on both maps, unlike
+S7 (91.5%). But the memory-equipped CNN is also at chance, and episode lengths (9-13 steps ~ walking straight to
+the junction) show why: no agent learned the information-gathering behaviour (turn back, look at the cue, then
+go). With a frame stack the cue is in the input only in episodes that start next to it (about 1 in 8 starts on
+S11), so the reward signal for using memory is weak. The bottleneck is exploration/credit assignment, not context
+length, and a 2M-frame PPO budget is not enough on these maps. **Transformer question: remains untested**; the
+honest statement is that none of our MiniGrid memory maps gave a usable benchmark at this compute (S7 doesn't need
+memory, S11/S13 aren't learned by memory agents in 2M frames).
+**Exploratory extension (NOT pre-registered, decided after seeing the probe):** S11 CNN fs12 at 6M frames, 1 seed
+(~2.6 core-h of the ~14 freed by skipping the main arms), only to size a future test ("is it learnable with 3x
+the frames?"). It enters no test. Queue `jobs/s4_q2.txt`.
+
 ### Block 4 result: demo assets (done 19:02 UTC) -> `demo/assets/index.md`
 Reruns of fetch3 naive and sleep, CNN trunk, seed 1 (`runs/demo_ckpt`, 4.5 and 6 min) **reproduce the original
 seed-1 accuracy matrices exactly** (naive final row 0.126 / 0.542 / 0.956; sleep 0.978 / 0.979 / 0.979), so the
@@ -71,11 +92,11 @@ it was that room, not a bug: 5/6 from that seed. The committed GIFs use the eval
 ### Plan and status
 | block | runs | est. core-h | status |
 |---|---|---|---|
-| 3 probe | 4 | 1.3 | queued |
+| 3 probe | 4 | 1.3 | **done** 19:35: no benchmark (see Block 3 result) |
 | 4 reruns + GIFs | 2 | 0.6 | **done** 19:02 |
 | 2 DFA +/- homeostasis | 12 | 2.5 | queued |
 | 1 replay s7-8, sleep_matched s1-6 | 8 | 9.5 | queued |
-| 3 main (4 arms x 3 seeds, +GRU if budget) | 12-15 | 11-17 | after probe |
+| 3 main (4 arms x 3 seeds, +GRU if budget) | 12-15 | 11-17 | **not run** (pre-registered rule); exploratory 6M fs12 probe instead (2.6) |
 | 1 sleep_matched s7-8 | 2 | 2.7 | after replay s7-8 |
 
 ## Session 3 (2026-09-28) — controls & statistical confidence (complete, ~19:40 UTC)

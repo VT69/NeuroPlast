@@ -5,3 +5,7 @@ END rc=0 1095s runs/s4_mem_probe/probe_S13_cnn_fs1_s1/eval.json
 START runs/demo_ckpt/fetch3_sleep_s1/results.json
 END rc=0 350s runs/demo_ckpt/fetch3_sleep_s1/results.json
 START runs/rq1_v2/rq1v2_dfae_s7/eval.json
+END rc=0 730s runs/rq1_v2/rq1v2_dfae_s7/eval.json
+START runs/rq1_v2/rq1v2_dfae_s9/eval.json
+END rc=0 690s runs/rq1_v2/rq1v2_dfae_s9/eval.json
+START runs/rq1_v2/rq1v2_dfae_homeo_s4/eval.json
