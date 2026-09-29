@@ -9,3 +9,7 @@ END rc=0 730s runs/rq1_v2/rq1v2_dfae_s6/eval.json
 START runs/rq1_v2/rq1v2_dfae_s8/eval.json
 END rc=0 700s runs/rq1_v2/rq1v2_dfae_s8/eval.json
 START runs/rq1_v2/rq1v2_dfae_s10/eval.json
+END rc=0 815s runs/rq1_v2/rq1v2_dfae_s10/eval.json
+START runs/rq1_v2/rq1v2_dfae_homeo_s7/eval.json
+END rc=0 836s runs/rq1_v2/rq1v2_dfae_homeo_s7/eval.json
+START runs/continual_hybrid/fetch3_replay_s7/results.json

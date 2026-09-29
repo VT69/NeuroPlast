@@ -20,3 +20,21 @@
 [rq1v2_dfae_s10] upd 100/195 frames 204800 fps 581 ret 0.006 len 358.2 ent 1.764 act 0.325
 [rq1v2_dfae_s10] upd 105/195 frames 215040 fps 582 ret 0.002 len 359.5 ent 1.818 act 0.322
 [rq1v2_dfae_s10] upd 110/195 frames 225280 fps 583 ret 0.002 len 359.5 ent 1.881 act 0.319
+[rq1v2_dfae_s10] upd 115/195 frames 235520 fps 582 ret 0.002 len 359.5 ent 1.893 act 0.335
+[rq1v2_dfae_s10] upd 120/195 frames 245760 fps 577 ret 0.014 len 355.4 ent 1.869 act 0.338
+[rq1v2_dfae_s10] upd 125/195 frames 256000 fps 572 ret 0.012 len 355.9 ent 1.883 act 0.330
+[rq1v2_dfae_s10] upd 130/195 frames 266240 fps 567 ret 0.012 len 355.9 ent 1.910 act 0.324
+[rq1v2_dfae_s10] upd 135/195 frames 276480 fps 562 ret 0.016 len 354.9 ent 1.924 act 0.324
+[rq1v2_dfae_s10] upd 140/195 frames 286720 fps 557 ret 0.007 len 357.9 ent 1.881 act 0.335
+[rq1v2_dfae_s10] upd 145/195 frames 296960 fps 554 ret 0.012 len 356.5 ent 1.896 act 0.338
+[rq1v2_dfae_s10] upd 150/195 frames 307200 fps 551 ret 0.008 len 357.6 ent 1.921 act 0.336
+[rq1v2_dfae_s10] upd 155/195 frames 317440 fps 547 ret 0.026 len 352.1 ent 1.830 act 0.339
+[rq1v2_dfae_s10] upd 160/195 frames 327680 fps 544 ret 0.019 len 354.3 ent 1.862 act 0.336
+[rq1v2_dfae_s10] upd 165/195 frames 337920 fps 540 ret 0.021 len 354.0 ent 1.885 act 0.333
+[rq1v2_dfae_s10] upd 170/195 frames 348160 fps 538 ret 0.023 len 353.2 ent 1.892 act 0.322
+[rq1v2_dfae_s10] upd 175/195 frames 358400 fps 535 ret 0.048 len 344.7 ent 1.906 act 0.323
+[rq1v2_dfae_s10] upd 180/195 frames 368640 fps 533 ret 0.065 len 339.0 ent 1.874 act 0.321
+[rq1v2_dfae_s10] upd 185/195 frames 378880 fps 531 ret 0.060 len 340.9 ent 1.877 act 0.327
+[rq1v2_dfae_s10] upd 190/195 frames 389120 fps 528 ret 0.046 len 345.5 ent 1.869 act 0.321
+[rq1v2_dfae_s10] upd 195/195 frames 399360 fps 524 ret 0.024 len 353.2 ent 1.872 act 0.322
+EVAL {"return_mean": 0.043399999886751174, "success": 0.12, "len_mean": 347.44, "train_frames": 399360, "final_train_return": 0.024049999862909316}

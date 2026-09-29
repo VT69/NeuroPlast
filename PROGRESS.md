@@ -59,6 +59,21 @@ sleep (see code changes). Rerun seed 1 of fetch3 naive and sleep (CNN, cl_cnn.ya
 final-agent checkpoint (check: R should reproduce the original seed-1 runs), then record GIFs of each agent on every
 task (sampled policy, same env seeds for both agents) into `demo/assets/` with an index.
 
+### Block 2 result (our result, n=10/arm): DFA with vs without homeostasis, DoorKey-6x6 (`results/s4_stats.md`), 20:00 UTC
+| arm | solved | AUC | final eval | failing seeds (eval) |
+|---|---|---|---|---|
+| DFA + homeostasis | **7/10** | **0.402 ± 0.307** | 0.645 ± 0.443 | s4 (0.00), s9 (0.04), s10 (0.00) |
+| DFA | 2/10 | 0.076 ± 0.101 | 0.188 ± 0.254 | 8 seeds (solvers: s5 0.71, s9 0.53) |
+| planned test | raw p | Holm (2 tests) |
+|---|---|---|
+| solve rate, Fisher exact | 0.070 | 0.070 (**not significant**) |
+| AUC, Welch (+0.326) | 0.0087 | **0.017 (significant)** |
+**Reading.** Homeostasis makes DFA learn faster on average (AUC 5x higher, survives Holm), but the solve-rate effect
+does not reach significance: with 10 seeds, 3 of the 7 new homeostasis seeds failed outright, so session 2's
+"3/3 vs 1/5, p=0.0003 on AUC" was an overestimate of reliability. Interpretation: homeostasis is a real
+but partial fix for DFA's runaway firing; it does not make weight-transport-free learning reliable on DoorKey-6x6.
+Compare backprop + homeostasis (session 3): 10/10 solved, AUC 0.616.
+
 ### Block 3 result: no memory benchmark established within budget (pre-registered outcome), 19:35 UTC
 Probe (1 seed, lr 3e-4, 2M frames, eval = 200 episodes, sampled policy; chance at the junction = 0.50):
 | map | CNN single frame | CNN frame stack 12 | fs12 train return, 75% -> 100% of frames | episode length |
@@ -94,7 +109,7 @@ it was that room, not a bug: 5/6 from that seed. The committed GIFs use the eval
 |---|---|---|---|
 | 3 probe | 4 | 1.3 | **done** 19:35: no benchmark (see Block 3 result) |
 | 4 reruns + GIFs | 2 | 0.6 | **done** 19:02 |
-| 2 DFA +/- homeostasis | 12 | 2.5 | queued |
+| 2 DFA +/- homeostasis | 12 | 2.5 | **done** 20:00 (see Block 2 result) |
 | 1 replay s7-8, sleep_matched s1-6 | 8 | 9.5 | queued |
 | 3 main (4 arms x 3 seeds, +GRU if budget) | 12-15 | 11-17 | **not run** (pre-registered rule); exploratory 6M fs12 probe instead (2.6) |
 | 1 sleep_matched s7-8 | 2 | 2.7 | after replay s7-8 |

@@ -1,0 +1,40 @@
+act_reg: 0.0
+anneal_lr: true
+ckpt_every: 20
+clip_coef: 0.2
+dfa: true
+dfa_scope: encoder
+enc_kwargs:
+  T: 4
+encoder: snn
+ent_coef: 0.01
+env_id: MiniGrid-DoorKey-6x6-v0
+env_kwargs: {}
+feat_dim: 128
+frame_stack: 1
+gae_lambda: 0.95
+gamma: 0.99
+hidden: 64
+lr: 0.001
+max_grad_norm: 0.5
+mem_cache: true
+mem_kwargs: {}
+memory: false
+minibatch_size: 256
+multihead: false
+n_tasks: 1
+num_envs: 16
+num_steps: 128
+out_dir: runs/rq1_v2
+run_name: rq1v2_dfae_homeo_s10
+seed: 10
+stdp:
+  alpha: 0.0
+  homeo: 0.15
+target_kl: 0.03
+task_id: 0
+threads: 1
+total_frames: 400000
+update_epochs: 4
+vf_coef: 0.5
+window: 1

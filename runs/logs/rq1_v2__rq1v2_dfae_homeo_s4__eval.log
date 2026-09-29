@@ -15,3 +15,26 @@
 [rq1v2_dfae_homeo_s4] upd 75/195 frames 153600 fps 560 ret 0.005 len 358.7 ent 1.817 act 0.150
 [rq1v2_dfae_homeo_s4] upd 80/195 frames 163840 fps 559 ret 0.002 len 359.6 ent 1.834 act 0.154
 [rq1v2_dfae_homeo_s4] upd 85/195 frames 174080 fps 560 ret 0.006 len 358.5 ent 1.827 act 0.164
+[rq1v2_dfae_homeo_s4] upd 90/195 frames 184320 fps 559 ret 0.011 len 356.7 ent 1.815 act 0.174
+[rq1v2_dfae_homeo_s4] upd 95/195 frames 194560 fps 553 ret 0.017 len 354.9 ent 1.810 act 0.148
+[rq1v2_dfae_homeo_s4] upd 100/195 frames 204800 fps 545 ret 0.018 len 354.8 ent 1.811 act 0.141
+[rq1v2_dfae_homeo_s4] upd 105/195 frames 215040 fps 540 ret 0.007 len 358.1 ent 1.809 act 0.149
+[rq1v2_dfae_homeo_s4] upd 110/195 frames 225280 fps 535 ret 0.001 len 359.9 ent 1.830 act 0.168
+[rq1v2_dfae_homeo_s4] upd 115/195 frames 235520 fps 531 ret 0.001 len 359.8 ent 1.833 act 0.174
+[rq1v2_dfae_homeo_s4] upd 120/195 frames 245760 fps 527 ret 0.004 len 359.4 ent 1.785 act 0.153
+[rq1v2_dfae_homeo_s4] upd 125/195 frames 256000 fps 524 ret 0.004 len 359.4 ent 1.761 act 0.149
+[rq1v2_dfae_homeo_s4] upd 130/195 frames 266240 fps 520 ret 0.004 len 359.4 ent 1.779 act 0.151
+[rq1v2_dfae_homeo_s4] upd 135/195 frames 276480 fps 517 ret 0.000 len 360.0 ent 1.796 act 0.151
+[rq1v2_dfae_homeo_s4] upd 140/195 frames 286720 fps 513 ret 0.000 len 360.0 ent 1.876 act 0.148
+[rq1v2_dfae_homeo_s4] upd 145/195 frames 296960 fps 509 ret 0.000 len 360.0 ent 1.787 act 0.151
+[rq1v2_dfae_homeo_s4] upd 150/195 frames 307200 fps 507 ret 0.005 len 358.3 ent 1.873 act 0.146
+[rq1v2_dfae_homeo_s4] upd 155/195 frames 317440 fps 505 ret 0.005 len 358.3 ent 1.866 act 0.157
+[rq1v2_dfae_homeo_s4] upd 160/195 frames 327680 fps 502 ret 0.005 len 358.3 ent 1.900 act 0.153
+[rq1v2_dfae_homeo_s4] upd 165/195 frames 337920 fps 499 ret 0.005 len 358.3 ent 1.890 act 0.149
+[rq1v2_dfae_homeo_s4] upd 170/195 frames 348160 fps 497 ret 0.008 len 357.2 ent 1.883 act 0.142
+[rq1v2_dfae_homeo_s4] upd 175/195 frames 358400 fps 493 ret 0.008 len 357.2 ent 1.884 act 0.140
+[rq1v2_dfae_homeo_s4] upd 180/195 frames 368640 fps 490 ret 0.008 len 357.2 ent 1.887 act 0.158
+[rq1v2_dfae_homeo_s4] upd 185/195 frames 378880 fps 486 ret 0.000 len 360.0 ent 1.891 act 0.158
+[rq1v2_dfae_homeo_s4] upd 190/195 frames 389120 fps 485 ret 0.000 len 360.0 ent 1.891 act 0.153
+[rq1v2_dfae_homeo_s4] upd 195/195 frames 399360 fps 482 ret 0.003 len 359.1 ent 1.886 act 0.155
+EVAL {"return_mean": 0.002862499952316284, "success": 0.005, "len_mean": 359.055, "train_frames": 399360, "final_train_return": 0.003375000059604645}
