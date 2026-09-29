@@ -59,11 +59,20 @@ sleep (see code changes). Rerun seed 1 of fetch3 naive and sleep (CNN, cl_cnn.ya
 final-agent checkpoint (check: R should reproduce the original seed-1 runs), then record GIFs of each agent on every
 task (sampled policy, same env seeds for both agents) into `demo/assets/` with an index.
 
+### Block 4 result: demo assets (done 19:02 UTC) -> `demo/assets/index.md`
+Reruns of fetch3 naive and sleep, CNN trunk, seed 1 (`runs/demo_ckpt`, 4.5 and 6 min) **reproduce the original
+seed-1 accuracy matrices exactly** (naive final row 0.126 / 0.542 / 0.956; sleep 0.978 / 0.979 / 0.979), so the
+GIFs show the agents that were scored. `scripts/record_demo.py` renders each agent (after all 3 tasks) on each task:
+3 episodes, sampled policy as in the eval, same rooms for both agents (the scored evaluation's first rooms).
+Naive: task 2 (trained last) 3/3 episodes; task 0 1/3 (two 256-step timeouts); task 1 2/3. Sleep: 9/9.
+(A dry run on arbitrary seed 777 had a naive agent spinning in place on task 2: checked against `evaluate()`,
+it was that room, not a bug: 5/6 from that seed. The committed GIFs use the eval's own rooms instead.)
+
 ### Plan and status
 | block | runs | est. core-h | status |
 |---|---|---|---|
 | 3 probe | 4 | 1.3 | queued |
-| 4 reruns + GIFs | 2 | 0.6 | queued |
+| 4 reruns + GIFs | 2 | 0.6 | **done** 19:02 |
 | 2 DFA +/- homeostasis | 12 | 2.5 | queued |
 | 1 replay s7-8, sleep_matched s1-6 | 8 | 9.5 | queued |
 | 3 main (4 arms x 3 seeds, +GRU if budget) | 12-15 | 11-17 | after probe |

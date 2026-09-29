@@ -1,0 +1,7 @@
+=== restart 2026-09-29T18:37:46Z ===
+26 jobs pending
+START runs/s4_mem_probe/probe_S11_cnn_fs1_s1/eval.json
+END rc=0 1095s runs/s4_mem_probe/probe_S11_cnn_fs1_s1/eval.json
+START runs/demo_ckpt/fetch3_naive_s1/results.json
+END rc=0 270s runs/demo_ckpt/fetch3_naive_s1/results.json
+START runs/rq1_v2/rq1v2_dfae_s6/eval.json
