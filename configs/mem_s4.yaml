@@ -1,0 +1,5 @@
+# Session 4, block 3: memory benchmark. One learning rate for every arm (3e-4: the rate the
+# SNN+Transformer needs, session 2). Map chosen by the pre-registered CNN probe (PROGRESS.md).
+env_id: MiniGrid-MemoryS11-v0
+lr: 0.0003
+total_frames: 2000000

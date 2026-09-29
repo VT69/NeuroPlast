@@ -71,8 +71,13 @@ class _SleepHook:
 class Sleep:
     def __init__(self, period=25, steps_per_phase=700, batch=128, lr=3e-4, buffer_per_task=5000,
                  rehearsal_coef=1.0, stdp_alpha=0.0, stdp_layers="all", dream=False, distill=True,
-                 end_of_task_sleep=True, stdp_center=False, stdp_homeo=None):
+                 end_of_task_sleep=True, stdp_center=False, stdp_homeo=None, replay_budget=None):
+        """replay_budget: if set, the TOTAL number of old-task replayed states over the whole sequence
+        (a multiple of `batch`). The steps are spread as evenly as possible over the sleep phases the
+        schedule will run, replacing steps_per_phase, so a sleep run can be matched exactly to a replay
+        run's measured `replay_samples` (session 4, block 1)."""
         self.period, self.steps, self.batch, self.lr = period, steps_per_phase, batch, lr
+        self.replay_budget, self._plan = replay_budget, None
         self.buffer_per_task, self.rehearsal_coef = buffer_per_task, rehearsal_coef
         self.stdp_alpha, self.stdp_layers, self.dream, self.distill = stdp_alpha, stdp_layers, dream, distill
         self.end_of_task_sleep = end_of_task_sleep
@@ -85,7 +90,25 @@ class Sleep:
 
     def hooks(self, agent, task_idx, cfg):
         self.reservoir = _Reservoir()
+        if self.replay_budget is not None and self._plan is None:
+            self._plan = self.plan_steps(cfg)
         return [_SleepHook(self, task_idx)]
+
+    def plan_steps(self, cfg):
+        """Per-phase step counts summing to replay_budget / batch. Phases run only once the buffer is
+        non-empty (tasks 1..T-1): every `period` updates plus one at the end of each such task."""
+        assert self.replay_budget % self.batch == 0, "replay_budget must be a multiple of batch"
+        n_steps = self.replay_budget // self.batch
+        updates = max(cfg.total_frames // (cfg.num_envs * cfg.num_steps), 1)
+        per_task = updates // self.period + (1 if self.end_of_task_sleep else 0)
+        n_phases = per_task * (cfg.n_tasks - 1)
+        q, r = divmod(n_steps, n_phases)
+        return [q + (1 if i < r else 0) for i in range(n_phases)]
+
+    def _phase_steps(self):
+        if self._plan is None:
+            return self.steps
+        return self._plan[self.n_phases] if self.n_phases < len(self._plan) else 0
 
     def end_task(self, agent, task_idx, cfg):
         if self.end_of_task_sleep and len(self.buf):
@@ -107,7 +130,8 @@ class Sleep:
         opt = torch.optim.Adam(agent.parameters(), lr=self.lr)
         agent.train()
         tot = 0.0
-        for _ in range(self.steps):
+        steps = self._phase_steps()
+        for _ in range(steps):
             loss = 0.0
             if self.dream and stdp is not None:
                 # dream: random binary frames with the stored mean input statistics, STDP only
@@ -140,4 +164,4 @@ class Sleep:
             agent.encoder.record_spikes = was_recording  # a wake-time STDP hook may need it
             agent.encoder.record = []
         self.n_phases += 1
-        return dict(sleep_loss=tot / max(self.steps, 1))
+        return dict(sleep_loss=tot / max(steps, 1))

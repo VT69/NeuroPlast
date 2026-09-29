@@ -3,6 +3,72 @@
 Living log, updated as work happens. Newest status at the top; decisions log
 and detailed notes below.
 
+## Session 4 (2026-09-29) — final experimental session before the results freeze
+Machine: fresh container, 4 cores, 15 GB RAM, 20 GB free disk; 4 workers, OMP_NUM_THREADS=1. Heartbeat Monitor
+(4-min status line) runs whenever the queue runs: the container is reclaimed ~5 min after the session goes idle
+(session 3 lesson). Budget ~9 h x 4 cores = ~36 core-h; plan below uses ~30.
+
+### Code changes (tests: `tests/test_session4.py`, full suite 28/28 passing)
+* `Sleep(replay_budget=N)`: total old-task replayed states over the whole sequence, spread as evenly as possible
+  over the schedule's sleep phases (replaces steps_per_phase). Test: a sleep run consumes exactly N.
+* `continual.py` saves `final_agent.pt` after the last `end_task`. `taskN/final.pt` is saved *before* end_task,
+  so for sleep it misses the last end-of-task sleep phase and is not the agent scored in R.
+* `mem_kwargs={kind: gru}`: 1-layer GRU over the same window of encoded frames as the Transformer (non-attention
+  memory baseline with identical context). Test: output matches the cached-feature path and depends on history.
+
+### Pre-registration (written before any session-4 run; one planned test per block)
+**Block 1 — sleep vs replay, replay samples matched exactly (RQ2).** The 28% mismatch exists only on the full
+hybrid: sleep 16 phases x 700 steps x 128 = 1,433,600 old-task states per run vs replay 0.91-1.48M (replay's count
+varies by seed because PPO's KL early stopping skips minibatches). CNN/SNN trunks are already ~matched (sleep
+0.54M vs replay 0.55-0.59M), so the block runs on the hybrid. Design: sleep seed s gets
+`replay_budget` = the measured `replay_samples` of replay seed s (exact, per seed), everything else identical
+(cl_hybrid_v2.yaml: lr 3e-4, 400k frames/task, buffer 5000/task, fetch3). Existing replay seeds 1-6 are reused;
+replay seeds 7-8 are new, then matched sleep seeds 7-8. Arm name `sleep_matched`.
+Planned test: final ACC, sleep_matched vs replay, two-sided Welch, alpha 0.05, n = 8 vs 8.
+Stopping rule (decided now): if seeds 7-8 of both arms don't finish this session, analyse seeds 1-6 (6 vs 6).
+Descriptive only: FORGET/BWT; matched vs unmatched sleep on the same seeds (how much the extra replay mattered).
+What "matched" does not remove: sleep still differs in *when* replay happens (offline phases vs interleaved) and
+adds current-task rehearsal on the same number of steps; that is the mechanism under test.
+
+**Block 2 — DFA with vs without homeostasis (RQ1-adjacent).** DoorKey-6x6, rq1_v2.yaml (400k frames), DFA on the
+SNN encoder (`dfa=true dfa_scope=encoder`) vs the same + homeostasis (`stdp={alpha: 0.0, homeo: 0.15}`), 10 seeds
+each (existing dfae s1-5 and dfae_homeo s1-3 reused; same config and code path, new seeds 6-10 and 4-10).
+Planned tests (two statistics, one contrast; Holm across the two): (i) solve rate (final eval return > 0.5),
+two-sided Fisher exact; (ii) AUC (mean training return), two-sided Welch. Alpha 0.05 after Holm.
+
+**Block 3 — memory benchmark (Transformer question).** *Probe (sizing, no test):* CNN single frame (fs1) and CNN
+frame stack 12 (fs12) on MiniGrid-MemoryS11 and -S13, lr 3e-4, 2M frames, seed 1 (4 runs). Why S11/S13: on S7 a
+memoryless CNN got 91.5% because the 7x7 view (which includes the agent's own row) shows the cue and both choice
+objects from one pose (cue 4-5 cells from the junction); on S11/S13 the cue is 8/10 cells from the junction,
+beyond the 6-cell view depth, and the 1-wide hallway can't encode the cue by position, so a memoryless agent that
+reaches the junction is at 50%. Window 12: after the last possible cue sighting an optimal path needs ~6 (S11) /
+~8 (S13) more actions, so K=12 leaves slack. *Map rule:* use the smallest map with fs1 success <= 0.60 and
+fs12 >= fs1 + 0.25. If neither qualifies: if fs12 is still rising at 2M, rerun S11 fs12 at 4M; otherwise report
+that no memory benchmark was established within budget (negative result) and skip the main runs.
+*Frames:* 2M per run, or 3M if the fs12 probe's training return rose by > 0.05 over its last 25% of frames.
+*Main arms (3 seeds each, lr 3e-4 for all, window/stack K=12):* CNN fs1, CNN fs12, SNN fs12, SNN+Transformer
+(window 12), and, last and only if budget allows, SNN+GRU (window 12).
+Planned test: eval success (200 episodes, sampled policy), SNN+Transformer vs SNN fs12, two-sided Welch, n=3 vs 3.
+Descriptive: CNN fs1 (memoryless floor), CNN fs12 (does memory help at all), SNN+GRU.
+*Investigation trigger:* if SNN fs12 mean success < CNN fs1 mean - 0.20, before interpreting: run SNN fs1 on the
+same map (is it the spiking trunk or the stacked input?) and check per-run encoder activity; the planned test is
+still reported, labelled confounded if the diagnostic points at the trunk.
+
+**Block 4 — demo assets (no test).** Checkpoints exist for every fetch3 CNN run, but the sleep ones are pre-final-
+sleep (see code changes). Rerun seed 1 of fetch3 naive and sleep (CNN, cl_cnn.yaml) into `runs/demo_ckpt` with the
+final-agent checkpoint (check: R should reproduce the original seed-1 runs), then record GIFs of each agent on every
+task (sampled policy, same env seeds for both agents) into `demo/assets/` with an index.
+
+### Plan and status
+| block | runs | est. core-h | status |
+|---|---|---|---|
+| 3 probe | 4 | 1.3 | queued |
+| 4 reruns + GIFs | 2 | 0.6 | queued |
+| 2 DFA +/- homeostasis | 12 | 2.5 | queued |
+| 1 replay s7-8, sleep_matched s1-6 | 8 | 9.5 | queued |
+| 3 main (4 arms x 3 seeds, +GRU if budget) | 12-15 | 11-17 | after probe |
+| 1 sleep_matched s7-8 | 2 | 2.7 | after replay s7-8 |
+
 ## Session 3 (2026-09-28) — controls & statistical confidence (complete, ~19:40 UTC)
 No new mechanisms. Colab unavailable, so extra seeds ran here.
 Machine: 4 cores, 15 GB RAM, 20 GB free disk -> 4 workers, OMP_NUM_THREADS=1.

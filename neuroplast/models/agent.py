@@ -41,7 +41,13 @@ class Agent(nn.Module):
         self.feat_dim = feat_dim
         self.window = window if memory else (frame_stack if frame_stack > 1 else 1)
         if memory:
-            self.memory = WorkingMemory(feat_dim, window, **(mem_kwargs or {}))
+            mk = dict(mem_kwargs or {})
+            kind = mk.pop("kind", "transformer")
+            if kind == "gru":
+                from neuroplast.models.memory.transformer import GRUMemory
+                self.memory = GRUMemory(feat_dim, window, **mk)
+            else:
+                self.memory = WorkingMemory(feat_dim, window, **mk)
         self.n_tasks = n_tasks
         self.task_emb = nn.Embedding(n_tasks, feat_dim) if (n_tasks > 1 and task_embed) else None
         if self.task_emb is not None:

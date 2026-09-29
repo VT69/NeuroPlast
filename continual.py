@@ -83,6 +83,12 @@ def run(suite, method, cfg, seed, out_root="runs/continual", eval_episodes=100, 
                    cfg=asdict(base), method_kwargs=method_kwargs or {})
         with open(os.path.join(out, "results.json"), "w") as f:
             json.dump(res, f, indent=1)
+    # the agent that was actually scored in R[-1]: taskN/final.pt is saved before end_task, so for sleep it
+    # misses the end-of-task sleep phase (session 4: demo assets need the true final agent)
+    if isolation:
+        torch.save([a.state_dict() for a in agents], os.path.join(out, "final_agent.pt"))
+    else:
+        torch.save(shared.state_dict(), os.path.join(out, "final_agent.pt"))
     return res
 
 

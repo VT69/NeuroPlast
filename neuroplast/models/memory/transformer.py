@@ -31,3 +31,19 @@ class WorkingMemory(nn.Module):
         # the newest slot is always valid, so no row is fully masked
         out = self.tf(h, src_key_padding_mask=~mask)
         return self.norm(out[:, -1])
+
+
+class GRUMemory(nn.Module):
+    """Non-attention working memory over the SAME window of encoded frames as WorkingMemory (session 4,
+    block 3): a 1-layer GRU run oldest -> newest; output = hidden state after the newest slot. Padding
+    slots (before the episode start) are zeroed, and they are always the oldest slots, so the GRU sees
+    zeros first and then the episode's frames. Same (B, K, D) + (B, K) mask interface."""
+
+    def __init__(self, dim=128, window=8, **_):
+        super().__init__()
+        self.window = window
+        self.gru = nn.GRU(dim, dim, batch_first=True)
+
+    def forward(self, x: torch.Tensor, mask: torch.Tensor) -> torch.Tensor:
+        out, h = self.gru(x * mask[..., None].to(x.dtype))
+        return h[-1]

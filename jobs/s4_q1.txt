@@ -1,0 +1,27 @@
+# session 4 queue 1: block 3 probe, block 4 demo reruns, block 2, block 1 (replay s7-8, matched sleep s1-6)
+runs/s4_mem_probe/probe_S11_cnn_fs1_s1/eval.json :: python train.py --config configs/mem_s4.yaml --set seed=1 run_name=probe_S11_cnn_fs1_s1 out_dir=runs/s4_mem_probe encoder=cnn frame_stack=1 env_id=MiniGrid-MemoryS11-v0
+runs/s4_mem_probe/probe_S11_cnn_fs12_s1/eval.json :: python train.py --config configs/mem_s4.yaml --set seed=1 run_name=probe_S11_cnn_fs12_s1 out_dir=runs/s4_mem_probe encoder=cnn frame_stack=12 env_id=MiniGrid-MemoryS11-v0
+runs/s4_mem_probe/probe_S13_cnn_fs1_s1/eval.json :: python train.py --config configs/mem_s4.yaml --set seed=1 run_name=probe_S13_cnn_fs1_s1 out_dir=runs/s4_mem_probe encoder=cnn frame_stack=1 env_id=MiniGrid-MemoryS13-v0
+runs/s4_mem_probe/probe_S13_cnn_fs12_s1/eval.json :: python train.py --config configs/mem_s4.yaml --set seed=1 run_name=probe_S13_cnn_fs12_s1 out_dir=runs/s4_mem_probe encoder=cnn frame_stack=12 env_id=MiniGrid-MemoryS13-v0
+runs/demo_ckpt/fetch3_naive_s1/results.json :: python continual.py --suite fetch3 --method naive --config configs/cl_cnn.yaml --seed 1 --out runs/demo_ckpt
+runs/demo_ckpt/fetch3_sleep_s1/results.json :: python continual.py --suite fetch3 --method sleep --config configs/cl_cnn.yaml --seed 1 --out runs/demo_ckpt
+runs/rq1_v2/rq1v2_dfae_s6/eval.json :: python train.py --config configs/rq1_v2.yaml --set seed=6 run_name=rq1v2_dfae_s6 out_dir=runs/rq1_v2 dfa=true dfa_scope=encoder
+runs/rq1_v2/rq1v2_dfae_s7/eval.json :: python train.py --config configs/rq1_v2.yaml --set seed=7 run_name=rq1v2_dfae_s7 out_dir=runs/rq1_v2 dfa=true dfa_scope=encoder
+runs/rq1_v2/rq1v2_dfae_s8/eval.json :: python train.py --config configs/rq1_v2.yaml --set seed=8 run_name=rq1v2_dfae_s8 out_dir=runs/rq1_v2 dfa=true dfa_scope=encoder
+runs/rq1_v2/rq1v2_dfae_s9/eval.json :: python train.py --config configs/rq1_v2.yaml --set seed=9 run_name=rq1v2_dfae_s9 out_dir=runs/rq1_v2 dfa=true dfa_scope=encoder
+runs/rq1_v2/rq1v2_dfae_s10/eval.json :: python train.py --config configs/rq1_v2.yaml --set seed=10 run_name=rq1v2_dfae_s10 out_dir=runs/rq1_v2 dfa=true dfa_scope=encoder
+runs/rq1_v2/rq1v2_dfae_homeo_s4/eval.json :: python train.py --config configs/rq1_v2.yaml --set seed=4 run_name=rq1v2_dfae_homeo_s4 out_dir=runs/rq1_v2 dfa=true dfa_scope=encoder "stdp={alpha: 0.0, homeo: 0.15}"
+runs/rq1_v2/rq1v2_dfae_homeo_s5/eval.json :: python train.py --config configs/rq1_v2.yaml --set seed=5 run_name=rq1v2_dfae_homeo_s5 out_dir=runs/rq1_v2 dfa=true dfa_scope=encoder "stdp={alpha: 0.0, homeo: 0.15}"
+runs/rq1_v2/rq1v2_dfae_homeo_s6/eval.json :: python train.py --config configs/rq1_v2.yaml --set seed=6 run_name=rq1v2_dfae_homeo_s6 out_dir=runs/rq1_v2 dfa=true dfa_scope=encoder "stdp={alpha: 0.0, homeo: 0.15}"
+runs/rq1_v2/rq1v2_dfae_homeo_s7/eval.json :: python train.py --config configs/rq1_v2.yaml --set seed=7 run_name=rq1v2_dfae_homeo_s7 out_dir=runs/rq1_v2 dfa=true dfa_scope=encoder "stdp={alpha: 0.0, homeo: 0.15}"
+runs/rq1_v2/rq1v2_dfae_homeo_s8/eval.json :: python train.py --config configs/rq1_v2.yaml --set seed=8 run_name=rq1v2_dfae_homeo_s8 out_dir=runs/rq1_v2 dfa=true dfa_scope=encoder "stdp={alpha: 0.0, homeo: 0.15}"
+runs/rq1_v2/rq1v2_dfae_homeo_s9/eval.json :: python train.py --config configs/rq1_v2.yaml --set seed=9 run_name=rq1v2_dfae_homeo_s9 out_dir=runs/rq1_v2 dfa=true dfa_scope=encoder "stdp={alpha: 0.0, homeo: 0.15}"
+runs/rq1_v2/rq1v2_dfae_homeo_s10/eval.json :: python train.py --config configs/rq1_v2.yaml --set seed=10 run_name=rq1v2_dfae_homeo_s10 out_dir=runs/rq1_v2 dfa=true dfa_scope=encoder "stdp={alpha: 0.0, homeo: 0.15}"
+runs/continual_hybrid/fetch3_replay_s7/results.json :: python continual.py --suite fetch3 --method replay --config configs/cl_hybrid_v2.yaml --seed 7 --out runs/continual_hybrid
+runs/continual_hybrid/fetch3_replay_s8/results.json :: python continual.py --suite fetch3 --method replay --config configs/cl_hybrid_v2.yaml --seed 8 --out runs/continual_hybrid
+runs/continual_hybrid/fetch3_sleep_matched_s1/results.json :: python continual.py --suite fetch3 --method sleep --config configs/cl_hybrid_v2.yaml --seed 1 --out runs/continual_hybrid --mk replay_budget=919680 --tag _matched
+runs/continual_hybrid/fetch3_sleep_matched_s2/results.json :: python continual.py --suite fetch3 --method sleep --config configs/cl_hybrid_v2.yaml --seed 2 --out runs/continual_hybrid --mk replay_budget=946432 --tag _matched
+runs/continual_hybrid/fetch3_sleep_matched_s3/results.json :: python continual.py --suite fetch3 --method sleep --config configs/cl_hybrid_v2.yaml --seed 3 --out runs/continual_hybrid --mk replay_budget=1475200 --tag _matched
+runs/continual_hybrid/fetch3_sleep_matched_s4/results.json :: python continual.py --suite fetch3 --method sleep --config configs/cl_hybrid_v2.yaml --seed 4 --out runs/continual_hybrid --mk replay_budget=908672 --tag _matched
+runs/continual_hybrid/fetch3_sleep_matched_s5/results.json :: python continual.py --suite fetch3 --method sleep --config configs/cl_hybrid_v2.yaml --seed 5 --out runs/continual_hybrid --mk replay_budget=1344128 --tag _matched
+runs/continual_hybrid/fetch3_sleep_matched_s6/results.json :: python continual.py --suite fetch3 --method sleep --config configs/cl_hybrid_v2.yaml --seed 6 --out runs/continual_hybrid --mk replay_budget=1140992 --tag _matched
