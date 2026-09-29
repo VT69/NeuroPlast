@@ -94,6 +94,12 @@ memory, S11/S13 aren't learned by memory agents in 2M frames).
 **Exploratory extension (NOT pre-registered, decided after seeing the probe):** S11 CNN fs12 at 6M frames, 1 seed
 (~2.6 core-h of the ~14 freed by skipping the main arms), only to size a future test ("is it learnable with 3x
 the frames?"). It enters no test. Queue `jobs/s4_q2.txt`.
+*Result (22:50 UTC):* eval success 0.485; training return 0.485 / 0.485 / 0.493 / 0.507 / 0.503 / 0.482 at
+1-6M frames, episode length ~10 throughout. **Flat at chance for 6M frames**: with 3x the frames the frame-stacked
+CNN still never learns to look back at the cue. A future memory test needs either a map/variant where the cue is
+seen on the way to the decision (e.g. the agent starts in the cue room facing the hallway), an exploration aid, or a
+much larger budget (the MiniGrid literature reports recurrent PPO needing tens of millions of frames on the larger
+Memory maps; not checked against the papers here, so treat as a hypothesis).
 
 ### Block 4 result: demo assets (done 19:02 UTC) -> `demo/assets/index.md`
 Reruns of fetch3 naive and sleep, CNN trunk, seed 1 (`runs/demo_ckpt`, 4.5 and 6 min) **reproduce the original

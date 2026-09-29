@@ -1,3 +1,4 @@
 === start 2026-09-29T19:31:11Z ===
 1 jobs pending
 START runs/s4_mem_probe/probe_S11_cnn_fs12_6M_s1/eval.json
+END rc=0 11784s runs/s4_mem_probe/probe_S11_cnn_fs12_6M_s1/eval.json
