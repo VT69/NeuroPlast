@@ -13,8 +13,67 @@ rerun on the frozen data at 01:25 UTC (`rq1_stats.py`, `memory_fair.py`, `rq5_st
 Results went in as they came out, including the nulls: session 4 turned two earlier positive hints into nulls
 (sleep > replay; DFA+homeostasis solve rate) and found no usable memory benchmark.
 
+## Session 6 (2026-09-30): presentation materials and git history (no new experiments; results stay frozen)
+Produced, in order (hashes after the rewrite):
+* **Dashboard redesign** (516bbe1). `demo/index.html` got a softer visual system, a "What we built" architecture
+  diagram (inline SVG), a plain-language scorecard with verdict badges (2 help conditionally, 1 trade-off, 3 no
+  effect, 1 untested), and the subtitle "Mostly no, with two specific exceptions". The memory chart has its own
+  sequence control (default SNN, 3 tasks), a y-axis from 0.7, and the key result annotated: sleep at 200 states/task
+  ties isolation in 46% of the memory. The naive agent's card notes that its first task-1 clip happens to succeed (1
+  of 3) and that the matrix gives the real average. Checked in a browser in light, dark and at 390 px: no console
+  errors, no horizontal overflow.
+* **GIFs re-rendered** from the same episodes (same rooms, actions and outcomes; `demo/assets/index.md` is
+  unchanged apart from a playback note): 400 ms per frame and a 1.5 s hold on each episode's last frame. Decision
+  logged here: the naive agent's time-outs are 256 steps, which is 100 s at 400 ms, so steps from the 24th on play at
+  50 ms with a visible "fast-forward 8x" label.
+* **Paper polish** (393a6f3):
+  * abstract rewritten (242 words); headline answer with the two exceptions; explicit contributions list
+  * CLEAR positioning in related work and Section 4.5: our replay keeps CLEAR's cloning losses but not its V-trace
+    RL loss on replayed data, and sleep = the same losses applied offline + self-distillation, so the matched test
+    isolates *when* replay happens
+  * self-contained captions; figures redrawn in Computer Modern at printed size (vector PDF) with the dashboard
+    palette (non-method series in grey/violet)
+  * a full reproducibility statement with a new number, `computeCoreHours` = 110 CPU hours over 289 runs,
+    computed from run logs
+  * "causal Transformer" corrected: there is no causal mask, but the window holds only past frames
+  * two builds: `paper/main.pdf` (preprint, your name) and `paper/main_anonymous.pdf` (TMLR double-blind, no name,
+    no repo URL); every page was rendered and checked
+* **Presentation** (8989ee2):
+  * `presentation/NeuroPlast_final_review.pptx` (+ `.pdf`): 15 slides + 4 backup, speaker notes on every slide
+  * built with python-pptx from the same numbers pipeline, with the paper's figures, one native chart and the
+    dashboard palette
+  * converted with LibreOffice (libreoffice-impress installed for this) and every slide checked for overflow
+* **Git history rewrite** (last):
+  * backup: `git bundle create --all` (4 refs, verified, SHA-256 696470db…d324b6); sent to you in 17 parts of
+    29 MB (upload limit 30 MiB), with `JOIN_BACKUP.txt`
+  * branches before: GitHub `main` b414299 (fully contained in `session-3`), GitHub `session-3` 34e3d27. The only
+    other branch, `claude/keen-lamport-wrnfpj`, was already gone from GitHub; its local copy (579f5c7, authored
+    "Claude", with Co-Authored-By/Claude-Session trailers) had a file tree identical to adabbd9 in `session-3`, so
+    nothing unique was lost (it is in the bundle)
+  * `git filter-repo` on a fresh mirror: all 26 commits now have author and committer `Vaibhav Tiwari
+    <75622110+VT69@users.noreply.github.com>`. 9 early commits had the display name "VT" with the same email.
+    Claude/Anthropic trailers were removed (none were left on GitHub's branches)
+  * the file tree is byte-identical to before (tree 21d76f2)
+  * pushed with `--force-with-lease` pinned to the old hashes: `session-3` and `main` both at 8989ee2 (plus this
+    PROGRESS commit); no other remote branches exist, no PRs, no tags
+  * old hashes in this file were replaced (4 places); README and paper had none
+
+### Left for you to review / fill in (session 6)
+1. Slide 1 of the deck: roll number, guide, department, institution, date.
+2. Paper: affiliation and email (preprint); the AI-assistance disclosure; the venue of Yu et al.; the
+   `% TODO verify` bib entries (Chaudhry, Neftci, Eshraghian, Bi & Poo, Frémaux, Turrigiano, Nøkland, Horowitz,
+   Schulman, Huang, Vaswani, Welch, Holm, Newcombe); Khetarpal volume/pages; Mallya venue.
+3. The anonymous build says the code is "provided as supplementary material": attach an anonymised copy when you
+   submit (e.g. anonymous.4open.science), or change the sentence.
+4. The preprint cites https://github.com/VT69/NeuroPlast: make sure the repo is public before the review.
+5. `relevant_literature/` (publisher PDFs) is committed in the repo; consider removing it from a public repo.
+6. GitHub may keep the old, now-unreachable commits (including the old Claude-authored one) accessible by hash
+   until its garbage collection runs, and the contributors list can lag. If Claude still shows as a contributor
+   after a day, GitHub Support can purge cached views.
+7. The compressed-replay idea on slide 14 is marked "idea, untested"; reword it if you want it framed differently.
+
 ## Session 5 (2026-09-30): paper draft and demo dashboard (no new experiments; results stay frozen)
-Produced (all on `session-3`: paper in 557b23c, dashboard in 8f9da01):
+Produced (all on `session-3`: paper in 1a106cb, dashboard in 4830ae2; hashes after the session-6 history rewrite):
 * **Paper draft** `paper/main.pdf` (15 pages, TMLR style, builds with `cd paper && latexmk -pdf main.tex`, no LaTeX
   errors). Sections: intro, related work, setup (pre-registration, Welch, Fisher, Holm), mechanisms, one results
   subsection per mechanism, "what didn't survive controls", limitations, conclusion, reproducibility, AI-assistance
@@ -199,9 +258,10 @@ Machine: 4 cores, 15 GB RAM, 20 GB free disk -> 4 workers, OMP_NUM_THREADS=1.
 Budget ~9 h x 4 cores = ~36 core-h. Runtime estimates are session-1/2 means measured under
 the same ~4-jobs-on-4-cores load.
 
-Repo note: GitHub `main` (bc8f633; session 2 was 5f2aae4) has the session-2 work inside a `neuroplast_session2_code_results/`
+Repo note (hashes updated after the session-6 history rewrite): GitHub `main` then (4a339bc;
+session 2 was ed04e55) had the session-2 work inside a `neuroplast_session2_code_results/`
 subfolder (plus the zip itself); the repo root there is still session-1 code. This working copy (pushed as
-branch `session-3`) has the session-2 code at the root (correct) + bc8f633's CLAUDE.md and
+branch `session-3`) has the session-2 code at the root (correct) + 4a339bc's CLAUDE.md and
 docs/LITERATURE_CONTEXT.md; relative to main it drops `neuroplast_session2_code_results/`, its zip and the
 old empty `src/`. The old branch `claude/keen-lamport-wrnfpj` is already gone from GitHub. §38.4 of the literature doc said backprop+homeostasis was never
 run: it was (3 seeds, session 2); tonight took it to 10 (correction note in §38.8).
@@ -643,7 +703,8 @@ Persistent membrane state as an SNN memory mechanism is a new mechanism: it need
 justification first.
 
 ## What to look at first when you're back
-0. **Session 5** at the top: the paper draft (`paper/main.pdf`, numbers in `paper/NUMBERS.md`), the dashboard
+0. **Session 6** at the top: the review list, the deck (`presentation/`), the two paper builds, and the
+   git-history note. Then **Session 5**: the paper draft (`paper/main.pdf`, numbers in `paper/NUMBERS.md`), the dashboard
    (`demo/index.html`), and the review list (TODOs only you can fill in).
 1. **RESULTS FREEZE** note at the top, then "Answers so far" and "Evidence hierarchy" (both final).
 2. Session 4 at the top: the pre-registration, then the four block results. Block 1 (sleep = replay once the replay
@@ -654,8 +715,9 @@ justification first.
    `results/rq5_memory.md` (+ `results/figs/rq5_memory_fetch3.png`), `results/continual.md`, `results/rq4.md`.
 4. `docs/LITERATURE_CONTEXT.md` §38.8: correction note from session 3. PROGRESS.md overrides it where they differ
    (e.g. session 4's Block 1/2 results postdate it).
-5. Git: everything is on branch `session-3` (authored as you, based on origin/main bc8f633). Replace main from it
-   when ready. Helpers `scripts/_s3_monitor.py` / `_s4_monitor.py` are local only (git-excluded).
+5. Git: history was rewritten in session 6 (every commit authored and committed by you; no Claude trailers), and
+   `main` now equals `session-3`. See the Session 6 section for the backup, the verification and what to do with
+   your local copy. Helpers `scripts/_s3_monitor.py` / `_s4_monitor.py` are local only (git-excluded).
 
 ## Environment / how to run
 - Dev box for this session: cloud container, 4 CPU cores, 15 GB RAM, **no GPU**.
