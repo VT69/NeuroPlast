@@ -169,7 +169,54 @@ held-out episodes with the same RNG state. The fp32 − int8 ACC difference has 
 
 
 ## Phase C: pre-registration
-(written and committed before any confirmation run starts)
+Written and committed before any confirmation run started (commit that adds this section). Nothing below changes
+after the first confirmation run starts, whatever the interim results.
+
+**Candidate.** Idea 2, buffer-free distillation (LwF) with an int8 teacher (`--method lwf --mk teacher_int8=true`,
+batch 128, coef 1.0).
+- Chosen from pilots because it was the only idea that cleared its kill criterion (CNN fetch3 0.977/0.970, int8
+  0.976; CNN fetch5 0.969/0.812, int8 0.963; SNN fetch3 0.825).
+- The int8 teacher was picked over the fp32 teacher before confirmation because it needs a quarter of the extra peak
+  memory, and the paired pilots and the int8 audit showed no cost.
+
+**Control: replay whose extra storage is one full fp32 network.**
+- Same loss (policy KL + 0.5 value MSE), same coefficient, same 128 distilled/replayed samples per PPO minibatch (so
+  replayed samples are matched), and the same frames, learning rate and seeds.
+- Buffer = ⌊fp32 network bytes / (T × 188 B)⌋ states/task: 973 on CNN fetch5, 1,380 on SNN fetch3.
+- This gives replay 4× LwF-int8's extra peak memory (LwF's int8 snapshot is 231 KB on CNN fetch5; the replay buffer
+  is 915 KB). After training LwF stores nothing, while replay keeps its buffer. The control is deliberately generous
+  to replay.
+
+### C1: CNN fetch5 (primary family)
+- **Arms and seeds.** LwF-int8, replay@973, and isolation as a reference. Seeds 201-210 (10 per arm, never used), 30
+  runs. `configs/cl_cnn.yaml`: 150k frames/task, lr 1e-3, 100 evaluation episodes/task.
+- **H1 (primary).** Final ACC differs between LwF-int8 and replay@973. Two-sided Welch t-test, α = 0.05. Report the
+  difference with its 95% Welch CI. Pilot direction: LwF higher. The test is two-sided anyway.
+- **H2.** FORGET differs between LwF-int8 and replay@973 (Welch).
+- **H3.** LwF-int8 vs isolation, final ACC (Welch). "No large difference" may be claimed only if the 95% CI lies
+  within ±0.05. Otherwise the difference is reported as it is.
+- **Multiple comparisons.** Holm correction over H1-H3.
+- **Descriptive.** Persistent and peak memory; replayed-sample counts (expected to match within about 1%); CPU time
+  per run; per-task R rows; number of runs with a never-learned task (a task under 0.5 right after its own training).
+
+### C2: SNN fetch3 (separate family; the capstone's substrate)
+- **Arms and seeds.** LwF-int8 vs replay@1380. Seeds 201-208 (8 per arm), 16 runs. `configs/cl_snn.yaml` (150k
+  frames/task, lr 1e-3).
+- **H4.** Final ACC differs (two-sided Welch, α = 0.05; 95% CI).
+- **H5.** FORGET differs (Welch). Holm correction over H4-H5.
+
+### Stopping rule
+- Run every listed run once; no early stopping, no interim tests.
+- A run killed by an infrastructure failure (for example a container restart) is rerun from scratch with the same
+  seed. That is the queue's normal resume behaviour, and it is logged. A run that crashes twice is reported as
+  missing.
+- Analysis: `explore/confirm_stats.py`, committed with this section.
+- Budget cap for Phase C: 12 core-h. If exceeded, C2 is cut to the seeds that finished and the cut is reported.
+
+### What would falsify the headline
+- If H1's CI includes 0 and its upper bound is below +0.03, the claim becomes "LwF matches replay given 4× its extra
+  memory". That is still a memory result, but not an accuracy one.
+- If LwF-int8 is significantly below replay, buffer-free distillation is worse, and that gets reported.
 
 ## Phase D: report
 
