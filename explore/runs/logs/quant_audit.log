@@ -1,0 +1,28 @@
+CNN fetch3               fetch3_isolation_s1      ACC fp32 0.979 int8 0.980 drop -0.000
+CNN fetch3               fetch3_isolation_s2      ACC fp32 0.978 int8 0.978 drop -0.000
+CNN fetch3               fetch3_isolation_s3      ACC fp32 0.979 int8 0.979 drop +0.000
+CNN fetch3               fetch3_replay_s1         ACC fp32 0.974 int8 0.978 drop -0.003
+CNN fetch3               fetch3_replay_s2         ACC fp32 0.976 int8 0.977 drop -0.000
+CNN fetch3               fetch3_replay_s3         ACC fp32 0.963 int8 0.960 drop +0.003
+CNN fetch3               fetch3_sleep_s1          ACC fp32 0.979 int8 0.979 drop +0.000
+CNN fetch3               fetch3_sleep_s2          ACC fp32 0.976 int8 0.977 drop -0.000
+CNN fetch3               fetch3_sleep_s3          ACC fp32 0.978 int8 0.978 drop +0.000
+CNN fetch3 small buffer  fetch3_sleep_buf200_s1   ACC fp32 0.965 int8 0.968 drop -0.003
+CNN fetch3 small buffer  fetch3_sleep_buf200_s2   ACC fp32 0.949 int8 0.951 drop -0.002
+CNN fetch3 small buffer  fetch3_sleep_buf200_s3   ACC fp32 0.960 int8 0.961 drop -0.000
+SNN fetch3               fetch3_isolation_s1      ACC fp32 0.838 int8 0.853 drop -0.015
+SNN fetch3               fetch3_isolation_s2      ACC fp32 0.748 int8 0.751 drop -0.003
+SNN fetch3               fetch3_isolation_s3      ACC fp32 0.916 int8 0.908 drop +0.008
+SNN fetch3               fetch3_sleep_s1          ACC fp32 0.881 int8 0.880 drop +0.001
+SNN fetch3               fetch3_sleep_s2          ACC fp32 0.873 int8 0.884 drop -0.011
+SNN fetch3               fetch3_sleep_s3          ACC fp32 0.798 int8 0.807 drop -0.009
+SNN fetch3 small buffer  fetch3_sleep_buf200_s1   ACC fp32 0.875 int8 0.862 drop +0.012
+SNN fetch3 small buffer  fetch3_sleep_buf200_s2   ACC fp32 0.822 int8 0.815 drop +0.007
+SNN fetch3 small buffer  fetch3_sleep_buf200_s3   ACC fp32 0.839 int8 0.829 drop +0.010
+CNN fetch5               fetch5_isolation_s1      ACC fp32 0.976 int8 0.976 drop -0.000
+CNN fetch5               fetch5_isolation_s2      ACC fp32 0.975 int8 0.975 drop -0.000
+CNN fetch5               fetch5_isolation_s3      ACC fp32 0.975 int8 0.975 drop +0.000
+CNN fetch5               fetch5_sleep_s1          ACC fp32 0.957 int8 0.958 drop -0.001
+CNN fetch5               fetch5_sleep_s2          ACC fp32 0.972 int8 0.972 drop +0.000
+CNN fetch5               fetch5_sleep_s3          ACC fp32 0.812 int8 0.816 drop -0.004
+done in 0.03 core-h

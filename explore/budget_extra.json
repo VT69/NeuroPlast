@@ -2,5 +2,9 @@
  {
   "name": "quant_audit",
   "core_h": 0.034296951956219145
+ },
+ {
+  "name": "lost_to_container_restart",
+  "core_h": 0.183
  }
 ]

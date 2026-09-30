@@ -1,0 +1,49 @@
+[fetch3_packnet_grad_s101 t0] [fetch3_packnet_grad_s101/task0] upd 5/73 frames 10240 fps 2469 ret 0.235 len 122.4 ent 1.905 act 0.040
+[fetch3_packnet_grad_s101 t0] [fetch3_packnet_grad_s101/task0] upd 10/73 frames 20480 fps 2486 ret 0.424 len 76.5 ent 1.883 act 0.064
+[fetch3_packnet_grad_s101 t0] [fetch3_packnet_grad_s101/task0] upd 15/73 frames 30720 fps 2543 ret 0.741 len 47.9 ent 1.723 act 0.091
+[fetch3_packnet_grad_s101 t0] [fetch3_packnet_grad_s101/task0] upd 20/73 frames 40960 fps 2515 ret 0.870 len 18.7 ent 1.410 act 0.120
+[fetch3_packnet_grad_s101 t0] [fetch3_packnet_grad_s101/task0] upd 25/73 frames 51200 fps 2512 ret 0.961 len 11.0 ent 0.905 act 0.170
+[fetch3_packnet_grad_s101 t0] [fetch3_packnet_grad_s101/task0] upd 30/73 frames 61440 fps 2494 ret 0.972 len 7.8 ent 0.490 act 0.215
+[fetch3_packnet_grad_s101 t0] [fetch3_packnet_grad_s101/task0] upd 35/73 frames 71680 fps 2424 ret 0.970 len 8.5 ent 0.408 act 0.221
+[fetch3_packnet_grad_s101 t0] [fetch3_packnet_grad_s101/task0] upd 40/73 frames 81920 fps 2399 ret 0.973 len 7.7 ent 0.328 act 0.241
+[fetch3_packnet_grad_s101 t0] [fetch3_packnet_grad_s101/task0] upd 45/73 frames 92160 fps 2390 ret 0.977 len 6.5 ent 0.298 act 0.236
+[fetch3_packnet_grad_s101 t0] [fetch3_packnet_grad_s101/task0] upd 50/73 frames 102400 fps 2380 ret 0.978 len 6.4 ent 0.258 act 0.221
+[fetch3_packnet_grad_s101 t0] [fetch3_packnet_grad_s101/task0] upd 55/73 frames 112640 fps 2379 ret 0.975 len 7.1 ent 0.222 act 0.215
+[fetch3_packnet_grad_s101 t0] [fetch3_packnet_grad_s101/task0] upd 60/73 frames 122880 fps 2372 ret 0.975 len 7.1 ent 0.248 act 0.196
+[fetch3_packnet_grad_s101 t0] [fetch3_packnet_grad_s101/task0] upd 65/73 frames 133120 fps 2364 ret 0.976 len 6.8 ent 0.228 act 0.188
+[fetch3_packnet_grad_s101 t0] [fetch3_packnet_grad_s101/task0] upd 70/73 frames 143360 fps 2360 ret 0.977 len 6.6 ent 0.210 act 0.194
+[fetch3_packnet_grad_s101 t0] [fetch3_packnet_grad_s101/task0] upd 73/73 frames 149504 fps 2357 ret 0.975 len 7.1 ent 0.193 act 0.198
+[fetch3_packnet_grad_s101] after task 0: R = [0.977, 0.212, 0.093]
+[fetch3_packnet_grad_s101 t1] [fetch3_packnet_grad_s101/task1] upd 5/73 frames 10240 fps 2351 ret 0.316 len 117.8 ent 1.890 act 0.149
+[fetch3_packnet_grad_s101 t1] [fetch3_packnet_grad_s101/task1] upd 10/73 frames 20480 fps 2391 ret 0.392 len 118.5 ent 1.813 act 0.163
+[fetch3_packnet_grad_s101 t1] [fetch3_packnet_grad_s101/task1] upd 15/73 frames 30720 fps 2398 ret 0.669 len 61.5 ent 1.733 act 0.182
+[fetch3_packnet_grad_s101 t1] [fetch3_packnet_grad_s101/task1] upd 20/73 frames 40960 fps 2403 ret 0.854 len 24.7 ent 1.517 act 0.209
+[fetch3_packnet_grad_s101 t1] [fetch3_packnet_grad_s101/task1] upd 25/73 frames 51200 fps 2403 ret 0.957 len 12.2 ent 1.131 act 0.281
+[fetch3_packnet_grad_s101 t1] [fetch3_packnet_grad_s101/task1] upd 30/73 frames 61440 fps 2404 ret 0.958 len 9.3 ent 0.730 act 0.329
+[fetch3_packnet_grad_s101 t1] [fetch3_packnet_grad_s101/task1] upd 35/73 frames 71680 fps 2387 ret 0.972 len 7.8 ent 0.658 act 0.320
+[fetch3_packnet_grad_s101 t1] [fetch3_packnet_grad_s101/task1] upd 40/73 frames 81920 fps 2386 ret 0.974 len 7.3 ent 0.449 act 0.365
+[fetch3_packnet_grad_s101 t1] [fetch3_packnet_grad_s101/task1] upd 45/73 frames 92160 fps 2382 ret 0.975 len 7.1 ent 0.412 act 0.371
+[fetch3_packnet_grad_s101 t1] [fetch3_packnet_grad_s101/task1] upd 50/73 frames 102400 fps 2376 ret 0.975 len 7.2 ent 0.287 act 0.372
+[fetch3_packnet_grad_s101 t1] [fetch3_packnet_grad_s101/task1] upd 55/73 frames 112640 fps 2369 ret 0.976 len 6.8 ent 0.226 act 0.366
+[fetch3_packnet_grad_s101 t1] [fetch3_packnet_grad_s101/task1] upd 60/73 frames 122880 fps 2361 ret 0.977 len 6.4 ent 0.257 act 0.348
+[fetch3_packnet_grad_s101 t1] [fetch3_packnet_grad_s101/task1] upd 65/73 frames 133120 fps 2360 ret 0.974 len 7.4 ent 0.237 act 0.365
+[fetch3_packnet_grad_s101 t1] [fetch3_packnet_grad_s101/task1] upd 70/73 frames 143360 fps 2359 ret 0.976 len 6.7 ent 0.200 act 0.361
+[fetch3_packnet_grad_s101 t1] [fetch3_packnet_grad_s101/task1] upd 73/73 frames 149504 fps 2358 ret 0.976 len 6.9 ent 0.156 act 0.375
+[fetch3_packnet_grad_s101] after task 1: R = [0.978, 0.978, 0.096]
+[fetch3_packnet_grad_s101 t2] [fetch3_packnet_grad_s101/task2] upd 5/73 frames 10240 fps 2493 ret 0.102 len 119.6 ent 1.926 act 0.270
+[fetch3_packnet_grad_s101 t2] [fetch3_packnet_grad_s101/task2] upd 10/73 frames 20480 fps 2489 ret 0.135 len 147.8 ent 1.885 act 0.268
+[fetch3_packnet_grad_s101 t2] [fetch3_packnet_grad_s101/task2] upd 15/73 frames 30720 fps 2459 ret 0.241 len 93.5 ent 1.779 act 0.284
+[fetch3_packnet_grad_s101 t2] [fetch3_packnet_grad_s101/task2] upd 20/73 frames 40960 fps 2425 ret 0.302 len 56.9 ent 1.702 act 0.294
+[fetch3_packnet_grad_s101 t2] [fetch3_packnet_grad_s101/task2] upd 25/73 frames 51200 fps 2423 ret 0.310 len 47.2 ent 1.658 act 0.363
+[fetch3_packnet_grad_s101 t2] [fetch3_packnet_grad_s101/task2] upd 30/73 frames 61440 fps 2435 ret 0.381 len 42.5 ent 1.609 act 0.410
+[fetch3_packnet_grad_s101 t2] [fetch3_packnet_grad_s101/task2] upd 35/73 frames 71680 fps 2423 ret 0.571 len 41.5 ent 1.580 act 0.425
+[fetch3_packnet_grad_s101 t2] [fetch3_packnet_grad_s101/task2] upd 40/73 frames 81920 fps 2426 ret 0.747 len 31.9 ent 1.466 act 0.419
+[fetch3_packnet_grad_s101 t2] [fetch3_packnet_grad_s101/task2] upd 45/73 frames 92160 fps 2430 ret 0.817 len 26.8 ent 1.303 act 0.441
+[fetch3_packnet_grad_s101 t2] [fetch3_packnet_grad_s101/task2] upd 50/73 frames 102400 fps 2430 ret 0.816 len 27.7 ent 1.091 act 0.432
+[fetch3_packnet_grad_s101 t2] [fetch3_packnet_grad_s101/task2] upd 55/73 frames 112640 fps 2426 ret 0.859 len 24.5 ent 1.064 act 0.427
+[fetch3_packnet_grad_s101 t2] [fetch3_packnet_grad_s101/task2] upd 60/73 frames 122880 fps 2425 ret 0.891 len 23.3 ent 1.054 act 0.424
+[fetch3_packnet_grad_s101 t2] [fetch3_packnet_grad_s101/task2] upd 65/73 frames 133120 fps 2427 ret 0.864 len 22.2 ent 0.992 act 0.445
+[fetch3_packnet_grad_s101 t2] [fetch3_packnet_grad_s101/task2] upd 70/73 frames 143360 fps 2425 ret 0.892 len 23.3 ent 0.944 act 0.430
+[fetch3_packnet_grad_s101 t2] [fetch3_packnet_grad_s101/task2] upd 73/73 frames 149504 fps 2423 ret 0.905 len 21.7 ent 0.974 act 0.457
+[fetch3_packnet_grad_s101] after task 2: R = [0.978, 0.978, 0.922]
+FINAL {"ACC": 0.9595898433526356, "BWT": 0.0003339847922325112, "FORGET": 0.0} params 194312

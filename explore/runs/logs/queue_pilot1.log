@@ -1,0 +1,23 @@
+11 jobs pending
+START explore/runs/mem/cf11_tf12_s101/eval.json
+START explore/runs/mem/cf11_gru12_s101/eval.json
+START explore/runs/mem/cf11_fs12_s101/eval.json
+START explore/runs/mem/cf11_fs1_s101/eval.json
+END rc=0 510s explore/runs/mem/cf11_fs1_s101/eval.json
+START explore/runs/cl/fetch3_packnet_s101/results.json
+END rc=0 300s explore/runs/cl/fetch3_packnet_s101/results.json
+START explore/runs/cl/fetch3_lwf_s101/results.json
+END rc=0 965s explore/runs/mem/cf11_gru12_s101/eval.json
+START explore/runs/cl/fetch5_packnet_s101/results.json
+END rc=0 290s explore/runs/cl/fetch3_lwf_s101/results.json
+START explore/runs/cl/fetch5_lwf_s101/results.json
+END rc=0 1210s explore/runs/mem/cf11_fs12_s101/eval.json
+START explore/runs/cl/fetch5_replay_buf57_s101/results.json
+END rc=0 1360s explore/runs/mem/cf11_tf12_s101/eval.json
+START explore/runs/cl/fetch3_packnet_s102/results.json
+END rc=0 400s explore/runs/cl/fetch5_packnet_s101/results.json
+START explore/runs/cl/fetch3_lwf_s102/results.json
+END rc=0 490s explore/runs/cl/fetch5_lwf_s101/results.json
+END rc=0 235s explore/runs/cl/fetch3_packnet_s102/results.json
+END rc=0 270s explore/runs/cl/fetch3_lwf_s102/results.json
+END rc=0 450s explore/runs/cl/fetch5_replay_buf57_s101/results.json
