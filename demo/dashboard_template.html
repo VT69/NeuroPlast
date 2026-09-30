@@ -1,0 +1,430 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>NeuroPlast results</title>
+<style>
+:root {
+  color-scheme: light;
+  --page: #f9f9f7; --surface: #fcfcfb; --ink: #0b0b0b; --ink2: #52514e; --muted: #898781;
+  --grid: #e1e0d9; --axis: #c3c2b7; --ring: rgba(11,11,11,0.10);
+  --s-naive: #e87ba4; --s-ewc_lam100: #eda100; --s-replay: #eb6834; --s-sleep: #2a78d6;
+  --s-sleep_matched: #4a3aa7; --s-isolation: #1baf7a;
+  --seq-lo: #cde2fb; --seq-hi: #104281;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --page: #0d0d0d; --surface: #1a1a19; --ink: #ffffff; --ink2: #c3c2b7; --muted: #898781;
+    --grid: #2c2c2a; --axis: #383835; --ring: rgba(255,255,255,0.10);
+    --s-naive: #d55181; --s-ewc_lam100: #c98500; --s-replay: #d95926; --s-sleep: #3987e5;
+    --s-sleep_matched: #9085e9; --s-isolation: #199e70;
+    --seq-lo: #184f95; --seq-hi: #cde2fb;
+  }
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --page: #0d0d0d; --surface: #1a1a19; --ink: #ffffff; --ink2: #c3c2b7; --muted: #898781;
+  --grid: #2c2c2a; --axis: #383835; --ring: rgba(255,255,255,0.10);
+  --s-naive: #d55181; --s-ewc_lam100: #c98500; --s-replay: #d95926; --s-sleep: #3987e5;
+  --s-sleep_matched: #9085e9; --s-isolation: #199e70;
+  --seq-lo: #184f95; --seq-hi: #cde2fb;
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--page); color: var(--ink); font: 15px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif; }
+main { max-width: 1120px; margin: 0 auto; padding: 28px 16px 64px; }
+h1 { font-size: 26px; line-height: 1.25; margin: 0 0 6px; font-weight: 650; }
+h2 { font-size: 19px; margin: 40px 0 6px; font-weight: 650; }
+h3 { font-size: 15px; margin: 0 0 8px; font-weight: 600; }
+p.lede { color: var(--ink2); max-width: 780px; margin: 0 0 4px; }
+.meta { color: var(--muted); font-size: 13px; }
+.card { background: var(--surface); border: 1px solid var(--ring); border-radius: 10px; padding: 16px; }
+.note { color: var(--ink2); font-size: 13px; margin: 8px 0 0; }
+.topbar { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; flex-wrap: wrap; }
+button.theme { background: var(--surface); color: var(--ink2); border: 1px solid var(--ring); border-radius: 8px; padding: 6px 10px; font: inherit; font-size: 13px; cursor: pointer; }
+
+/* scorecard */
+table.score { width: 100%; border-collapse: collapse; font-size: 14px; }
+table.score th { text-align: left; color: var(--muted); font-weight: 500; font-size: 12px; padding: 6px 10px; border-bottom: 1px solid var(--grid); }
+table.score td { padding: 10px; border-bottom: 1px solid var(--grid); vertical-align: top; }
+table.score td.mech { font-weight: 600; white-space: nowrap; }
+table.score td.q { color: var(--ink2); }
+.verdict { display: inline-flex; gap: 6px; align-items: baseline; font-weight: 600; }
+.verdict .ic { font-size: 15px; width: 16px; text-align: center; color: var(--ink2); }
+td.num { font-variant-numeric: tabular-nums; }
+td.ev { color: var(--muted); font-size: 13px; }
+.legendkey { color: var(--muted); font-size: 12px; margin-top: 8px; }
+
+/* agents */
+.agents { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+.agent h3 small { color: var(--muted); font-weight: 400; }
+.gifs { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+.gifs figure { margin: 0; }
+.gifs img { width: 100%; height: auto; border-radius: 6px; border: 1px solid var(--ring); display: block; }
+.gifs figcaption { font-size: 12px; color: var(--ink2); margin-top: 4px; }
+.matrix { display: grid; gap: 2px; margin-top: 12px; font-variant-numeric: tabular-nums; font-size: 13px; }
+.matrix .cell { padding: 6px 4px; text-align: center; border-radius: 3px; }
+.matrix .hdr { color: var(--muted); font-size: 12px; text-align: center; align-self: end; }
+.matrix .rh { color: var(--muted); font-size: 12px; text-align: right; padding-right: 6px; align-self: center; }
+
+/* controls */
+.controls { display: flex; gap: 6px; flex-wrap: wrap; margin: 14px 0 12px; align-items: center; }
+.controls .lab { color: var(--muted); font-size: 13px; margin-right: 4px; }
+.seg button { background: var(--surface); color: var(--ink2); border: 1px solid var(--ring); padding: 6px 12px; font: inherit; font-size: 13px; cursor: pointer; }
+.seg button:first-child { border-radius: 8px 0 0 8px; }
+.seg button:last-child { border-radius: 0 8px 8px 0; }
+.seg button[aria-pressed="true"] { color: var(--ink); font-weight: 600; box-shadow: inset 0 -2px 0 var(--ink); }
+.charts2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+svg text { fill: var(--muted); font-size: 11px; font-family: system-ui, -apple-system, "Segoe UI", sans-serif; }
+svg .ttl { fill: var(--ink); font-size: 13px; font-weight: 600; }
+.legend { display: flex; flex-wrap: wrap; gap: 4px 14px; font-size: 12px; color: var(--ink2); margin: 2px 0 6px; }
+.legend span { display: inline-flex; align-items: center; gap: 6px; }
+details { margin-top: 8px; }
+details summary { color: var(--ink2); font-size: 13px; cursor: pointer; }
+table.data { border-collapse: collapse; font-size: 12px; margin-top: 6px; font-variant-numeric: tabular-nums; }
+table.data th, table.data td { padding: 3px 8px; border-bottom: 1px solid var(--grid); text-align: right; }
+table.data th:first-child, table.data td:first-child { text-align: left; }
+#tip { position: fixed; pointer-events: none; background: var(--surface); color: var(--ink); border: 1px solid var(--ring); border-radius: 8px; padding: 8px 10px; font-size: 12px; box-shadow: 0 4px 16px rgba(0,0,0,0.12); display: none; z-index: 10; min-width: 150px; }
+#tip .row { display: flex; align-items: center; gap: 8px; justify-content: space-between; }
+#tip .row b { font-variant-numeric: tabular-nums; }
+#tip .k { display: inline-flex; align-items: center; gap: 6px; color: var(--ink2); }
+#tip .hd { color: var(--muted); margin-bottom: 4px; }
+footer { margin-top: 48px; color: var(--muted); font-size: 12px; }
+code { font-size: 12px; }
+#fgtable, #memtable { overflow-x: auto; }
+@media (max-width: 760px) {
+  .agents, .charts2 { grid-template-columns: 1fr; }
+  table.score thead { display: none; }
+  table.score, table.score tbody, table.score tr, table.score td { display: block; width: 100%; }
+  table.score tr { padding: 10px 0; border-bottom: 1px solid var(--grid); }
+  table.score td { border: 0; padding: 2px 0; }
+  table.score td.mech { white-space: normal; font-size: 15px; }
+  table.score td.q { font-size: 13px; }
+  .seg { display: flex; flex-wrap: wrap; gap: 4px; }
+  .seg button, .seg button:first-child, .seg button:last-child { border-radius: 8px; }
+}
+</style>
+</head>
+<body>
+<main>
+  <div class="topbar">
+    <div>
+      <h1>Do brain-inspired mechanisms help continual reinforcement learning?</h1>
+      <p class="lede">A controlled ablation study with spiking agents on MiniGrid. Each mechanism was switched on and off
+      against a matched non-biological control. Short answer: mostly no. Every number below is read from the frozen results.</p>
+      <p class="meta" id="meta"></p>
+    </div>
+    <button class="theme" id="theme" type="button">Toggle theme</button>
+  </div>
+
+  <h2>Mechanism scorecard</h2>
+  <p class="note">Same conclusions as the paper. Intervals are 95% confidence intervals.</p>
+  <div class="card" style="margin-top:10px">
+    <table class="score" id="score">
+      <thead><tr><th>Mechanism</th><th class="q">Question</th><th>Verdict</th><th>Key number</th><th>Evidence</th></tr></thead>
+      <tbody></tbody>
+    </table>
+    <p class="legendkey">○ no effect beyond the control &nbsp; ◐ partial or conditional effect &nbsp; ? not tested</p>
+  </div>
+
+  <h2>Watch the agents: naive fine-tuning vs sleep</h2>
+  <p class="note" id="agentsnote"></p>
+  <div class="agents" id="agents"></div>
+
+  <h2>Forgetting and memory, by task sequence</h2>
+  <div class="controls" role="group" aria-label="Task sequence">
+    <span class="lab">Sequence</span>
+    <div class="seg" id="seqseg"></div>
+  </div>
+  <div class="charts2">
+    <div class="card"><div id="fg1"></div></div>
+    <div class="card"><div id="fg2"></div></div>
+  </div>
+  <p class="note" id="fgnote"></p>
+  <details><summary>Table view: forgetting curves</summary><div id="fgtable"></div></details>
+
+  <div class="card" style="margin-top:16px"><div id="mem"></div></div>
+  <p class="note">Total memory = fp32 parameters + replay buffer at its measured storage cost. Points for the selected
+  sequence are highlighted; the others are faded. Labels: replay states stored per task (sleep and replay at the same
+  buffer size share one label). Points are nudged sideways in the line charts so overlapping methods stay visible.</p>
+  <details><summary>Table view: accuracy vs total memory</summary><div id="memtable"></div></details>
+
+  <footer>
+    Built by <code>python demo/build_dashboard.py</code> from <code>runs/</code> and <code>results/</code> (via the paper's
+    <code>paper/compute_numbers.py</code>). GIFs: <code>demo/assets/</code>. Run an agent yourself:
+    <code>python demo/live_episode.py --agent sleep --task 0</code> (tasks numbered from 0 there: 0 = red ball).
+  </footer>
+</main>
+<div id="tip" role="status" aria-live="polite"></div>
+
+<script id="data" type="application/json">/*__DATA__*/null</script>
+<script>
+(function () {
+  const D = JSON.parse(document.getElementById("data").textContent);
+  const NS = "http://www.w3.org/2000/svg";
+  const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+  const el = (tag, attrs = {}, parent) => {
+    const e = document.createElementNS(NS, tag);
+    for (const [k, v] of Object.entries(attrs)) e.setAttribute(k, v);
+    if (parent) parent.appendChild(e);
+    return e;
+  };
+  const h = (tag, cls, text) => { const e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; };
+  const METHOD = {naive: "naive", ewc_lam100: "EWC (λ=100)", replay: "replay", sleep: "sleep", sleep_matched: "sleep, replay-matched", isolation: "isolation"};
+  const DASH = {naive: "2 3", ewc_lam100: "6 3"};
+  const MARK = {CNN: "circle", SNN: "square", Hybrid: "triangle"};
+  const narrow = () => innerWidth <= 760;
+  const fmt = (v, d = 3) => (v < 0 ? "−" : "") + Math.abs(v).toFixed(d);
+
+  // theme toggle
+  document.getElementById("theme").addEventListener("click", () => {
+    const root = document.documentElement;
+    const dark = root.dataset.theme ? root.dataset.theme === "dark" : matchMedia("(prefers-color-scheme: dark)").matches;
+    root.dataset.theme = dark ? "light" : "dark";
+    renderAll();
+  });
+  document.getElementById("meta").textContent = `Results frozen ${D.generated}. ${D.seedRange} seeds per arm.`;
+
+  // tooltip
+  const tip = document.getElementById("tip");
+  function showTip(evt, head, rows) {
+    tip.replaceChildren();
+    tip.appendChild(h("div", "hd", head));
+    for (const r of rows) {
+      const row = h("div", "row");
+      const k = h("span", "k");
+      if (r.color) { const s = document.createElementNS(NS, "svg"); s.setAttribute("width", 14); s.setAttribute("height", 4); el("line", {x1: 0, x2: 14, y1: 2, y2: 2, style: `stroke:${r.color};stroke-width:2`}, s); k.appendChild(s); }
+      k.appendChild(document.createTextNode(r.label));
+      row.appendChild(k); row.appendChild(h("b", null, r.value));
+      tip.appendChild(row);
+    }
+    tip.style.display = "block";
+    const x = Math.min(evt.clientX + 14, innerWidth - tip.offsetWidth - 8);
+    const y = Math.min(evt.clientY + 14, innerHeight - tip.offsetHeight - 8);
+    tip.style.left = x + "px"; tip.style.top = y + "px";
+  }
+  const hideTip = () => { tip.style.display = "none"; };
+
+  // ---------------- scorecard
+  const tb = document.querySelector("#score tbody");
+  for (const r of D.scorecard) {
+    const tr = h("tr");
+    tr.appendChild(h("td", "mech", r.mech));
+    tr.appendChild(h("td", "q", r.q));
+    const td = h("td"); const v = h("span", "verdict"); v.appendChild(h("span", "ic", r.icon)); v.appendChild(h("span", null, r.verdict)); td.appendChild(v); tr.appendChild(td);
+    tr.appendChild(h("td", "num", r.num));
+    tr.appendChild(h("td", "ev", r.ev));
+    tb.appendChild(tr);
+  }
+
+  // ---------------- agents (GIFs + real accuracy matrices)
+  const TASKS = ["red ball", "green key", "blue box"];
+  document.getElementById("agentsnote").textContent =
+    "Both CNN agents trained on the same sequence: fetch the red ball, then the green key, then the blue box (the task ID is given). " +
+    "Each GIF shows the agent after all three tasks, in the first three rooms of the scored evaluation — the same rooms for both " +
+    "agents, not chosen by outcome. The matrix is the real accuracy matrix of this run: row = after training task i, column = return on task j.";
+  function lerpColor(a, b, t) {
+    const p = c => [1, 3, 5].map(i => parseInt(c.slice(i, i + 2), 16));
+    const [x, y] = [p(a), p(b)];
+    return "rgb(" + x.map((v, i) => Math.round(v + (y[i] - v) * t)).join(",") + ")";
+  }
+  function renderAgents() {
+    const host = document.getElementById("agents"); host.replaceChildren();
+    const lo = css("--seq-lo"), hi = css("--seq-hi");
+    for (const [m, title] of [["naive", "Naive fine-tuning"], ["sleep", "Sleep-like consolidation"]]) {
+      const a = D.demo[m];
+      const card = h("div", "card agent");
+      const h3 = h("h3", null, title + " ");
+      h3.appendChild(h("small", null, `seed 1, ACC ${a.acc.toFixed(3)} · mean over ${a.seedAcc.length} seeds ${a.seedMean.toFixed(3)}`));
+      card.appendChild(h3);
+      const g = h("div", "gifs");
+      a.gifs.forEach((src, k) => {
+        const f = h("figure"); const img = document.createElement("img"); img.src = src;
+        img.alt = `${title} agent after all tasks, task ${k + 1}: fetch the ${TASKS[k]}`; f.appendChild(img);
+        const ep = D.demo.episodes[(m === "naive" ? 0 : 3) + k] || "";
+        f.appendChild(h("figcaption", null, `Task ${k + 1}: ${TASKS[k]} — ${ep.replace(/\(\d+ steps\)/g, "").replace(/\s+,/g, ",")}`));
+        g.appendChild(f);
+      });
+      card.appendChild(g);
+      const mx = h("div", "matrix"); mx.style.gridTemplateColumns = "auto repeat(3, minmax(0,1fr))";
+      mx.appendChild(h("div", "rh", ""));
+      for (let j = 0; j < 3; j++) mx.appendChild(h("div", "hdr", `task ${j + 1}`));
+      a.R.forEach((row, i) => {
+        mx.appendChild(h("div", "rh", `after ${i + 1}`));
+        row.forEach(v => {
+          const c = h("div", "cell", v.toFixed(3));
+          c.style.background = lerpColor(lo, hi, Math.max(0, Math.min(1, v)));
+          const dark = document.documentElement.dataset.theme === "dark" || (!document.documentElement.dataset.theme && matchMedia("(prefers-color-scheme: dark)").matches);
+          c.style.color = (dark ? v < 0.55 : v > 0.55) ? "#ffffff" : "#0b0b0b";
+          mx.appendChild(c);
+        });
+      });
+      card.appendChild(mx);
+      card.appendChild(h("p", "note", "Bottom row = final performance on each task (its mean is ACC)."));
+      host.appendChild(card);
+    }
+  }
+
+  // ---------------- line chart (forgetting curves)
+  function lineChart(host, title, ylab, seq, field) {
+    host.replaceChildren();
+    const S = D.forgetting[seq];
+    const W = narrow() ? 400 : 520, H = narrow() ? 300 : 290, m = {l: 54, r: 18, t: 30, b: 38};
+    const n = S.series.length, dodge = i => (i - (n - 1) / 2) * 4;
+    const leg = h("div", "legend");
+    for (const s of S.series) {
+      const sp = h("span"); const sv = document.createElementNS(NS, "svg"); sv.setAttribute("width", 18); sv.setAttribute("height", 6);
+      el("line", {x1: 0, x2: 18, y1: 3, y2: 3, style: `stroke:var(--s-${s.key});stroke-width:2;${DASH[s.key] ? "stroke-dasharray:" + DASH[s.key] : ""}`}, sv);
+      sp.appendChild(sv); sp.appendChild(document.createTextNode(`${s.label} (n=${s.n})`)); leg.appendChild(sp);
+    }
+    const svg = el("svg", {viewBox: `0 0 ${W} ${H}`, width: "100%", role: "img", "aria-label": title});
+    el("text", {x: m.l, y: 16, class: "ttl"}, svg).textContent = title;
+    host.appendChild(svg); host.insertBefore(leg, svg);
+    const T = S.T;
+    const X = x => m.l + (x - 1) / (T - 1) * (W - m.l - m.r);
+    const Y = y => m.t + (1 - y) * (H - m.t - m.b);
+    for (let v = 0; v <= 1.0001; v += 0.25) {
+      el("line", {x1: m.l, x2: W - m.r, y1: Y(v), y2: Y(v), style: "stroke:var(--grid);stroke-width:1"}, svg);
+      el("text", {x: m.l - 6, y: Y(v) + 4, "text-anchor": "end"}, svg).textContent = v.toFixed(2);
+    }
+    for (let x = 1; x <= T; x++) el("text", {x: X(x), y: H - m.b + 16, "text-anchor": "middle"}, svg).textContent = x;
+    el("text", {x: (m.l + W - m.r) / 2, y: H - 6, "text-anchor": "middle"}, svg).textContent = "tasks trained so far";
+    const yl = el("text", {x: 12, y: (m.t + H - m.b) / 2, "text-anchor": "middle", transform: `rotate(-90 12 ${(m.t + H - m.b) / 2})`}, svg); yl.textContent = ylab;
+    S.series.forEach((s, i) => {
+      const pts = s[field], XD = x => X(x) + dodge(i);
+      const band = pts.map(p => `${XD(p.x)},${Y(Math.min(1, p.mean + p.ci))}`).concat(pts.slice().reverse().map(p => `${XD(p.x)},${Y(Math.max(0, p.mean - p.ci))}`));
+      el("polygon", {points: band.join(" "), style: `fill:var(--s-${s.key});opacity:0.08`}, svg);
+    });
+    S.series.forEach((s, i) => {
+      const pts = s[field], XD = x => X(x) + dodge(i);
+      el("polyline", {points: pts.map(p => `${XD(p.x)},${Y(p.mean)}`).join(" "), style: `fill:none;stroke:var(--s-${s.key});stroke-width:2;${DASH[s.key] ? "stroke-dasharray:" + DASH[s.key] : ""}`}, svg);
+      for (const p of pts) el("circle", {cx: XD(p.x), cy: Y(p.mean), r: 4, style: `fill:var(--s-${s.key});stroke:var(--surface);stroke-width:2`}, svg);
+    });
+    const hair = el("line", {y1: m.t, y2: H - m.b, style: "stroke:var(--axis);stroke-width:1;display:none"}, svg);
+    const hit = el("rect", {x: m.l, y: m.t, width: W - m.l - m.r, height: H - m.t - m.b, fill: "transparent", tabindex: 0}, svg);
+    const onMove = evt => {
+      const r = svg.getBoundingClientRect();
+      const px = (evt.clientX - r.left) / r.width * W;
+      const x = Math.max(1, Math.min(T, Math.round(1 + (px - m.l) / (W - m.l - m.r) * (T - 1))));
+      hair.setAttribute("x1", X(x)); hair.setAttribute("x2", X(x)); hair.style.display = "";
+      const rows = S.series.map(s => ({label: s.label, color: css(`--s-${s.key}`), value: `${fmt(s[field][x - 1].mean)} ± ${s[field][x - 1].ci.toFixed(3)}`}));
+      showTip(evt, `after task ${x} · mean ± 95% CI half-width`, rows);
+    };
+    hit.addEventListener("pointermove", onMove);
+    hit.addEventListener("pointerleave", () => { hair.style.display = "none"; hideTip(); });
+    hit.addEventListener("focus", () => { const r = svg.getBoundingClientRect(); onMove({clientX: r.left + r.width / 2, clientY: r.top + 40}); });
+    hit.addEventListener("blur", hideTip);
+  }
+
+  function fgTable(seq) {
+    const S = D.forgetting[seq];
+    const t = h("table", "data");
+    const hr = h("tr"); hr.appendChild(h("th", null, "method (n)"));
+    for (let x = 1; x <= S.T; x++) hr.appendChild(h("th", null, `task 1 after ${x}`));
+    for (let x = 1; x <= S.T; x++) hr.appendChild(h("th", null, `seen after ${x}`));
+    t.appendChild(hr);
+    for (const s of S.series) {
+      const tr = h("tr"); tr.appendChild(h("td", null, `${s.label} (${s.n})`));
+      s.first.forEach(p => tr.appendChild(h("td", null, fmt(p.mean))));
+      s.seen.forEach(p => tr.appendChild(h("td", null, fmt(p.mean))));
+      t.appendChild(tr);
+    }
+    const host = document.getElementById("fgtable"); host.replaceChildren(t);
+    host.appendChild(h("p", "note", "Source: " + S.source));
+  }
+
+  // ---------------- scatter (accuracy vs total memory)
+  function memChart(seq) {
+    const host = document.getElementById("mem"); host.replaceChildren();
+    const P = D.memory;
+    const leg = h("div", "legend");
+    for (const k of ["isolation", "sleep", "replay"]) {
+      const sp = h("span"); const sv = document.createElementNS(NS, "svg"); sv.setAttribute("width", 10); sv.setAttribute("height", 10);
+      el("circle", {cx: 5, cy: 5, r: 4, style: `fill:var(--s-${k})`}, sv); sp.appendChild(sv); sp.appendChild(document.createTextNode(METHOD[k])); leg.appendChild(sp);
+    }
+    for (const [t, shp] of Object.entries(MARK)) {
+      const sp = h("span"); const sv = document.createElementNS(NS, "svg"); sv.setAttribute("width", 10); sv.setAttribute("height", 10);
+      drawMark(sv, shp, 5, 5, 4, "none", "var(--ink2)"); sp.appendChild(sv); sp.appendChild(document.createTextNode(t === "Hybrid" ? "SNN+Transformer" : t)); leg.appendChild(sp);
+    }
+    host.appendChild(leg);
+    const W = narrow() ? 420 : 1060, H = narrow() ? 400 : 330, m = {l: 48, r: 18, t: 30, b: 40};
+    const svg = el("svg", {viewBox: `0 0 ${W} ${H}`, width: "100%", role: "img", "aria-label": "Final ACC against total memory"}, host);
+    el("text", {x: m.l, y: 16, class: "ttl"}, svg).textContent = "Final accuracy vs total memory (log scale)";
+    const lx0 = Math.log10(0.6), lx1 = Math.log10(12);
+    const X = v => m.l + (Math.log10(v) - lx0) / (lx1 - lx0) * (W - m.l - m.r);
+    const Y = v => m.t + (1.0 - v) / (1.0 - 0.3) * (H - m.t - m.b);
+    for (const v of [0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0]) {
+      el("line", {x1: m.l, x2: W - m.r, y1: Y(v), y2: Y(v), style: "stroke:var(--grid);stroke-width:1"}, svg);
+      el("text", {x: m.l - 6, y: Y(v) + 4, "text-anchor": "end"}, svg).textContent = v.toFixed(1);
+    }
+    for (const v of [0.6, 1, 2, 3, 5, 10]) {
+      el("line", {x1: X(v), x2: X(v), y1: m.t, y2: H - m.b, style: "stroke:var(--grid);stroke-width:1"}, svg);
+      el("text", {x: X(v), y: H - m.b + 16, "text-anchor": "middle"}, svg).textContent = v + " MB";
+    }
+    el("text", {x: (m.l + W - m.r) / 2, y: H - 6, "text-anchor": "middle"}, svg).textContent = "total memory: fp32 parameters + replay buffer";
+    const yl = el("text", {x: 12, y: (m.t + H - m.b) / 2, "text-anchor": "middle", transform: `rotate(-90 12 ${(m.t + H - m.b) / 2})`}, svg); yl.textContent = "final ACC";
+    const sorted = P.slice().sort((a, b) => (a.seq === seq) - (b.seq === seq));
+    const labelled = new Set();
+    for (const p of sorted) {
+      const on = p.seq === seq;
+      const g = el("g", {style: `opacity:${on ? 1 : 0.18}`}, svg);
+      drawMark(g, MARK[p.trunk], X(p.mb), Y(p.acc), on ? 6 : 5, `var(--s-${p.method})`, "var(--surface)");
+      if (on && p.method !== "isolation" && !labelled.has(p.buf)) {
+        // one label per buffer size, above the higher of the sleep/replay pair that shares it
+        labelled.add(p.buf);
+        const top = Math.max(...P.filter(q => q.seq === seq && q.buf === p.buf && q.method !== "isolation").map(q => q.acc));
+        el("text", {x: X(p.mb), y: Y(top) - 11, "text-anchor": "middle"}, g).textContent = p.buf;
+      }
+      const hit = el("circle", {cx: X(p.mb), cy: Y(p.acc), r: 12, fill: "transparent", tabindex: on ? 0 : -1}, svg);
+      const show = evt => showTip(evt, `${p.trunk === "Hybrid" ? "SNN+Transformer" : p.trunk} · ${p.suite} · ${p.frames / 1000}k frames/task`, [
+        {label: METHOD[p.method] + (p.method === "isolation" ? "" : `, ${p.buf}/task`), color: css(`--s-${p.method}`), value: `ACC ${p.acc.toFixed(3)} ± ${p.sd.toFixed(3)} SD`},
+        {label: "total memory", value: `${p.mb.toFixed(2)} MB`}, {label: "seeds", value: String(p.n)}]);
+      hit.addEventListener("pointermove", show);
+      hit.addEventListener("pointerleave", hideTip);
+      hit.addEventListener("focus", () => { const r = hit.getBoundingClientRect(); show({clientX: r.right, clientY: r.bottom}); });
+      hit.addEventListener("blur", hideTip);
+    }
+    const t = h("table", "data");
+    const hr = h("tr"); for (const c of ["sequence", "method", "states/task", "total MB", "ACC", "SD", "seeds"]) hr.appendChild(h("th", null, c)); t.appendChild(hr);
+    for (const p of P) {
+      const tr = h("tr");
+      for (const c of [`${p.trunk === "Hybrid" ? "SNN+Transformer" : p.trunk} ${p.suite}`, METHOD[p.method], p.method === "isolation" ? "–" : p.buf, p.mb.toFixed(2), p.acc.toFixed(3), p.sd.toFixed(3), p.n]) tr.appendChild(h("td", null, String(c)));
+      t.appendChild(tr);
+    }
+    document.getElementById("memtable").replaceChildren(t);
+  }
+  function drawMark(parent, shape, x, y, r, fill, stroke) {
+    const st = `fill:${fill};stroke:${stroke};stroke-width:${fill === "none" ? 1.4 : 1.5}`;
+    if (shape === "circle") return el("circle", {cx: x, cy: y, r, style: st}, parent);
+    if (shape === "square") return el("rect", {x: x - r * 0.9, y: y - r * 0.9, width: r * 1.8, height: r * 1.8, style: st}, parent);
+    return el("polygon", {points: `${x},${y - r * 1.1} ${x + r},${y + r * 0.8} ${x - r},${y + r * 0.8}`, style: st}, parent);
+  }
+
+  // ---------------- sequence control
+  const SEQS = [["cnn3", "CNN · 3 tasks"], ["snn3", "SNN · 3 tasks"], ["hyb3", "SNN+Transformer · 3 tasks"], ["cnn5", "CNN · 5 tasks"]];
+  let seq = "cnn3";
+  try { seq = localStorage.getItem("np-seq") || seq; } catch (e) {}
+  if (!D.forgetting[seq]) seq = "cnn3";
+  const seg = document.getElementById("seqseg");
+  for (const [k, lab] of SEQS) {
+    const b = h("button", null, lab); b.type = "button"; b.dataset.k = k;
+    b.addEventListener("click", () => { seq = k; try { localStorage.setItem("np-seq", k); } catch (e) {} renderAll(); });
+    seg.appendChild(b);
+  }
+  function renderAll() {
+    for (const b of seg.children) b.setAttribute("aria-pressed", String(b.dataset.k === seq));
+    renderAgents();
+    lineChart(document.getElementById("fg1"), "Return on the first task", "return on task 1", seq, "first");
+    lineChart(document.getElementById("fg2"), "Mean return over tasks seen so far", "mean return, seen tasks", seq, "seen");
+    const S = D.forgetting[seq];
+    document.getElementById("fgnote").textContent = `${S.label}. Mean over seeds; shaded = 95% CI (wide with 3 seeds). Methods whose lines lie on top of each other (e.g. all at 1.0) have near-identical means; hover, focus, or open the table view for exact values.`;
+    fgTable(seq);
+    memChart(seq === "cnn5" ? "cnn5" : seq);
+  }
+  renderAll();
+  try { matchMedia("(max-width: 760px)").addEventListener("change", renderAll); } catch (e) {}
+})();
+</script>
+</body>
+</html>
