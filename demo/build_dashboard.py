@@ -12,6 +12,7 @@ import glob
 import json
 import math
 import os
+import re
 import sys
 
 import numpy as np
@@ -33,7 +34,8 @@ def ci95(x):
 def numbers():
     for fn in (cn.protocol, cn.rq3, cn.rq1, cn.dfa, cn.rq2, cn.rq5, cn.memory, cn.rq4, cn.demo, cn.seeds):
         fn()
-    return {k: v[1].replace("$\\pm$", "±").replace("--", "–") for k, v in cn.N.items()}
+    # typographic minus for negative numbers ("-0.167" -> "−0.167"); ranges already use an en dash
+    return {k: re.sub(r"(?<![\w.])-(?=\d)", "−", v[1].replace("$\\pm$", "±").replace("--", "–")) for k, v in cn.N.items()}
 
 
 SEQUENCES = [("cnn3", "CNN · 3 tasks", "runs/continual", "fetch3", "CNN"),
@@ -87,58 +89,81 @@ def memory():
 
 def demo_agents():
     out = {}
+    rows = [line.split("|") for line in open("demo/assets/index.md") if line.startswith("| [fetch3_")]
+    eps = {}
+    for r in rows:  # "| [gif](gif) | method | task | ✓ 0.99 (4 steps), ✗ 0.00 (256 steps), ... | score |"
+        m, task = r[2].strip(), int(r[3].strip().split(":")[0])
+        eps.setdefault(m, {})[task] = [dict(ok=e.strip().startswith("✓"), ret=float(e.split()[1]), steps=int(e.split("(")[1].split()[0]))
+                                       for e in r[4].split(",")]
     for m in ("naive", "sleep"):
         r = json.load(open(f"runs/demo_ckpt/fetch3_{m}_s1/results.json"))
         seeds = cn.cl("runs/continual", m)
         accs = [x["metrics"]["ACC"] for x in seeds.values()]
         out[m] = dict(R=[[round(v, 3) for v in row] for row in r["R"]], acc=round(r["metrics"]["ACC"], 3),
                       seedAcc=[round(a, 3) for a in accs], seedMean=round(float(np.mean(accs)), 3),
+                      episodes=[eps[m][k] for k in range(3)],
                       gifs=[f"data:image/gif;base64,{base64.b64encode(open(f'demo/assets/fetch3_{m}_task{k}.gif', 'rb').read()).decode()}"
                             for k in range(3)])
-    idx = open("demo/assets/index.md").read()
-    out["episodes"] = [line.split("|")[4].strip() for line in idx.splitlines() if line.startswith("| [fetch3_")]
     return out
 
 
+def key_memory(N, mem):
+    """The annotated result: SNN fetch3, sleep with the smallest buffer vs isolation (paper Section 5, RQ5)."""
+    a = next(p for p in mem if p["seq"] == "snn3" and p["method"] == "sleep" and p["buf"] == 200)
+    b = next(p for p in mem if p["seq"] == "snn3" and p["method"] == "isolation")
+    return dict(seq="snn3", buf=200, bigBuf=N["bufferPerTask"], sleepAcc=f"{a['acc']:.3f}", isoAcc=f"{b['acc']:.3f}",
+                sleepMb=f"{a['mb']:.2f}", isoMb=f"{b['mb']:.2f}", ratioPct=round(100 * a["mb"] / b["mb"]),
+                diffCi=N["snnSleepTwoHundredVsIsoCi"], p=N["snnSleepTwoHundredVsIsoP"], n=min(a["n"], b["n"]))
+
+
 def scorecard(N):
+    """Plain-language version of the paper's conclusions. kind: helps | tradeoff | none | untested."""
     return [
-        dict(mech="Spiking encoder", q="Better accuracy-vs-operations than a sparsified CNN?", icon="◐",
-             verdict="Lower-ops regime, not more accuracy",
-             num=f"works at {N['rqThreeSnnTwoLowOps']} ops/frame (acc {N['rqThreeSnnTwoLowAcc']}) where the CNN stops at "
-                 f"{N['rqThreeCnnFloorOps']}; {N['snnCpuSlowdown']}× CPU cost per training step",
-             ev=f"{N['rqThreeSeeds']} seeds per point; energy only a proxy"),
-        dict(mech="STDP (reward-modulated)", q="Helps beyond homeostasis and a same-size random update?", icon="○",
-             verdict="No effect", num=f"vs random update: ΔAUC {N['rqOneContrBAucCi']}, p = {N['rqOneContrBAucP']}",
+        dict(mech="Spiking encoder", kind="tradeoff", verdict="Fewer operations, not more accuracy",
+             q="Does a spiking encoder reach the same accuracy with fewer operations than a pruned ordinary network?",
+             num=f"Works at {N['rqThreeSnnTwoLowOps']} operations per frame (accuracy {N['rqThreeSnnTwoLowAcc']}); the pruned "
+                 f"CNN stops working below {N['rqThreeCnnFloorOps']}. Costs {N['snnCpuSlowdown']}× more CPU time per training step.",
+             ev=f"{N['rqThreeSeeds']} seeds per point; energy is an estimate, not measured on hardware"),
+        dict(mech="Local learning rule (STDP)", kind="none", verdict="No effect",
+             q="Does a brain-like local learning rule (reward-modulated STDP) help, compared with a random update of the same size?",
+             num=f"Difference in learning speed vs the random update: ΔAUC {N['rqOneContrBAucCi']}, p = {N['rqOneContrBAucP']}.",
              ev=f"pre-registered, {N['rqOneBpN']} seeds per arm, Holm-corrected"),
-        dict(mech="Homeostasis", q="Helps a weight-transport-free learner (DFA)?", icon="◐",
-             verdict="Faster learning, not reliable learning",
-             num=f"ΔAUC {N['dfaAucCi']} (Holm p = {N['dfaAucHolm']}); solved {N['rqOneDfaHomeoSolved']} vs "
-                 f"{N['rqOneDfaSolved']} (Holm p = {N['dfaFisherHolm']})",
+        dict(mech="Homeostasis, without backprop", kind="helps", verdict="Faster learning, not more reliable",
+             q="Does homeostasis (keeping firing rates near a target) help SNNs trained without backprop (DFA)?",
+             num=f"Learning speed ΔAUC {N['dfaAucCi']} (Holm p = {N['dfaAucHolm']}). Solved {N['rqOneDfaHomeoSolved']} vs "
+                 f"{N['rqOneDfaSolved']} runs, not significant (Holm p = {N['dfaFisherHolm']}).",
              ev=f"pre-registered, {N['rqOneDfaN']} seeds per arm"),
-        dict(mech="Homeostasis with backprop", q="Helps ordinary backprop?", icon="○", verdict="Not significant",
-             num=f"ΔAUC {N['rqOneContrCAucCi']}, raw p = {N['rqOneContrCAucP']}, Holm p = {N['rqOneContrCAucHolm']}",
+        dict(mech="Homeostasis, with backprop", kind="none", verdict="Not significant after correction",
+             q="Does homeostasis help SNNs trained with ordinary backprop?",
+             num=f"ΔAUC {N['rqOneContrCAucCi']}; raw p = {N['rqOneContrCAucP']}, Holm-corrected p = {N['rqOneContrCAucHolm']}.",
              ev=f"pre-registered, {N['rqOneBpN']} seeds per arm"),
-        dict(mech="Sleep-like consolidation", q="Less forgetting than replay at an equal replay budget?", icon="○",
-             verdict="Equal to replay",
-             num=f"ΔACC {N['matchAccCi']}, p = {N['matchAccP']}; FORGET {N['matchForgetSleep']} vs {N['matchForgetReplay']}",
-             ev=f"pre-registered, replayed samples matched exactly, {N['matchN']} seeds per arm"),
-        dict(mech="Shared weights vs isolation", q="More performance per unit of total memory?", icon="◐",
-             verdict="Only with small replay buffers",
-             num=f"at 5,000 states/task isolation is {N['perMbRatioRange']}× more ACC per MB; SNN sleep at 200/task "
-                 f"ties isolation ({N['smallSnnTwoHundredAcc']} vs {N['snnIsoAcc']}) in {N['smallSnnTwoHundredMb']} vs "
-                 f"{N['memSnnThreeIsoMb']} MB",
-             ev="3 seeds per arm; per parameter shared weights always win"),
-        dict(mech="Transformer working memory", q="Helps on a task that needs memory?", icon="?", verdict="Untested",
-             num=f"no usable benchmark: on MemoryS11/S13 a memoryless CNN ({N['probeElevenOne']}, {N['probeThirteenOne']}) "
-                 f"and a {N['memWindow']}-frame stack ({N['probeElevenTwelve']}, {N['probeThirteenTwelve']}) are both at chance",
+        dict(mech="Sleep-like consolidation", kind="none", verdict="Ties replay",
+             q="Does offline, sleep-like consolidation reduce forgetting more than replay, with the same number of replayed memories?",
+             num=f"Sleep minus replay, final accuracy: {N['matchAccCi']}, p = {N['matchAccP']}. Forgetting "
+                 f"{N['matchForgetSleep']} vs {N['matchForgetReplay']}.",
+             ev=f"pre-registered, replayed samples matched exactly, {N['matchN']} seeds per arm; both beat naive fine-tuning"),
+        dict(mech="One shared network", kind="helps", verdict="Only with small replay buffers",
+             q="Is one shared network more memory-efficient than a separate network per task (isolation)?",
+             num=f"SNN: sleep with 200 states per task ties isolation ({N['smallSnnTwoHundredAcc']} vs {N['snnIsoAcc']}) in "
+                 f"{N['smallSnnTwoHundredMb']} vs {N['memSnnThreeIsoMb']} MB. At 5,000 states per task isolation gets "
+                 f"{N['perMbRatioRange']}× more accuracy per MB.",
+             ev="3 seeds per arm; per parameter the shared network always wins"),
+        dict(mech="Transformer working memory", kind="untested", verdict="Untested: no usable benchmark",
+             q="Does Transformer working memory help on a task that needs memory?",
+             num=f"On MemoryS11/S13 a memoryless CNN ({N['probeElevenOne']}, {N['probeThirteenOne']}) and a "
+                 f"{N['memWindow']}-frame stack ({N['probeElevenTwelve']}, {N['probeThirteenTwelve']}) both stay at chance, "
+                 f"so the comparison could not be run.",
              ev="pre-registered rule skipped the comparison"),
     ]
 
 
 def main():
     N = numbers()
-    data = dict(forgetting=forgetting(), memory=memory(), demo=demo_agents(), scorecard=scorecard(N),
-                seedRange=N["seedRange"], generated="2026-09-30")
+    mem = memory()
+    arch = dict(T=N["snnT"], window=N["hybridWindow"], buffer=N["bufferPerTask"], period=N["sleepPeriod"],
+                steps=N["sleepSteps"])
+    data = dict(forgetting=forgetting(), memory=mem, demo=demo_agents(), scorecard=scorecard(N), arch=arch,
+                keyMem=key_memory(N, mem), seedRange=N["seedRange"], generated="2026-09-30")
     html = open("demo/dashboard_template.html").read().replace("/*__DATA__*/null", json.dumps(data))
     with open("demo/index.html", "w") as f:
         f.write(html)

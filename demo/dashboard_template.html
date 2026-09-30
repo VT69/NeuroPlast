@@ -3,158 +3,275 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>NeuroPlast results</title>
+<title>NeuroPlast Results</title>
 <style>
 :root {
   color-scheme: light;
-  --page: #f9f9f7; --surface: #fcfcfb; --ink: #0b0b0b; --ink2: #52514e; --muted: #898781;
-  --grid: #e1e0d9; --axis: #c3c2b7; --ring: rgba(11,11,11,0.10);
+  --page: #f3f3f0; --surface: #fcfcfb; --surface2: #f6f6f3; --ink: #151514; --ink2: #52514e; --muted: #85837d;
+  --grid: #ebeae4; --axis: #cfcdc4; --hair: rgba(21,21,20,0.06); --focus: #2a78d6;
+  --shadow: 0 1px 2px rgba(21,21,20,0.04), 0 6px 24px rgba(21,21,20,0.06);
+  --shadow-hi: 0 2px 4px rgba(21,21,20,0.05), 0 12px 32px rgba(21,21,20,0.10);
   --s-naive: #e87ba4; --s-ewc_lam100: #eda100; --s-replay: #eb6834; --s-sleep: #2a78d6;
   --s-sleep_matched: #4a3aa7; --s-isolation: #1baf7a;
-  --seq-lo: #cde2fb; --seq-hi: #104281;
+  --seq-lo: #e3eefb; --seq-hi: #104281;
+  --b-helps: #e3f4ec; --b-helps-ink: #0f6b4a; --b-trade: #fbf0d9; --b-trade-ink: #7a5300;
+  --b-none: #efeee9; --b-none-ink: #52514e; --b-untested: #efeee9; --b-untested-ink: #52514e;
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
     color-scheme: dark;
-    --page: #0d0d0d; --surface: #1a1a19; --ink: #ffffff; --ink2: #c3c2b7; --muted: #898781;
-    --grid: #2c2c2a; --axis: #383835; --ring: rgba(255,255,255,0.10);
+    --page: #111110; --surface: #1a1a19; --surface2: #222220; --ink: #f4f4f1; --ink2: #c3c2b7; --muted: #8f8d86;
+    --grid: #272725; --axis: #3a3a37; --hair: rgba(255,255,255,0.07); --focus: #3987e5;
+    --shadow: 0 1px 2px rgba(0,0,0,0.3), 0 6px 24px rgba(0,0,0,0.25);
+    --shadow-hi: 0 2px 4px rgba(0,0,0,0.35), 0 12px 32px rgba(0,0,0,0.35);
     --s-naive: #d55181; --s-ewc_lam100: #c98500; --s-replay: #d95926; --s-sleep: #3987e5;
     --s-sleep_matched: #9085e9; --s-isolation: #199e70;
-    --seq-lo: #184f95; --seq-hi: #cde2fb;
+    --seq-lo: #1d3350; --seq-hi: #cde2fb;
+    --b-helps: #133528; --b-helps-ink: #7fd9b1; --b-trade: #3a2c0c; --b-trade-ink: #f0c56b;
+    --b-none: #262624; --b-none-ink: #c3c2b7; --b-untested: #262624; --b-untested-ink: #c3c2b7;
   }
 }
 :root[data-theme="dark"] {
   color-scheme: dark;
-  --page: #0d0d0d; --surface: #1a1a19; --ink: #ffffff; --ink2: #c3c2b7; --muted: #898781;
-  --grid: #2c2c2a; --axis: #383835; --ring: rgba(255,255,255,0.10);
+  --page: #111110; --surface: #1a1a19; --surface2: #222220; --ink: #f4f4f1; --ink2: #c3c2b7; --muted: #8f8d86;
+  --grid: #272725; --axis: #3a3a37; --hair: rgba(255,255,255,0.07); --focus: #3987e5;
+  --shadow: 0 1px 2px rgba(0,0,0,0.3), 0 6px 24px rgba(0,0,0,0.25);
+  --shadow-hi: 0 2px 4px rgba(0,0,0,0.35), 0 12px 32px rgba(0,0,0,0.35);
   --s-naive: #d55181; --s-ewc_lam100: #c98500; --s-replay: #d95926; --s-sleep: #3987e5;
   --s-sleep_matched: #9085e9; --s-isolation: #199e70;
-  --seq-lo: #184f95; --seq-hi: #cde2fb;
+  --seq-lo: #1d3350; --seq-hi: #cde2fb;
+  --b-helps: #133528; --b-helps-ink: #7fd9b1; --b-trade: #3a2c0c; --b-trade-ink: #f0c56b;
+  --b-none: #262624; --b-none-ink: #c3c2b7; --b-untested: #262624; --b-untested-ink: #c3c2b7;
 }
 * { box-sizing: border-box; }
-body { margin: 0; background: var(--page); color: var(--ink); font: 15px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif; }
-main { max-width: 1120px; margin: 0 auto; padding: 28px 16px 64px; }
-h1 { font-size: 26px; line-height: 1.25; margin: 0 0 6px; font-weight: 650; }
-h2 { font-size: 19px; margin: 40px 0 6px; font-weight: 650; }
-h3 { font-size: 15px; margin: 0 0 8px; font-weight: 600; }
-p.lede { color: var(--ink2); max-width: 780px; margin: 0 0 4px; }
-.meta { color: var(--muted); font-size: 13px; }
-.card { background: var(--surface); border: 1px solid var(--ring); border-radius: 10px; padding: 16px; }
-.note { color: var(--ink2); font-size: 13px; margin: 8px 0 0; }
-.topbar { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; flex-wrap: wrap; }
-button.theme { background: var(--surface); color: var(--ink2); border: 1px solid var(--ring); border-radius: 8px; padding: 6px 10px; font: inherit; font-size: 13px; cursor: pointer; }
+html { -webkit-text-size-adjust: 100%; scroll-behavior: smooth; }
+body {
+  margin: 0; background: var(--page); color: var(--ink);
+  font: 16px/1.6 ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; text-rendering: optimizeLegibility;
+  transition: background-color .35s ease, color .35s ease;
+}
+main { max-width: 1120px; margin: 0 auto; padding: 40px 20px 80px; }
+h1 { font-size: clamp(28px, 4.2vw, 42px); line-height: 1.15; margin: 14px 0 12px; font-weight: 700; letter-spacing: -0.022em; max-width: 880px; }
+h2 { font-size: 24px; line-height: 1.25; margin: 0 0 8px; font-weight: 680; letter-spacing: -0.015em; }
+h3 { font-size: 16px; margin: 0 0 10px; font-weight: 620; letter-spacing: -0.005em; }
+section { margin-top: 72px; scroll-margin-top: 24px; }
+.eyebrow { font-size: 13px; color: var(--muted); letter-spacing: 0.02em; }
+.subtitle { font-size: clamp(19px, 2.4vw, 23px); line-height: 1.35; color: var(--ink); margin: 0 0 14px; font-weight: 500; letter-spacing: -0.01em; }
+.lede { color: var(--ink2); max-width: 760px; margin: 0; font-size: 17px; }
+.sub { color: var(--ink2); max-width: 780px; margin: 0 0 20px; }
+.note { color: var(--ink2); font-size: 14px; margin: 12px 0 0; max-width: 820px; }
+.card {
+  background: var(--surface); border-radius: 20px; padding: 24px; box-shadow: var(--shadow);
+  border: 1px solid var(--hair); transition: background-color .35s ease, box-shadow .25s ease, border-color .35s ease;
+}
+.topbar { display: flex; justify-content: space-between; align-items: center; gap: 16px; }
+button { font: inherit; color: inherit; }
+.pill-btn {
+  display: inline-flex; align-items: center; gap: 8px; background: var(--surface); color: var(--ink2);
+  border: 1px solid var(--hair); border-radius: 999px; padding: 7px 14px; font-size: 14px; cursor: pointer;
+  box-shadow: var(--shadow); transition: background-color .35s ease, color .2s ease, box-shadow .2s ease, transform .2s ease;
+}
+.pill-btn:hover { box-shadow: var(--shadow-hi); color: var(--ink); transform: translateY(-1px); }
+:focus-visible { outline: 2px solid var(--focus); outline-offset: 3px; border-radius: 10px; }
+.pill-btn svg { width: 16px; height: 16px; stroke: currentColor; fill: none; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.tally { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 22px; }
+.toc { display: flex; flex-wrap: wrap; gap: 6px 18px; margin-top: 28px; font-size: 14px; }
+.toc a { color: var(--ink2); text-decoration: none; border-radius: 8px; padding: 2px 0; transition: color .2s ease; }
+.toc a:hover { color: var(--ink); }
+
+/* badges */
+.badge { display: inline-flex; align-items: center; gap: 7px; border-radius: 14px; padding: 4px 12px 4px 10px; font-size: 13px; font-weight: 560; transition: background-color .35s ease, color .35s ease; }
+.badge .ic { font-size: 13px; line-height: 1; }
+.badge.helps { background: var(--b-helps); color: var(--b-helps-ink); }
+.badge.tradeoff { background: var(--b-trade); color: var(--b-trade-ink); }
+.badge.none { background: var(--b-none); color: var(--b-none-ink); }
+.badge.untested { background: var(--b-untested); color: var(--b-untested-ink); }
+
+/* architecture */
+.arch svg { display: block; width: 100%; height: auto; }
+.arch .node rect, .arch .node path.cyl { fill: var(--surface2); stroke: var(--hair); stroke-width: 1; transition: fill .35s ease; }
+.arch .node .t { fill: var(--ink); font-size: 15px; font-weight: 620; }
+.arch .node .l { fill: var(--ink2); font-size: 12.5px; }
+.arch .edge { fill: none; stroke: var(--axis); stroke-width: 1.75; stroke-linecap: round; stroke-linejoin: round; }
+.arch .ah { fill: var(--axis); }
+.arch .lab { fill: var(--muted); font-size: 12px; }
+.arch .accent { stroke-width: 4; stroke-linecap: round; }
+.arch-legend { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; margin-top: 20px; }
+.arch-legend div { font-size: 14px; color: var(--ink2); }
+.arch-legend b { display: block; color: var(--ink); font-weight: 600; margin-bottom: 2px; }
 
 /* scorecard */
-table.score { width: 100%; border-collapse: collapse; font-size: 14px; }
-table.score th { text-align: left; color: var(--muted); font-weight: 500; font-size: 12px; padding: 6px 10px; border-bottom: 1px solid var(--grid); }
-table.score td { padding: 10px; border-bottom: 1px solid var(--grid); vertical-align: top; }
-table.score td.mech { font-weight: 600; white-space: nowrap; }
-table.score td.q { color: var(--ink2); }
-.verdict { display: inline-flex; gap: 6px; align-items: baseline; font-weight: 600; }
-.verdict .ic { font-size: 15px; width: 16px; text-align: center; color: var(--ink2); }
-td.num { font-variant-numeric: tabular-nums; }
-td.ev { color: var(--muted); font-size: 13px; }
-.legendkey { color: var(--muted); font-size: 12px; margin-top: 8px; }
+table.score { width: 100%; border-collapse: collapse; font-size: 14.5px; }
+table.score th { text-align: left; color: var(--muted); font-weight: 500; font-size: 12.5px; padding: 0 14px 12px; letter-spacing: 0.02em; }
+table.score td { padding: 16px 14px; vertical-align: top; border-top: 1px solid var(--grid); transition: background-color .2s ease; }
+table.score tbody tr:hover td { background: var(--surface2); }
+table.score tbody tr td:first-child { border-radius: 12px 0 0 12px; }
+table.score tbody tr td:last-child { border-radius: 0 12px 12px 0; }
+table.score td.mech { width: 30%; }
+table.score td.mech b { display: block; font-weight: 620; margin-bottom: 3px; }
+table.score td.mech span { color: var(--ink2); font-size: 14px; }
+table.score td.verd { width: 20%; }
+table.score td.num { font-variant-numeric: tabular-nums; color: var(--ink); }
+table.score td.ev { color: var(--muted); font-size: 13px; width: 17%; }
+.legendkey { color: var(--muted); font-size: 13px; margin: 14px 14px 0; display: flex; flex-wrap: wrap; gap: 8px 16px; }
 
 /* agents */
-.agents { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
-.agent h3 small { color: var(--muted); font-weight: 400; }
-.gifs { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+.agents { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; }
+.agent h3 { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 10px; }
+.agent h3 small { color: var(--muted); font-weight: 400; font-size: 13.5px; }
+.gifs { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
 .gifs figure { margin: 0; }
-.gifs img { width: 100%; height: auto; border-radius: 6px; border: 1px solid var(--ring); display: block; }
-.gifs figcaption { font-size: 12px; color: var(--ink2); margin-top: 4px; }
-.matrix { display: grid; gap: 2px; margin-top: 12px; font-variant-numeric: tabular-nums; font-size: 13px; }
-.matrix .cell { padding: 6px 4px; text-align: center; border-radius: 3px; }
-.matrix .hdr { color: var(--muted); font-size: 12px; text-align: center; align-self: end; }
-.matrix .rh { color: var(--muted); font-size: 12px; text-align: right; padding-right: 6px; align-self: center; }
+.gifs img { width: 100%; height: auto; border-radius: 12px; display: block; box-shadow: var(--shadow); background: #1a1a19; }
+.gifs figcaption { font-size: 12.5px; color: var(--ink2); margin-top: 8px; line-height: 1.45; }
+.callout { margin-top: 14px; font-size: 13.5px; color: var(--ink2); background: var(--surface2); border-radius: 12px; padding: 10px 14px; transition: background-color .35s ease; }
+.matrix { display: grid; gap: 4px; margin-top: 18px; font-variant-numeric: tabular-nums; font-size: 13.5px; }
+.matrix .cell { padding: 8px 4px; text-align: center; border-radius: 8px; transition: background-color .35s ease, color .35s ease; }
+.matrix .hdr { color: var(--muted); font-size: 12.5px; text-align: center; align-self: end; padding-bottom: 2px; }
+.matrix .rh { color: var(--muted); font-size: 12.5px; text-align: right; padding-right: 8px; align-self: center; white-space: nowrap; }
 
 /* controls */
-.controls { display: flex; gap: 6px; flex-wrap: wrap; margin: 14px 0 12px; align-items: center; }
-.controls .lab { color: var(--muted); font-size: 13px; margin-right: 4px; }
-.seg button { background: var(--surface); color: var(--ink2); border: 1px solid var(--ring); padding: 6px 12px; font: inherit; font-size: 13px; cursor: pointer; }
-.seg button:first-child { border-radius: 8px 0 0 8px; }
-.seg button:last-child { border-radius: 0 8px 8px 0; }
-.seg button[aria-pressed="true"] { color: var(--ink); font-weight: 600; box-shadow: inset 0 -2px 0 var(--ink); }
-.charts2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
-svg text { fill: var(--muted); font-size: 11px; font-family: system-ui, -apple-system, "Segoe UI", sans-serif; }
-svg .ttl { fill: var(--ink); font-size: 13px; font-weight: 600; }
-.legend { display: flex; flex-wrap: wrap; gap: 4px 14px; font-size: 12px; color: var(--ink2); margin: 2px 0 6px; }
-.legend span { display: inline-flex; align-items: center; gap: 6px; }
-details { margin-top: 8px; }
-details summary { color: var(--ink2); font-size: 13px; cursor: pointer; }
-table.data { border-collapse: collapse; font-size: 12px; margin-top: 6px; font-variant-numeric: tabular-nums; }
-table.data th, table.data td { padding: 3px 8px; border-bottom: 1px solid var(--grid); text-align: right; }
+.controls { display: flex; gap: 10px; flex-wrap: wrap; margin: 4px 0 18px; align-items: center; }
+.controls .lab { color: var(--muted); font-size: 14px; }
+.seg { display: inline-flex; flex-wrap: wrap; gap: 4px; background: var(--surface2); border-radius: 22px; padding: 4px; box-shadow: inset 0 0 0 1px var(--hair); transition: background-color .35s ease; }
+.seg button { background: transparent; color: var(--ink2); border: 0; border-radius: 999px; padding: 6px 14px; font-size: 14px; cursor: pointer; transition: background-color .25s ease, color .25s ease, box-shadow .25s ease; }
+.seg button:hover { color: var(--ink); }
+.seg button[aria-pressed="true"] { background: var(--surface); color: var(--ink); font-weight: 600; box-shadow: 0 1px 2px rgba(0,0,0,0.08), 0 2px 8px rgba(0,0,0,0.06); }
+.charts2 { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; }
+svg.chart { display: block; width: 100%; height: auto; shape-rendering: geometricPrecision; }
+svg.chart text { fill: var(--muted); font-size: 12px; font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+.charttitle { font-size: 15px; font-weight: 620; margin: 0 0 8px; }
+svg.chart .ann { fill: var(--ink); font-size: 12.5px; font-weight: 600; }
+.legend { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: 13px; color: var(--ink2); margin: 0 0 8px; }
+.legend span { display: inline-flex; align-items: center; gap: 7px; }
+.keyres { display: grid; grid-template-columns: auto 1fr; gap: 6px 22px; align-items: center; margin-bottom: 20px; }
+.keyres .big { font-size: 40px; font-weight: 700; letter-spacing: -0.03em; line-height: 1; font-variant-numeric: tabular-nums; }
+.keyres .big small { font-size: 16px; font-weight: 500; color: var(--muted); letter-spacing: 0; margin-left: 6px; }
+.keyres p { margin: 0; color: var(--ink2); font-size: 15px; }
+.keyres p b { color: var(--ink); font-weight: 600; }
+details { margin-top: 14px; }
+details summary { color: var(--ink2); font-size: 14px; cursor: pointer; border-radius: 8px; width: fit-content; transition: color .2s ease; }
+details summary:hover { color: var(--ink); }
+.tablewrap { overflow-x: auto; margin-top: 10px; border-radius: 14px; background: var(--surface); box-shadow: var(--shadow); padding: 8px 12px; }
+table.data { border-collapse: collapse; font-size: 13px; font-variant-numeric: tabular-nums; width: 100%; }
+table.data th, table.data td { padding: 6px 10px; border-bottom: 1px solid var(--grid); text-align: right; white-space: nowrap; }
+table.data th { color: var(--muted); font-weight: 500; }
+table.data tr:last-child td { border-bottom: 0; }
 table.data th:first-child, table.data td:first-child { text-align: left; }
-#tip { position: fixed; pointer-events: none; background: var(--surface); color: var(--ink); border: 1px solid var(--ring); border-radius: 8px; padding: 8px 10px; font-size: 12px; box-shadow: 0 4px 16px rgba(0,0,0,0.12); display: none; z-index: 10; min-width: 150px; }
-#tip .row { display: flex; align-items: center; gap: 8px; justify-content: space-between; }
-#tip .row b { font-variant-numeric: tabular-nums; }
-#tip .k { display: inline-flex; align-items: center; gap: 6px; color: var(--ink2); }
+#tip {
+  position: fixed; pointer-events: none; background: var(--surface); color: var(--ink); border: 1px solid var(--hair);
+  border-radius: 12px; padding: 10px 12px; font-size: 12.5px; box-shadow: var(--shadow-hi); display: none; z-index: 10;
+  min-width: 170px; max-width: 320px;
+}
+#tip .row { display: flex; align-items: center; gap: 12px; justify-content: space-between; line-height: 1.7; }
+#tip .row b { font-variant-numeric: tabular-nums; font-weight: 600; }
+#tip .k { display: inline-flex; align-items: center; gap: 7px; color: var(--ink2); }
 #tip .hd { color: var(--muted); margin-bottom: 4px; }
-footer { margin-top: 48px; color: var(--muted); font-size: 12px; }
-code { font-size: 12px; }
-#fgtable, #memtable { overflow-x: auto; }
+footer { margin-top: 80px; color: var(--muted); font-size: 13px; line-height: 1.8; }
+code { font: 12.5px/1.4 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; background: var(--surface2); border-radius: 6px; padding: 1px 6px; }
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { transition: none !important; scroll-behavior: auto !important; } }
 @media (max-width: 760px) {
-  .agents, .charts2 { grid-template-columns: 1fr; }
+  main { padding: 24px 16px 64px; }
+  section { margin-top: 56px; }
+  .card { padding: 18px 16px; border-radius: 18px; }
+  .agents, .charts2, .arch-legend { grid-template-columns: 1fr; }
   table.score thead { display: none; }
-  table.score, table.score tbody, table.score tr, table.score td { display: block; width: 100%; }
-  table.score tr { padding: 10px 0; border-bottom: 1px solid var(--grid); }
-  table.score td { border: 0; padding: 2px 0; }
-  table.score td.mech { white-space: normal; font-size: 15px; }
-  table.score td.q { font-size: 13px; }
-  .seg { display: flex; flex-wrap: wrap; gap: 4px; }
-  .seg button, .seg button:first-child, .seg button:last-child { border-radius: 8px; }
+  table.score, table.score tbody, table.score tr, table.score td { display: block; width: 100% !important; }
+  table.score tr { padding: 14px 0; border-top: 1px solid var(--grid); }
+  table.score tbody tr:first-child { border-top: 0; padding-top: 0; }
+  table.score td { border: 0; padding: 3px 0; }
+  table.score td.verd { padding: 8px 0 6px; }
+  table.score tbody tr:hover td { background: transparent; }
+  .keyres { grid-template-columns: 1fr; }
+  .topbar { align-items: flex-start; }
 }
 </style>
 </head>
 <body>
 <main>
-  <div class="topbar">
-    <div>
-      <h1>Do brain-inspired mechanisms help continual reinforcement learning?</h1>
-      <p class="lede">A controlled ablation study with spiking agents on MiniGrid. Each mechanism was switched on and off
-      against a matched non-biological control. Short answer: mostly no. Every number below is read from the frozen results.</p>
-      <p class="meta" id="meta"></p>
+  <header>
+    <div class="topbar">
+      <div class="eyebrow" id="eyebrow"></div>
+      <button class="pill-btn" id="theme" type="button" aria-label="Switch colour theme"></button>
     </div>
-    <button class="theme" id="theme" type="button">Toggle theme</button>
-  </div>
+    <h1>Do brain-inspired mechanisms help continual reinforcement learning?</h1>
+    <p class="subtitle">Mostly no, with two specific exceptions.</p>
+    <p class="lede">We tested seven brain-inspired ideas one at a time, each against a matched control that is not
+    brain-inspired, in small agents that learn a sequence of tasks. Every number on this page is read from the
+    frozen results.</p>
+    <div class="tally" id="tally"></div>
+    <nav class="toc" aria-label="Sections">
+      <a href="#built">What we built</a><a href="#scorecard">Scorecard</a><a href="#agents">Watch the agents</a>
+      <a href="#forgetting">Forgetting</a><a href="#memory">Memory trade-off</a>
+    </nav>
+  </header>
 
-  <h2>Mechanism scorecard</h2>
-  <p class="note">Same conclusions as the paper. Intervals are 95% confidence intervals.</p>
-  <div class="card" style="margin-top:10px">
-    <table class="score" id="score">
-      <thead><tr><th>Mechanism</th><th class="q">Question</th><th>Verdict</th><th>Key number</th><th>Evidence</th></tr></thead>
-      <tbody></tbody>
-    </table>
-    <p class="legendkey">○ no effect beyond the control &nbsp; ◐ partial or conditional effect &nbsp; ? not tested</p>
-  </div>
+  <section id="built">
+    <h2>What we built</h2>
+    <p class="sub">An agent that sees a small grid world, turns each frame into spikes, optionally remembers the last few
+    frames, and picks an action. It learns tasks one after another. The sleep variant alternates online learning
+    with offline phases that revisit stored experience.</p>
+    <div class="card arch"><div id="archsvg"></div>
+      <div class="arch-legend">
+        <div><b>Swap one part at a time</b>Each ablation changes one component: spiking vs ordinary (CNN) encoder,
+        with or without Transformer memory, local learning rules on or off.</div>
+        <div><b>Matched controls</b>Sleep is compared with replay, which uses the same buffer interleaved with
+        online learning, and with EWC, naive fine-tuning and one network per task (isolation).</div>
+        <div><b>Fair budgets</b>Same frames, seeds and learning rate across arms; replayed samples matched exactly
+        for sleep vs replay; memory counted as parameters plus buffer.</div>
+      </div>
+    </div>
+  </section>
 
-  <h2>Watch the agents: naive fine-tuning vs sleep</h2>
-  <p class="note" id="agentsnote"></p>
-  <div class="agents" id="agents"></div>
+  <section id="scorecard">
+    <h2>Mechanism scorecard</h2>
+    <p class="sub">The same conclusions as the paper. Brackets are 95% confidence intervals; p-values are two-sided.</p>
+    <div class="card">
+      <table class="score" id="score">
+        <thead><tr><th>Mechanism and question</th><th>Verdict</th><th>Key number</th><th>Evidence</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </section>
 
-  <h2>Forgetting and memory, by task sequence</h2>
-  <div class="controls" role="group" aria-label="Task sequence">
-    <span class="lab">Sequence</span>
-    <div class="seg" id="seqseg"></div>
-  </div>
-  <div class="charts2">
-    <div class="card"><div id="fg1"></div></div>
-    <div class="card"><div id="fg2"></div></div>
-  </div>
-  <p class="note" id="fgnote"></p>
-  <details><summary>Table view: forgetting curves</summary><div id="fgtable"></div></details>
+  <section id="agents">
+    <h2>Watch the agents: naive fine-tuning vs sleep</h2>
+    <p class="sub" id="agentsnote"></p>
+    <div class="agents" id="agentcards"></div>
+  </section>
 
-  <div class="card" style="margin-top:16px"><div id="mem"></div></div>
-  <p class="note">Total memory = fp32 parameters + replay buffer at its measured storage cost. Points for the selected
-  sequence are highlighted; the others are faded. Labels: replay states stored per task (sleep and replay at the same
-  buffer size share one label). Points are nudged sideways in the line charts so overlapping methods stay visible.</p>
-  <details><summary>Table view: accuracy vs total memory</summary><div id="memtable"></div></details>
+  <section id="forgetting">
+    <h2>Forgetting, by task sequence</h2>
+    <p class="sub">How well each method still does the first task, and all tasks seen so far, as new tasks are learned.</p>
+    <div class="controls" role="group" aria-label="Task sequence for the forgetting charts">
+      <span class="lab">Sequence</span><div class="seg" id="seqseg"></div>
+    </div>
+    <div class="charts2">
+      <div class="card"><div id="fg1"></div></div>
+      <div class="card"><div id="fg2"></div></div>
+    </div>
+    <p class="note" id="fgnote"></p>
+    <details><summary>Table view: forgetting curves</summary><div class="tablewrap" id="fgtable"></div></details>
+  </section>
 
-  <footer>
-    Built by <code>python demo/build_dashboard.py</code> from <code>runs/</code> and <code>results/</code> (via the paper's
-    <code>paper/compute_numbers.py</code>). GIFs: <code>demo/assets/</code>. Run an agent yourself:
-    <code>python demo/live_episode.py --agent sleep --task 0</code> (tasks numbered from 0 there: 0 = red ball).
-  </footer>
+  <section id="memory">
+    <h2>Memory trade-off: one shared network vs one network per task</h2>
+    <p class="sub">Final accuracy against total memory: the network's parameters plus the replay buffer. Isolation
+    never forgets, by construction, but needs a new network for every task.</p>
+    <div class="card">
+      <div class="keyres" id="keyres"></div>
+      <div class="controls" role="group" aria-label="Task sequence for the memory chart">
+        <span class="lab">Sequence</span><div class="seg" id="memseg"></div>
+      </div>
+      <div id="mem"></div>
+    </div>
+    <p class="note">Points for the selected sequence are highlighted; the others are faded. Labels give the replay states
+    stored per task (sleep and replay at the same buffer size share one label). Memory is fp32 parameters plus the
+    buffer at its measured storage cost.</p>
+    <details><summary>Table view: accuracy vs total memory</summary><div class="tablewrap" id="memtable"></div></details>
+  </section>
+
+  <footer id="foot"></footer>
 </main>
 <div id="tip" role="status" aria-live="polite"></div>
 
@@ -163,7 +280,8 @@ code { font-size: 12px; }
 (function () {
   const D = JSON.parse(document.getElementById("data").textContent);
   const NS = "http://www.w3.org/2000/svg";
-  const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+  const root = document.documentElement;
+  const css = n => getComputedStyle(root).getPropertyValue(n).trim();
   const el = (tag, attrs = {}, parent) => {
     const e = document.createElementNS(NS, tag);
     for (const [k, v] of Object.entries(attrs)) e.setAttribute(k, v);
@@ -172,96 +290,196 @@ code { font-size: 12px; }
   };
   const h = (tag, cls, text) => { const e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; };
   const METHOD = {naive: "naive", ewc_lam100: "EWC (λ=100)", replay: "replay", sleep: "sleep", sleep_matched: "sleep, replay-matched", isolation: "isolation"};
-  const DASH = {naive: "2 3", ewc_lam100: "6 3"};
+  const DASH = {naive: "2 4", ewc_lam100: "7 4"};
   const MARK = {CNN: "circle", SNN: "square", Hybrid: "triangle"};
-  const narrow = () => innerWidth <= 760;
+  const TRUNK = t => t === "Hybrid" ? "SNN+Transformer" : t;
   const fmt = (v, d = 3) => (v < 0 ? "−" : "") + Math.abs(v).toFixed(d);
+  const narrow = () => innerWidth <= 760;
+  const isDark = () => root.dataset.theme ? root.dataset.theme === "dark" : matchMedia("(prefers-color-scheme: dark)").matches;
+  const LINE = "stroke-linejoin:round;stroke-linecap:round";
 
-  // theme toggle
-  document.getElementById("theme").addEventListener("click", () => {
-    const root = document.documentElement;
-    const dark = root.dataset.theme ? root.dataset.theme === "dark" : matchMedia("(prefers-color-scheme: dark)").matches;
-    root.dataset.theme = dark ? "light" : "dark";
+  // ---------------- header, theme
+  document.getElementById("eyebrow").textContent = `NeuroPlast · capstone research · results frozen ${D.generated}`;
+  const themeBtn = document.getElementById("theme");
+  const SUN = '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>';
+  const MOON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"/></svg>';
+  function paintThemeBtn() { themeBtn.innerHTML = (isDark() ? SUN + "<span>Light</span>" : MOON + "<span>Dark</span>"); }
+  try { const t = localStorage.getItem("np-theme"); if (t === "dark" || t === "light") root.dataset.theme = t; } catch (e) {}
+  themeBtn.addEventListener("click", () => {
+    root.dataset.theme = isDark() ? "light" : "dark";
+    try { localStorage.setItem("np-theme", root.dataset.theme); } catch (e) {}
     renderAll();
   });
-  document.getElementById("meta").textContent = `Results frozen ${D.generated}. ${D.seedRange} seeds per arm.`;
+  try { matchMedia("(prefers-color-scheme: dark)").addEventListener("change", () => renderAll()); } catch (e) {}
 
-  // tooltip
+  const KIND = {helps: ["◐", "help, conditionally"], tradeoff: ["⇄", "trade-off"], none: ["○", "no effect beyond the control"], untested: ["?", "not tested"]};
+  const badge = (kind, text) => { const b = h("span", "badge " + kind); b.appendChild(h("span", "ic", KIND[kind][0])); b.appendChild(h("span", null, text)); return b; };
+  const tally = document.getElementById("tally");
+  for (const k of ["helps", "tradeoff", "none", "untested"]) {
+    const n = D.scorecard.filter(r => r.kind === k).length;
+    if (n) tally.appendChild(badge(k, `${n} ${KIND[k][1]}`));
+  }
+
+  // ---------------- tooltip
   const tip = document.getElementById("tip");
   function showTip(evt, head, rows) {
     tip.replaceChildren();
     tip.appendChild(h("div", "hd", head));
     for (const r of rows) {
-      const row = h("div", "row");
-      const k = h("span", "k");
-      if (r.color) { const s = document.createElementNS(NS, "svg"); s.setAttribute("width", 14); s.setAttribute("height", 4); el("line", {x1: 0, x2: 14, y1: 2, y2: 2, style: `stroke:${r.color};stroke-width:2`}, s); k.appendChild(s); }
+      const row = h("div", "row"); const k = h("span", "k");
+      if (r.color) { const s = document.createElementNS(NS, "svg"); s.setAttribute("width", 14); s.setAttribute("height", 4); el("line", {x1: 1, x2: 13, y1: 2, y2: 2, style: `stroke:${r.color};stroke-width:2.5;${LINE}`}, s); k.appendChild(s); }
       k.appendChild(document.createTextNode(r.label));
-      row.appendChild(k); row.appendChild(h("b", null, r.value));
-      tip.appendChild(row);
+      row.appendChild(k); row.appendChild(h("b", null, r.value)); tip.appendChild(row);
     }
     tip.style.display = "block";
-    const x = Math.min(evt.clientX + 14, innerWidth - tip.offsetWidth - 8);
-    const y = Math.min(evt.clientY + 14, innerHeight - tip.offsetHeight - 8);
-    tip.style.left = x + "px"; tip.style.top = y + "px";
+    const x = Math.min(evt.clientX + 16, innerWidth - tip.offsetWidth - 8);
+    const y = Math.min(evt.clientY + 16, innerHeight - tip.offsetHeight - 8);
+    tip.style.left = Math.max(8, x) + "px"; tip.style.top = Math.max(8, y) + "px";
   }
   const hideTip = () => { tip.style.display = "none"; };
+
+  // ---------------- architecture diagram
+  function renderArch() {
+    const A = D.arch, host = document.getElementById("archsvg"); host.replaceChildren();
+    const N = {
+      env: ["Environment", ["MiniGrid, 7×7 view of the room", "task ID given each episode", "reward for the right object"]],
+      enc: ["Spiking encoder", ["3 conv layers of LIF neurons", `${A.T} spike steps per frame`, "control: same-shape CNN"]],
+      tf: ["Transformer memory", ["1 layer, 4 attention heads", `attends over the last ${A.window} frames`, "SNN+Transformer agent only"]],
+      heads: ["Actor-critic heads", ["policy + value head per task", "task embedding on features", "trained with PPO"]],
+      wake: ["Wake: online learning", ["PPO on the current task", "the agent acts in the environment", "states stored at the end of each task"]],
+      buf: ["Replay buffer", [`${A.buffer} states per task`]],
+      sleep: ["Sleep: offline consolidation", [`every ${A.period} updates and at task end`, `${A.steps} gradient steps, no environment`, "distil old tasks, rehearse the current one"]],
+    };
+    const wide = !narrow();
+    let W, H, P;
+    if (wide) {
+      W = 1040; H = 392;
+      const bw = 212, by = 34, bh = 118, xs = [16, 283, 550, 817];
+      P = {env: [xs[0], by, bw, bh], enc: [xs[1], by, bw, bh], tf: [xs[2], by, bw, bh], heads: [xs[3], by, bw, bh],
+           wake: [16, 252, 380, 124], buf: [446, 268, 148, 92], sleep: [644, 252, 380, 124]};
+    } else {
+      W = 360; H = 940;
+      const bx = 16, bw = 300, bh = 104, ys = [16, 146, 276, 406];
+      P = {env: [bx, ys[0], bw, bh], enc: [bx, ys[1], bw, bh], tf: [bx, ys[2], bw, bh], heads: [bx, ys[3], bw, bh],
+           wake: [bx, 578, bw, 104], buf: [bx + 60, 708, 180, 84], sleep: [bx, 818, bw, 104]};
+    }
+    const vy = wide ? 20 : 0;
+    const svg = el("svg", {viewBox: `0 ${vy} ${W} ${H - vy}`, role: "img", "aria-label": "Architecture: MiniGrid environment, spiking encoder, Transformer working memory, actor-critic heads, and the wake and sleep training phases around a replay buffer."}, host);
+    const defs = el("defs", {}, svg);
+    const mk = el("marker", {id: "ah", viewBox: "0 0 10 10", refX: 8, refY: 5, markerWidth: 7, markerHeight: 7, orient: "auto-start-reverse"}, defs);
+    el("path", {d: "M1,1 L9,5 L1,9 Q3,5 1,1 Z", class: "ah"}, mk);
+    const arrow = d => el("path", {d, class: "edge", "marker-end": "url(#ah)"}, svg);
+    const accent = {sleep: "--s-sleep", wake: "--ink2"};
+    for (const [k, [x, y, w, hh]] of Object.entries(P)) {
+      const g = el("g", {class: "node"}, svg);
+      if (k === "buf") {
+        const ry = 10;
+        el("path", {class: "cyl", d: `M${x},${y + ry} A${w / 2},${ry} 0 0 1 ${x + w},${y + ry} V${y + hh - ry} A${w / 2},${ry} 0 0 1 ${x},${y + hh - ry} Z`}, g);
+        el("path", {d: `M${x},${y + ry} A${w / 2},${ry} 0 0 0 ${x + w},${y + ry}`, style: "fill:none;stroke:var(--axis);stroke-width:1"}, g);
+        el("text", {x: x + w / 2, y: y + hh / 2 + 6, class: "t", "text-anchor": "middle"}, g).textContent = N[k][0];
+        el("text", {x: x + w / 2, y: y + hh / 2 + 26, class: "l", "text-anchor": "middle"}, g).textContent = N[k][1][0];
+        continue;
+      }
+      el("rect", {x, y, width: w, height: hh, rx: 16}, g);
+      if (accent[k]) el("line", {x1: x + 16, x2: x + 44, y1: y + 14, y2: y + 14, class: "accent", style: `stroke:var(${accent[k]})`}, g);
+      el("text", {x: x + 16, y: y + 40, class: "t"}, g).textContent = N[k][0];
+      N[k][1].forEach((line, i) => { el("text", {x: x + 16, y: y + 62 + i * 18, class: "l"}, g).textContent = line; });
+    }
+    const R = k => P[k][0] + P[k][2], B = k => P[k][1] + P[k][3], CX = k => P[k][0] + P[k][2] / 2, CY = k => P[k][1] + P[k][3] / 2;
+    if (wide) {
+      for (const [a, b] of [["env", "enc"], ["enc", "tf"], ["tf", "heads"]]) arrow(`M${R(a) + 8},${CY(a)} H${P[b][0] - 6}`);
+      const ly = B("heads") + 32;
+      arrow(`M${CX("heads")},${B("heads") + 6} V${ly} H${CX("env")} V${B("env") + 10}`);
+      el("rect", {x: 488, y: ly - 11, width: 64, height: 22, rx: 11, style: "fill:var(--surface)"}, svg);
+      el("text", {x: 520, y: ly + 4, class: "lab", "text-anchor": "middle"}, svg).textContent = "action";
+      arrow(`M${R("wake") + 6},${CY("buf")} H${P.buf[0] - 6}`);
+      arrow(`M${R("buf") + 6},${CY("buf")} H${P.sleep[0] - 6}`);
+      el("text", {x: 16, y: 234, class: "lab"}, svg).textContent = "Continual training of the sleep variant: wake and sleep phases alternate on the same shared network";
+    } else {
+      for (const [a, b] of [["env", "enc"], ["enc", "tf"], ["tf", "heads"]]) arrow(`M${CX(a)},${B(a) + 6} V${P[b][1] - 6}`);
+      arrow(`M${R("heads") + 4},${CY("heads")} H${W - 20} V${CY("env")} H${R("env") + 10}`);
+      const my = (CY("env") + CY("heads")) / 2;
+      el("rect", {x: W - 29, y: my - 28, width: 18, height: 56, rx: 9, style: "fill:var(--surface)"}, svg);
+      el("text", {x: W - 20, y: my, class: "lab", "text-anchor": "middle", transform: `rotate(90 ${W - 20} ${my}) translate(0 4)`}, svg).textContent = "action";
+      el("text", {x: 16, y: 558, class: "lab"}, svg).textContent = "Sleep variant: wake and sleep alternate";
+      arrow(`M${CX("wake")},${B("wake") + 6} V${P.buf[1] - 6}`);
+      arrow(`M${CX("buf")},${B("buf") + 6} V${P.sleep[1] - 6}`);
+    }
+  }
 
   // ---------------- scorecard
   const tb = document.querySelector("#score tbody");
   for (const r of D.scorecard) {
     const tr = h("tr");
-    tr.appendChild(h("td", "mech", r.mech));
-    tr.appendChild(h("td", "q", r.q));
-    const td = h("td"); const v = h("span", "verdict"); v.appendChild(h("span", "ic", r.icon)); v.appendChild(h("span", null, r.verdict)); td.appendChild(v); tr.appendChild(td);
+    const m = h("td", "mech"); m.appendChild(h("b", null, r.mech)); m.appendChild(h("span", null, r.q)); tr.appendChild(m);
+    const v = h("td", "verd"); v.appendChild(badge(r.kind, r.verdict)); tr.appendChild(v);
     tr.appendChild(h("td", "num", r.num));
     tr.appendChild(h("td", "ev", r.ev));
     tb.appendChild(tr);
   }
+  const key = h("div", "legendkey");
+  for (const k of ["helps", "tradeoff", "none", "untested"]) key.appendChild(h("span", null, `${KIND[k][0]} ${KIND[k][1]}`));
+  document.querySelector("#scorecard .card").appendChild(key);
 
-  // ---------------- agents (GIFs + real accuracy matrices)
+  // ---------------- agents
   const TASKS = ["red ball", "green key", "blue box"];
   document.getElementById("agentsnote").textContent =
-    "Both CNN agents trained on the same sequence: fetch the red ball, then the green key, then the blue box (the task ID is given). " +
-    "Each GIF shows the agent after all three tasks, in the first three rooms of the scored evaluation — the same rooms for both " +
-    "agents, not chosen by outcome. The matrix is the real accuracy matrix of this run: row = after training task i, column = return on task j.";
-  function lerpColor(a, b, t) {
+    "Two ordinary (CNN) agents trained on the same sequence: fetch the red ball, then the green key, then the blue box. " +
+    "Each clip shows the agent after all three tasks, in the first three rooms of the scored evaluation: the same rooms for " +
+    "both agents, not chosen by outcome. Next to the clips is the run's real accuracy matrix (100 evaluation episodes per cell).";
+  function mix(a, b, t) {
     const p = c => [1, 3, 5].map(i => parseInt(c.slice(i, i + 2), 16));
     const [x, y] = [p(a), p(b)];
     return "rgb(" + x.map((v, i) => Math.round(v + (y[i] - v) * t)).join(",") + ")";
   }
   function renderAgents() {
-    const host = document.getElementById("agents"); host.replaceChildren();
-    const lo = css("--seq-lo"), hi = css("--seq-hi");
+    const host = document.getElementById("agentcards"); host.replaceChildren();
+    const lo = css("--seq-lo"), hi = css("--seq-hi"), dark = isDark();
     for (const [m, title] of [["naive", "Naive fine-tuning"], ["sleep", "Sleep-like consolidation"]]) {
       const a = D.demo[m];
       const card = h("div", "card agent");
-      const h3 = h("h3", null, title + " ");
-      h3.appendChild(h("small", null, `seed 1, ACC ${a.acc.toFixed(3)} · mean over ${a.seedAcc.length} seeds ${a.seedMean.toFixed(3)}`));
+      const h3 = h("h3", null, title);
+      h3.appendChild(h("small", null, `seed 1 · final accuracy ${a.acc.toFixed(3)} · mean of ${a.seedAcc.length} seeds ${a.seedMean.toFixed(3)}`));
       card.appendChild(h3);
       const g = h("div", "gifs");
       a.gifs.forEach((src, k) => {
-        const f = h("figure"); const img = document.createElement("img"); img.src = src;
-        img.alt = `${title} agent after all tasks, task ${k + 1}: fetch the ${TASKS[k]}`; f.appendChild(img);
-        const ep = D.demo.episodes[(m === "naive" ? 0 : 3) + k] || "";
-        f.appendChild(h("figcaption", null, `Task ${k + 1}: ${TASKS[k]} — ${ep.replace(/\(\d+ steps\)/g, "").replace(/\s+,/g, ",")}`));
+        const f = h("figure"); const img = document.createElement("img"); img.src = src; img.width = 512; img.height = 560;
+        img.alt = `${title} agent after all tasks, task ${k + 1}: fetch the ${TASKS[k]}, three episodes`; f.appendChild(img);
+        const ep = a.episodes[k];
+        const fc = h("figcaption", null, `Task ${k + 1}: ${TASKS[k]}`);
+        fc.appendChild(document.createElement("br"));
+        fc.appendChild(document.createTextNode(ep.map(e => e.ok ? "✓" : "✗").join(" ") + ` (${ep.filter(e => e.ok).length} of ${ep.length})`));
+        f.appendChild(fc);
         g.appendChild(f);
       });
       card.appendChild(g);
+      if (m === "naive") {
+        const e = a.episodes[0], won = e.filter(x => x.ok).length;
+        card.appendChild(h("div", "callout",
+          `Task 1: the first clip happens to succeed (${won} of ${e.length} episodes here). ` +
+          `Over 100 evaluation episodes this agent's task-1 return is ${a.R[a.R.length - 1][0].toFixed(3)}; the matrix gives the real average.`));
+      } else {
+        const all = a.episodes.flat(), won = all.filter(x => x.ok).length;
+        const last = a.R[a.R.length - 1];
+        card.appendChild(h("div", "callout",
+          `${won} of ${all.length} episodes shown succeed, in line with the matrix: over 100 evaluation episodes per task, ` +
+          `final returns are ${last.map(v => v.toFixed(3)).join(", ")}.`));
+      }
       const mx = h("div", "matrix"); mx.style.gridTemplateColumns = "auto repeat(3, minmax(0,1fr))";
       mx.appendChild(h("div", "rh", ""));
       for (let j = 0; j < 3; j++) mx.appendChild(h("div", "hdr", `task ${j + 1}`));
       a.R.forEach((row, i) => {
-        mx.appendChild(h("div", "rh", `after ${i + 1}`));
+        mx.appendChild(h("div", "rh", `after task ${i + 1}`));
         row.forEach(v => {
           const c = h("div", "cell", v.toFixed(3));
-          c.style.background = lerpColor(lo, hi, Math.max(0, Math.min(1, v)));
-          const dark = document.documentElement.dataset.theme === "dark" || (!document.documentElement.dataset.theme && matchMedia("(prefers-color-scheme: dark)").matches);
-          c.style.color = (dark ? v < 0.55 : v > 0.55) ? "#ffffff" : "#0b0b0b";
+          const t = Math.max(0, Math.min(1, v));
+          c.style.background = mix(lo, hi, t);
+          c.style.color = (dark ? t < 0.6 : t > 0.5) ? "#ffffff" : "#151514";
           mx.appendChild(c);
         });
       });
       card.appendChild(mx);
-      card.appendChild(h("p", "note", "Bottom row = final performance on each task (its mean is ACC)."));
+      card.appendChild(h("p", "note", "Rows: after training task i. Columns: mean return on task j. The bottom row is final performance; its mean is the final accuracy."));
       host.appendChild(card);
     }
   }
@@ -270,59 +488,60 @@ code { font-size: 12px; }
   function lineChart(host, title, ylab, seq, field) {
     host.replaceChildren();
     const S = D.forgetting[seq];
-    const W = narrow() ? 400 : 520, H = narrow() ? 300 : 290, m = {l: 54, r: 18, t: 30, b: 38};
+    const W = narrow() ? 360 : 480, H = narrow() ? 300 : 280, m = {l: 58, r: 16, t: 14, b: 44};
     const n = S.series.length, dodge = i => (i - (n - 1) / 2) * 4;
     const leg = h("div", "legend");
     for (const s of S.series) {
-      const sp = h("span"); const sv = document.createElementNS(NS, "svg"); sv.setAttribute("width", 18); sv.setAttribute("height", 6);
-      el("line", {x1: 0, x2: 18, y1: 3, y2: 3, style: `stroke:var(--s-${s.key});stroke-width:2;${DASH[s.key] ? "stroke-dasharray:" + DASH[s.key] : ""}`}, sv);
+      const sp = h("span"); const sv = document.createElementNS(NS, "svg"); sv.setAttribute("width", 20); sv.setAttribute("height", 6);
+      el("line", {x1: 2, x2: 18, y1: 3, y2: 3, style: `stroke:var(--s-${s.key});stroke-width:2.5;${LINE};${DASH[s.key] ? "stroke-dasharray:" + DASH[s.key] : ""}`}, sv);
       sp.appendChild(sv); sp.appendChild(document.createTextNode(`${s.label} (n=${s.n})`)); leg.appendChild(sp);
     }
-    const svg = el("svg", {viewBox: `0 0 ${W} ${H}`, width: "100%", role: "img", "aria-label": title});
-    el("text", {x: m.l, y: 16, class: "ttl"}, svg).textContent = title;
-    host.appendChild(svg); host.insertBefore(leg, svg);
+    host.appendChild(h("h3", "charttitle", title));
+    host.appendChild(leg);
+    const svg = el("svg", {viewBox: `0 0 ${W} ${H}`, class: "chart", role: "img", "aria-label": `${title}, ${S.label}`}, host);
     const T = S.T;
     const X = x => m.l + (x - 1) / (T - 1) * (W - m.l - m.r);
     const Y = y => m.t + (1 - y) * (H - m.t - m.b);
     for (let v = 0; v <= 1.0001; v += 0.25) {
       el("line", {x1: m.l, x2: W - m.r, y1: Y(v), y2: Y(v), style: "stroke:var(--grid);stroke-width:1"}, svg);
-      el("text", {x: m.l - 6, y: Y(v) + 4, "text-anchor": "end"}, svg).textContent = v.toFixed(2);
+      el("text", {x: m.l - 10, y: Y(v) + 4, "text-anchor": "end"}, svg).textContent = v.toFixed(2);
     }
-    for (let x = 1; x <= T; x++) el("text", {x: X(x), y: H - m.b + 16, "text-anchor": "middle"}, svg).textContent = x;
+    for (let x = 1; x <= T; x++) el("text", {x: X(x), y: H - m.b + 18, "text-anchor": "middle"}, svg).textContent = x;
     el("text", {x: (m.l + W - m.r) / 2, y: H - 6, "text-anchor": "middle"}, svg).textContent = "tasks trained so far";
-    const yl = el("text", {x: 12, y: (m.t + H - m.b) / 2, "text-anchor": "middle", transform: `rotate(-90 12 ${(m.t + H - m.b) / 2})`}, svg); yl.textContent = ylab;
+    const cy = (m.t + H - m.b) / 2;
+    el("text", {x: 14, y: cy, "text-anchor": "middle", transform: `rotate(-90 14 ${cy})`}, svg).textContent = ylab;
     S.series.forEach((s, i) => {
       const pts = s[field], XD = x => X(x) + dodge(i);
       const band = pts.map(p => `${XD(p.x)},${Y(Math.min(1, p.mean + p.ci))}`).concat(pts.slice().reverse().map(p => `${XD(p.x)},${Y(Math.max(0, p.mean - p.ci))}`));
-      el("polygon", {points: band.join(" "), style: `fill:var(--s-${s.key});opacity:0.08`}, svg);
+      el("polygon", {points: band.join(" "), style: `fill:var(--s-${s.key});opacity:0.07;stroke:none`}, svg);
     });
     S.series.forEach((s, i) => {
       const pts = s[field], XD = x => X(x) + dodge(i);
-      el("polyline", {points: pts.map(p => `${XD(p.x)},${Y(p.mean)}`).join(" "), style: `fill:none;stroke:var(--s-${s.key});stroke-width:2;${DASH[s.key] ? "stroke-dasharray:" + DASH[s.key] : ""}`}, svg);
+      el("polyline", {points: pts.map(p => `${XD(p.x)},${Y(p.mean)}`).join(" "), style: `fill:none;stroke:var(--s-${s.key});stroke-width:2.25;${LINE};${DASH[s.key] ? "stroke-dasharray:" + DASH[s.key] : ""}`}, svg);
       for (const p of pts) el("circle", {cx: XD(p.x), cy: Y(p.mean), r: 4, style: `fill:var(--s-${s.key});stroke:var(--surface);stroke-width:2`}, svg);
     });
-    const hair = el("line", {y1: m.t, y2: H - m.b, style: "stroke:var(--axis);stroke-width:1;display:none"}, svg);
-    const hit = el("rect", {x: m.l, y: m.t, width: W - m.l - m.r, height: H - m.t - m.b, fill: "transparent", tabindex: 0}, svg);
+    const hair = el("line", {y1: m.t, y2: H - m.b, style: "stroke:var(--axis);stroke-width:1;stroke-dasharray:3 4;display:none"}, svg);
+    const hit = el("rect", {x: m.l, y: m.t, width: W - m.l - m.r, height: H - m.t - m.b, fill: "transparent", tabindex: 0, "aria-label": `${title}: focus for values`}, svg);
     const onMove = evt => {
       const r = svg.getBoundingClientRect();
       const px = (evt.clientX - r.left) / r.width * W;
       const x = Math.max(1, Math.min(T, Math.round(1 + (px - m.l) / (W - m.l - m.r) * (T - 1))));
       hair.setAttribute("x1", X(x)); hair.setAttribute("x2", X(x)); hair.style.display = "";
-      const rows = S.series.map(s => ({label: s.label, color: css(`--s-${s.key}`), value: `${fmt(s[field][x - 1].mean)} ± ${s[field][x - 1].ci.toFixed(3)}`}));
-      showTip(evt, `after task ${x} · mean ± 95% CI half-width`, rows);
+      showTip(evt, `after task ${x} · mean ± 95% CI half-width`,
+              S.series.map(s => ({label: s.label, color: css(`--s-${s.key}`), value: `${fmt(s[field][x - 1].mean)} ± ${s[field][x - 1].ci.toFixed(3)}`})));
     };
     hit.addEventListener("pointermove", onMove);
     hit.addEventListener("pointerleave", () => { hair.style.display = "none"; hideTip(); });
     hit.addEventListener("focus", () => { const r = svg.getBoundingClientRect(); onMove({clientX: r.left + r.width / 2, clientY: r.top + 40}); });
-    hit.addEventListener("blur", hideTip);
+    hit.addEventListener("blur", () => { hair.style.display = "none"; hideTip(); });
   }
 
   function fgTable(seq) {
     const S = D.forgetting[seq];
     const t = h("table", "data");
-    const hr = h("tr"); hr.appendChild(h("th", null, "method (n)"));
-    for (let x = 1; x <= S.T; x++) hr.appendChild(h("th", null, `task 1 after ${x}`));
-    for (let x = 1; x <= S.T; x++) hr.appendChild(h("th", null, `seen after ${x}`));
+    const hr = h("tr"); hr.appendChild(h("th", null, "method (seeds)"));
+    for (let x = 1; x <= S.T; x++) hr.appendChild(h("th", null, `task 1, after ${x}`));
+    for (let x = 1; x <= S.T; x++) hr.appendChild(h("th", null, `seen, after ${x}`));
     t.appendChild(hr);
     for (const s of S.series) {
       const tr = h("tr"); tr.appendChild(h("td", null, `${s.label} (${s.n})`));
@@ -334,50 +553,81 @@ code { font-size: 12px; }
     host.appendChild(h("p", "note", "Source: " + S.source));
   }
 
-  // ---------------- scatter (accuracy vs total memory)
+  // ---------------- memory scatter
+  const K = D.keyMem;
+  (function keyResult() {
+    const host = document.getElementById("keyres");
+    const big = h("div", "big", K.ratioPct + "%"); big.appendChild(h("small", null, "of the memory"));
+    host.appendChild(big);
+    const p = h("p");
+    p.appendChild(h("b", null, "Key result (SNN, 3 tasks): "));
+    p.appendChild(document.createTextNode(
+      `sleep with only ${K.buf} stored states per task matches isolation's accuracy (${K.sleepAcc} vs ${K.isoAcc}; ` +
+      `difference ${K.diffCi}, p = ${K.p}, ${K.n} seeds per arm) in ${K.sleepMb} MB instead of ${K.isoMb} MB. ` +
+      `With the default ${K.bigBuf} states per task, isolation is the more memory-efficient choice.`));
+    host.appendChild(p);
+  })();
+  function drawMark(parent, shape, x, y, r, fill, stroke) {
+    const st = `fill:${fill};stroke:${stroke};stroke-width:${fill === "none" ? 1.4 : 1.75};${LINE}`;
+    if (shape === "circle") return el("circle", {cx: x, cy: y, r, style: st}, parent);
+    if (shape === "square") return el("rect", {x: x - r * 0.9, y: y - r * 0.9, width: r * 1.8, height: r * 1.8, rx: 1.5, style: st}, parent);
+    return el("polygon", {points: `${x},${y - r * 1.1} ${x + r},${y + r * 0.8} ${x - r},${y + r * 0.8}`, style: st}, parent);
+  }
   function memChart(seq) {
     const host = document.getElementById("mem"); host.replaceChildren();
     const P = D.memory;
     const leg = h("div", "legend");
     for (const k of ["isolation", "sleep", "replay"]) {
-      const sp = h("span"); const sv = document.createElementNS(NS, "svg"); sv.setAttribute("width", 10); sv.setAttribute("height", 10);
-      el("circle", {cx: 5, cy: 5, r: 4, style: `fill:var(--s-${k})`}, sv); sp.appendChild(sv); sp.appendChild(document.createTextNode(METHOD[k])); leg.appendChild(sp);
+      const sp = h("span"); const sv = document.createElementNS(NS, "svg"); sv.setAttribute("width", 12); sv.setAttribute("height", 12);
+      el("circle", {cx: 6, cy: 6, r: 5, style: `fill:var(--s-${k})`}, sv); sp.appendChild(sv); sp.appendChild(document.createTextNode(METHOD[k])); leg.appendChild(sp);
     }
     for (const [t, shp] of Object.entries(MARK)) {
-      const sp = h("span"); const sv = document.createElementNS(NS, "svg"); sv.setAttribute("width", 10); sv.setAttribute("height", 10);
-      drawMark(sv, shp, 5, 5, 4, "none", "var(--ink2)"); sp.appendChild(sv); sp.appendChild(document.createTextNode(t === "Hybrid" ? "SNN+Transformer" : t)); leg.appendChild(sp);
+      const sp = h("span"); const sv = document.createElementNS(NS, "svg"); sv.setAttribute("width", 12); sv.setAttribute("height", 12);
+      drawMark(sv, shp, 6, 6, 4.5, "none", "var(--ink2)"); sp.appendChild(sv); sp.appendChild(document.createTextNode(TRUNK(t))); leg.appendChild(sp);
     }
+    host.appendChild(h("h3", "charttitle", "Final accuracy vs total memory (log scale)"));
     host.appendChild(leg);
-    const W = narrow() ? 420 : 1060, H = narrow() ? 400 : 330, m = {l: 48, r: 18, t: 30, b: 40};
-    const svg = el("svg", {viewBox: `0 0 ${W} ${H}`, width: "100%", role: "img", "aria-label": "Final ACC against total memory"}, host);
-    el("text", {x: m.l, y: 16, class: "ttl"}, svg).textContent = "Final accuracy vs total memory (log scale)";
-    const lx0 = Math.log10(0.6), lx1 = Math.log10(12);
+    const nw = narrow();
+    const W = nw ? 360 : 1060, H = nw ? 380 : 360, m = {l: nw ? 58 : 64, r: 14, t: 16, b: 46};
+    const svg = el("svg", {viewBox: `0 0 ${W} ${H}`, class: "chart", role: "img", "aria-label": "Final accuracy against total memory"}, host);
+    const lx0 = Math.log10(0.6), lx1 = Math.log10(12), y0 = 0.7;
     const X = v => m.l + (Math.log10(v) - lx0) / (lx1 - lx0) * (W - m.l - m.r);
-    const Y = v => m.t + (1.0 - v) / (1.0 - 0.3) * (H - m.t - m.b);
-    for (const v of [0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0]) {
+    const Y = v => m.t + (1.0 - v) / (1.0 - y0) * (H - m.t - m.b);
+    for (const v of [0.7, 0.75, 0.8, 0.85, 0.9, 0.95, 1.0]) {
       el("line", {x1: m.l, x2: W - m.r, y1: Y(v), y2: Y(v), style: "stroke:var(--grid);stroke-width:1"}, svg);
-      el("text", {x: m.l - 6, y: Y(v) + 4, "text-anchor": "end"}, svg).textContent = v.toFixed(1);
+      el("text", {x: m.l - 10, y: Y(v) + 4, "text-anchor": "end"}, svg).textContent = v.toFixed(2);
     }
-    for (const v of [0.6, 1, 2, 3, 5, 10]) {
+    for (const v of (nw ? [0.6, 1, 2, 5, 10] : [0.6, 1, 2, 3, 5, 10])) {
       el("line", {x1: X(v), x2: X(v), y1: m.t, y2: H - m.b, style: "stroke:var(--grid);stroke-width:1"}, svg);
-      el("text", {x: X(v), y: H - m.b + 16, "text-anchor": "middle"}, svg).textContent = v + " MB";
+      el("text", {x: X(v), y: H - m.b + 18, "text-anchor": "middle"}, svg).textContent = v + " MB";
     }
     el("text", {x: (m.l + W - m.r) / 2, y: H - 6, "text-anchor": "middle"}, svg).textContent = "total memory: fp32 parameters + replay buffer";
-    const yl = el("text", {x: 12, y: (m.t + H - m.b) / 2, "text-anchor": "middle", transform: `rotate(-90 12 ${(m.t + H - m.b) / 2})`}, svg); yl.textContent = "final ACC";
+    const cy = (m.t + H - m.b) / 2;
+    el("text", {x: 14, y: cy, "text-anchor": "middle", transform: `rotate(-90 14 ${cy})`}, svg).textContent = "final accuracy (ACC)";
+    // key-result annotation (SNN, 3 tasks): sleep at the small buffer vs isolation
+    if (seq === K.seq) {
+      const a = P.find(p => p.seq === K.seq && p.method === "sleep" && p.buf === K.buf);
+      const b = P.find(p => p.seq === K.seq && p.method === "isolation");
+      const yA = Math.min(Y(a.acc), Y(b.acc)) - 30;
+      el("path", {d: `M${X(a.mb)},${Y(a.acc) - 11} V${yA} H${X(b.mb)} V${Y(b.acc) - 11}`, style: `fill:none;stroke:var(--ink2);stroke-width:1.25;stroke-dasharray:3 4;${LINE}`}, svg);
+      const tx = (X(a.mb) + X(b.mb)) / 2;
+      el("text", {x: tx, y: yA - 24, class: "ann", "text-anchor": "middle"}, svg).textContent = "same accuracy,";
+      el("text", {x: tx, y: yA - 8, class: "ann", "text-anchor": "middle"}, svg).textContent = `${K.ratioPct}% of the memory`;
+    }
     const sorted = P.slice().sort((a, b) => (a.seq === seq) - (b.seq === seq));
     const labelled = new Set();
     for (const p of sorted) {
       const on = p.seq === seq;
-      const g = el("g", {style: `opacity:${on ? 1 : 0.18}`}, svg);
-      drawMark(g, MARK[p.trunk], X(p.mb), Y(p.acc), on ? 6 : 5, `var(--s-${p.method})`, "var(--surface)");
+      const g = el("g", {style: `opacity:${on ? 1 : 0.16}`}, svg);
+      drawMark(g, MARK[p.trunk], X(p.mb), Y(p.acc), on ? 6.5 : 5, `var(--s-${p.method})`, "var(--surface)");
+      if (on && p.method === "isolation") el("text", {x: X(p.mb) + 11, y: Y(p.acc) + 4, style: "fill:var(--ink2)"}, g).textContent = "isolation";
       if (on && p.method !== "isolation" && !labelled.has(p.buf)) {
-        // one label per buffer size, above the higher of the sleep/replay pair that shares it
         labelled.add(p.buf);
-        const top = Math.max(...P.filter(q => q.seq === seq && q.buf === p.buf && q.method !== "isolation").map(q => q.acc));
-        el("text", {x: X(p.mb), y: Y(top) - 11, "text-anchor": "middle"}, g).textContent = p.buf;
+        const low = Math.min(...P.filter(q => q.seq === seq && q.buf === p.buf && q.method !== "isolation").map(q => q.acc));
+        el("text", {x: X(p.mb), y: Y(low) + 24, "text-anchor": "middle"}, g).textContent = `${p.buf.toLocaleString("en")}/task`;
       }
-      const hit = el("circle", {cx: X(p.mb), cy: Y(p.acc), r: 12, fill: "transparent", tabindex: on ? 0 : -1}, svg);
-      const show = evt => showTip(evt, `${p.trunk === "Hybrid" ? "SNN+Transformer" : p.trunk} · ${p.suite} · ${p.frames / 1000}k frames/task`, [
+      const hit = el("circle", {cx: X(p.mb), cy: Y(p.acc), r: 13, fill: "transparent", tabindex: on ? 0 : -1, "aria-label": `${TRUNK(p.trunk)} ${p.suite}, ${METHOD[p.method]}`}, svg);
+      const show = evt => showTip(evt, `${TRUNK(p.trunk)} · ${p.suite} · ${p.frames / 1000}k frames per task`, [
         {label: METHOD[p.method] + (p.method === "isolation" ? "" : `, ${p.buf}/task`), color: css(`--s-${p.method}`), value: `ACC ${p.acc.toFixed(3)} ± ${p.sd.toFixed(3)} SD`},
         {label: "total memory", value: `${p.mb.toFixed(2)} MB`}, {label: "seeds", value: String(p.n)}]);
       hit.addEventListener("pointermove", show);
@@ -389,41 +639,53 @@ code { font-size: 12px; }
     const hr = h("tr"); for (const c of ["sequence", "method", "states/task", "total MB", "ACC", "SD", "seeds"]) hr.appendChild(h("th", null, c)); t.appendChild(hr);
     for (const p of P) {
       const tr = h("tr");
-      for (const c of [`${p.trunk === "Hybrid" ? "SNN+Transformer" : p.trunk} ${p.suite}`, METHOD[p.method], p.method === "isolation" ? "–" : p.buf, p.mb.toFixed(2), p.acc.toFixed(3), p.sd.toFixed(3), p.n]) tr.appendChild(h("td", null, String(c)));
+      for (const c of [`${TRUNK(p.trunk)} ${p.suite}`, METHOD[p.method], p.method === "isolation" ? "–" : p.buf, p.mb.toFixed(2), p.acc.toFixed(3), p.sd.toFixed(3), p.n]) tr.appendChild(h("td", null, String(c)));
       t.appendChild(tr);
     }
     document.getElementById("memtable").replaceChildren(t);
   }
-  function drawMark(parent, shape, x, y, r, fill, stroke) {
-    const st = `fill:${fill};stroke:${stroke};stroke-width:${fill === "none" ? 1.4 : 1.5}`;
-    if (shape === "circle") return el("circle", {cx: x, cy: y, r, style: st}, parent);
-    if (shape === "square") return el("rect", {x: x - r * 0.9, y: y - r * 0.9, width: r * 1.8, height: r * 1.8, style: st}, parent);
-    return el("polygon", {points: `${x},${y - r * 1.1} ${x + r},${y + r * 0.8} ${x - r},${y + r * 0.8}`, style: st}, parent);
-  }
 
-  // ---------------- sequence control
-  const SEQS = [["cnn3", "CNN · 3 tasks"], ["snn3", "SNN · 3 tasks"], ["hyb3", "SNN+Transformer · 3 tasks"], ["cnn5", "CNN · 5 tasks"]];
-  let seq = "cnn3";
-  try { seq = localStorage.getItem("np-seq") || seq; } catch (e) {}
-  if (!D.forgetting[seq]) seq = "cnn3";
-  const seg = document.getElementById("seqseg");
-  for (const [k, lab] of SEQS) {
-    const b = h("button", null, lab); b.type = "button"; b.dataset.k = k;
-    b.addEventListener("click", () => { seq = k; try { localStorage.setItem("np-seq", k); } catch (e) {} renderAll(); });
-    seg.appendChild(b);
+  // ---------------- controls and render
+  function segControl(host, options, set, store) {
+    for (const [k, lab] of options) {
+      const b = h("button", null, lab); b.type = "button"; b.dataset.k = k;
+      b.addEventListener("click", () => { set(k); try { localStorage.setItem(store, k); } catch (e) {} renderAll(); });
+      host.appendChild(b);
+    }
   }
+  const SEQS = [["cnn3", "CNN · 3 tasks"], ["snn3", "SNN · 3 tasks"], ["hyb3", "SNN+Transformer · 3 tasks"], ["cnn5", "CNN · 5 tasks"]];
+  const MSEQS = [["cnn3", "CNN · 3 tasks"], ["snn3", "SNN · 3 tasks"], ["hyb3", "SNN+Transformer · 3"], ["cnn5", "CNN · 5 tasks"], ["snn5", "SNN · 5 tasks"]];
+  let seq = "cnn3", mseq = K.seq;
+  try { seq = localStorage.getItem("np-seq") || seq; mseq = localStorage.getItem("np-mseq") || mseq; } catch (e) {}
+  if (!D.forgetting[seq]) seq = "cnn3";
+  if (!D.memory.some(p => p.seq === mseq)) mseq = K.seq;
+  const seg = document.getElementById("seqseg"), mseg = document.getElementById("memseg");
+  segControl(seg, SEQS, k => { seq = k; }, "np-seq");
+  segControl(mseg, MSEQS.filter(([k]) => D.memory.some(p => p.seq === k)), k => { mseq = k; }, "np-mseq");
+
+  const foot = document.getElementById("foot");
+  foot.appendChild(document.createTextNode("Built by "));
+  foot.appendChild(h("code", null, "python demo/build_dashboard.py"));
+  foot.appendChild(document.createTextNode(" from runs/ and results/, through the paper's own numbers pipeline (paper/compute_numbers.py). " +
+    `Seeds per arm: ${D.seedRange}. Run an agent yourself on CPU: `));
+  foot.appendChild(h("code", null, "python demo/live_episode.py --agent sleep --task 0"));
+  foot.appendChild(document.createTextNode(" (tasks are numbered from 0 there: 0 = red ball)."));
+
   function renderAll() {
+    paintThemeBtn();
     for (const b of seg.children) b.setAttribute("aria-pressed", String(b.dataset.k === seq));
+    for (const b of mseg.children) b.setAttribute("aria-pressed", String(b.dataset.k === mseq));
+    renderArch();
     renderAgents();
     lineChart(document.getElementById("fg1"), "Return on the first task", "return on task 1", seq, "first");
     lineChart(document.getElementById("fg2"), "Mean return over tasks seen so far", "mean return, seen tasks", seq, "seen");
-    const S = D.forgetting[seq];
-    document.getElementById("fgnote").textContent = `${S.label}. Mean over seeds; shaded = 95% CI (wide with 3 seeds). Methods whose lines lie on top of each other (e.g. all at 1.0) have near-identical means; hover, focus, or open the table view for exact values.`;
+    document.getElementById("fgnote").textContent = `${D.forgetting[seq].label}. Mean over seeds; shaded bands are 95% CIs (wide with 3 seeds). ` +
+      "Methods are nudged sideways so overlapping lines stay visible; lines stacked at 1.0 have near-identical means. Hover, focus, or open the table view for exact values.";
     fgTable(seq);
-    memChart(seq === "cnn5" ? "cnn5" : seq);
+    memChart(mseq);
   }
   renderAll();
-  try { matchMedia("(max-width: 760px)").addEventListener("change", renderAll); } catch (e) {}
+  try { matchMedia("(max-width: 760px)").addEventListener("change", () => renderAll()); } catch (e) {}
 })();
 </script>
 </body>

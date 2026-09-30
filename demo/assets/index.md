@@ -4,6 +4,8 @@ Both agents were trained on the same 3-task sequence (FetchObj-0 -> 1 -> 2: fetc
 
 What to compare: tasks 0 and 1 were learned earlier in the sequence, so forgetting would show there; task 2 was trained last. The last column is the measured score, the GIFs are 3 illustrative episodes.
 
+Playback: 400 ms per frame, the last frame of each episode held 1.5 s; steps from 24 on play at 50 ms (labelled fast-forward), so a 256-step time-out doesn't take 100 s.
+
 | GIF | agent | task | episodes (3) | agent's scored mean return on this task (100 eval episodes) |
 |---|---|---|---|---|
 | [fetch3_naive_task0.gif](fetch3_naive_task0.gif) | naive | 0: fetch the red ball | ✓ 0.99 (4 steps), ✗ 0.00 (256 steps), ✗ 0.00 (256 steps) | 0.126 |
