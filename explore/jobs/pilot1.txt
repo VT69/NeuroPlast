@@ -1,0 +1,12 @@
+# Pilot round 1 (seeds 101-102; exploratory). Longest jobs first.
+explore/runs/mem/cf11_tf12_s101/eval.json :: python explore/run_single.py --config configs/mem_s4.yaml --set env_id=Explore-CueFirstS11-v0 total_frames=1000000 out_dir=explore/runs/mem encoder=cnn seed=101 run_name=cf11_tf12_s101 memory=true window=12
+explore/runs/mem/cf11_gru12_s101/eval.json :: python explore/run_single.py --config configs/mem_s4.yaml --set env_id=Explore-CueFirstS11-v0 total_frames=1000000 out_dir=explore/runs/mem encoder=cnn seed=101 run_name=cf11_gru12_s101 memory=true window=12 "mem_kwargs={kind: gru}"
+explore/runs/mem/cf11_fs12_s101/eval.json :: python explore/run_single.py --config configs/mem_s4.yaml --set env_id=Explore-CueFirstS11-v0 total_frames=1000000 out_dir=explore/runs/mem encoder=cnn seed=101 run_name=cf11_fs12_s101 frame_stack=12
+explore/runs/mem/cf11_fs1_s101/eval.json :: python explore/run_single.py --config configs/mem_s4.yaml --set env_id=Explore-CueFirstS11-v0 total_frames=1000000 out_dir=explore/runs/mem encoder=cnn seed=101 run_name=cf11_fs1_s101 frame_stack=1
+explore/runs/cl/fetch3_packnet_s101/results.json :: python explore/run_cl.py --config configs/cl_cnn.yaml --out explore/runs/cl --suite fetch3 --method packnet --seed 101
+explore/runs/cl/fetch3_lwf_s101/results.json :: python explore/run_cl.py --config configs/cl_cnn.yaml --out explore/runs/cl --suite fetch3 --method lwf --seed 101
+explore/runs/cl/fetch5_packnet_s101/results.json :: python explore/run_cl.py --config configs/cl_cnn.yaml --out explore/runs/cl --suite fetch5 --method packnet --seed 101
+explore/runs/cl/fetch5_lwf_s101/results.json :: python explore/run_cl.py --config configs/cl_cnn.yaml --out explore/runs/cl --suite fetch5 --method lwf --seed 101
+explore/runs/cl/fetch5_replay_buf57_s101/results.json :: python explore/run_cl.py --config configs/cl_cnn.yaml --out explore/runs/cl --suite fetch5 --method replay --seed 101 --tag _buf57 --mk buffer_per_task=57
+explore/runs/cl/fetch3_packnet_s102/results.json :: python explore/run_cl.py --config configs/cl_cnn.yaml --out explore/runs/cl --suite fetch3 --method packnet --seed 102
+explore/runs/cl/fetch3_lwf_s102/results.json :: python explore/run_cl.py --config configs/cl_cnn.yaml --out explore/runs/cl --suite fetch3 --method lwf --seed 102
