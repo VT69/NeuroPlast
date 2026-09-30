@@ -166,7 +166,74 @@ held-out episodes with the same RNG state. The fp32 − int8 ACC difference has 
 - This beats my prediction (0.85-0.95). It is on par with replay@5000 (0.970) and isolation (0.979), and above
   replay@200 (0.946) and replay@50 (0.885), while storing no states.
 - Persistent memory 0.78 MB (the same as naive). Peak memory during training 1.55 MB (student + snapshot).
+- **Round 2, s102: ACC 0.970, FORGET 0.000.** Replicates s101.
+- **int8 teacher, s101: ACC 0.976** (fp32 teacher 0.977). The int8 snapshot costs nothing detectable, as the audit
+  predicted.
+- **fetch5 s101: ACC 0.969; s102: ACC 0.812, FORGET 0.021.** In s102, task 2 was never learned (0.33 right after its
+  own training), while the other four reached 0.91-0.98. That is a plasticity failure, not forgetting: distilling
+  towards the snapshot seems to hold the shared encoder too tightly on some seeds. [interp; one seed] **int8 teacher,
+  s101: 0.963.**
+- **SNN fetch3 s101: ACC 0.825, FORGET 0.056** vs replay@200 (the pilot control) 0.797, FORGET 0.068. The SNN is
+  weaker at 150k frames/task anyway (diagonal 0.84-0.88 for both methods).
+- **Matched-memory replay controls (s101).** Buffer = one fp32 network's bytes / (T × 188 B):
+  - CNN fetch3 replay@1378: ACC 0.959 (LwF 0.977).
+  - CNN fetch5 replay@973: ACC 0.950 (LwF 0.969 / 0.812; int8 0.963).
+  - CNN fetch5 replay@57 (bytes of LwF's int8 snapshot): ACC 0.623, FORGET 0.435. At LwF-int8's peak memory, replay
+    barely works.
+- Distilled samples match replay's (fetch3 595k vs 0.55-0.59M; fetch5 1.19M, the same per-minibatch rule).
+- **Decision.** Kill criterion (fetch3 ACC < replay@50's 0.885) not met: the fetch3 pilots are 0.970-0.977. The
+  fetch5 s102 failure is the main risk; it went into the pre-registration as a descriptive "never-learned tasks"
+  count. → Phase C (C1, C2).
 
+### Idea 1, round 2: PackNet with gradual pruning. KILLED. [pilot]
+- 5 pruning steps between 50% and 75% of each task's updates; same final 1/T split and frames. Kept fractions were
+  exactly 1/3 (fetch3) and 1/5 (fetch5) per task.
+  | run | ACC | diagonal (return right after each task) |
+  |---|---|---|
+  | fetch3 s101 | 0.960 | 0.98 / 0.98 / 0.92 |
+  | fetch3 s102 | 0.857 | 0.98 / 0.98 / 0.62 |
+  | fetch5 s101 | 0.878 | 0.97 / 0.97 / 0.97 / 0.84 / 0.59 |
+- Gradual pruning fixed the task-0 collapse of the one-shot version, but the last task still fails to learn with its
+  1/T share on top of frozen earlier weights. Pilot mean 0.908 on fetch3 and 0.878 on fetch5 are both below the kill line
+  (isolation − 0.05 = 0.929 / 0.926), so it is killed. No further tuning.
+- [interp] Isolation-inside-one-network pays for its low memory (0.81 MB fetch3) with late-task plasticity. The
+  capstone's isolation baseline (separate small networks) does not have this problem, so it stays the right
+  reference.
+
+### Idea 5: sleep vs replay dose-response at low replay budgets. [pilot, CNN fetch3 s101] → Phase C3
+| replayed samples (≈ % of usual) | sleep | replay (batch per minibatch) |
+|---|---|---|
+| ~595k (100%, frozen seeds 1-3) | 0.978 | 0.970 |
+| ~55-61k (~10%) | 0.841 (FORGET 0.206; rb 55,040) | 0.935 (b=13, 60,606 samples) |
+| ~11-14k (~2%) | 0.585 (FORGET 0.591; rb 10,880) | 0.957 (b=3, 13,980 samples; FORGET 0.001) |
+- The direction reverses: at the full budget sleep ≥ replay (the capstone's result), but with scarce replay, interleaving
+  a few old states into every PPO minibatch protects far better than the same number spent in offline sleep phases.
+- Kill criterion (|sleep − replay| < 0.03 at both budgets) not met: the gaps are 0.094 and 0.372.
+- This was not a kill/keep idea but a boundary on the capstone's sleep finding, so it became a pre-registered
+  confirmation (C3) at the ~2% point, with the budget matched conservatively in sleep's favour.
+
+### Idea 6: DFA + homeostasis target-rate sweep. KILLED (kill criterion met). [pilot, DoorKey-6x6, 400k frames]
+Cut to 2 seeds per target (101-102) instead of 3, to save budget for Phase C.
+| homeostatic target | solved (final eval > 0.5) | final eval return |
+|---|---|---|
+| 0.05 | 2/2 | 0.933, 0.876 |
+| 0.15 (pre-registered; capstone 7/10 on seeds 1-10) | 2/2 | 0.956, 0.934 |
+| 0.3 | 2/2 | 0.687 (success 0.88), 0.882 |
+- No target solved more seeds than 0.15, so it is killed. At n = 2 per arm the pilot cannot detect a solve-rate change
+  of the size that matters (7/10 → 10/10); it only rules out a dramatic failure of the other targets. 0.3 looks
+  slightly worse. [pilot; not a finding]
+- Cost 1.2 core-h.
+
+### Idea 7: stateful SNN as working memory. NOT RUN.
+Its only test bed was CueFirst-S11, which idea 4 killed: no memory agent learned the task, so a stateful-SNN arm could
+not be distinguished from anything. Dropped without spending compute.
+
+### Infrastructure incidents
+- Container restart 1: 4 pilot jobs killed, rerun from scratch; 0.183 core-h lost.
+- Container restart 2 (22:36): the first 4 C2 SNN runs killed about 2 min in, rerun from scratch with the same seeds
+  (pre-registered stopping rule); 0.13 core-h lost.
+- Commit `16883dd` accidentally added run checkpoints (`*.pt`); they were untracked in the next commit but remain in
+  the `explore` branch history.
 
 ## Phase C: pre-registration
 Written and committed before any confirmation run started (commit that adds this section). Nothing below changes

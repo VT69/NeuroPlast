@@ -6,5 +6,10 @@
  {
   "name": "lost_to_container_restart",
   "core_h": 0.183
+ },
+ {
+  "name": "lost_to_container_restart_2",
+  "core_h": 0.13,
+  "note": "4 C2 SNN runs killed ~2 min in; rerun from scratch with the same seeds"
  }
 ]
