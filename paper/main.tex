@@ -1,0 +1,688 @@
+\documentclass[10pt]{article}
+% TMLR style. [preprint] shows the author and removes the TMLR header; for an anonymous TMLR submission use
+% \usepackage{tmlr} instead (and remove the author block's identifying details).
+\usepackage[preprint]{tmlr}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{xspace}
+\usepackage{multirow}
+\usepackage{array}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\usepackage{url}
+\hypersetup{colorlinks=true, linkcolor=blue!50!black, citecolor=blue!50!black, urlcolor=blue!50!black}
+
+% Every result number is a macro generated from runs/ and results/ by paper/compute_numbers.py (see NUMBERS.md).
+\input{numbers}
+\xspaceaddexceptions{\%}
+
+% Claim labels: literature claim / our result / our interpretation.
+\newcommand{\lit}{\textsc{[lit]}\xspace}
+\newcommand{\ours}{\textsc{[ours]}\xspace}
+\newcommand{\interp}{\textsc{[interp]}\xspace}
+\newcommand{\todo}[1]{\textcolor{red}{\textbf{TODO:} #1}}
+
+\title{Do Brain-Inspired Mechanisms Help Continual Reinforcement Learning?\\
+A Controlled Ablation Study with Spiking Agents}
+
+\author{\name Vaibhav Tiwari \\
+      \addr \todo{affiliation and contact email}}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+Brain-inspired mechanisms---spiking neural networks, local plasticity rules such as spike-timing-dependent
+plasticity (STDP), homeostasis, sleep-like offline consolidation---are often proposed as remedies for
+catastrophic forgetting and for the cost of deep reinforcement learning (RL), and they are usually introduced
+together. We test six of them one at a time, each against a matched non-biological control, in a small
+task-incremental continual RL setting (MiniGrid, PPO, CPU-scale agents, \seedRange seeds per arm, pre-registered
+tests with 95\% confidence intervals). The answer is mostly negative. A reward-modulated STDP term is
+indistinguishable from a random update of the same size (AUC difference \rqOneContrBAucCi). Sleep-like
+consolidation beats naive fine-tuning and EWC, but once its replay budget is matched exactly to experience replay
+it ties replay on accuracy (\matchAccCi) and forgetting. Shared weights beat parameter isolation per parameter, but
+per unit of total memory (parameters plus replay buffer) only at small buffers. Homeostasis is the one local
+mechanism with a surviving effect: it speeds up learning with a weight-transport-free global signal (direct
+feedback alignment; AUC \dfaAucCi, Holm $p=\dfaAucHolm$), without making it reliable (solve rate $p=\dfaFisherHolm$).
+A spiking encoder reaches a lower operation-count regime than a sparsified CNN (\rqThreeSnnTwoLowOps vs
+\rqThreeCnnFloorOps operations per frame), but costs \snnCpuSlowdown{}$\times$ more CPU time per training step. We
+could not test whether Transformer working memory helps, because none of our memory benchmarks was learnable by
+memory-equipped agents within budget. Five earlier positive findings did not survive controls; we document each
+one and its cause (seed count, training budget, memory accounting, replay-sample budget, benchmark validity).
+\end{abstract}
+
+% =====================================================================================================
+\section{Introduction}
+\label{sec:intro}
+
+A continual reinforcement learning (RL) agent learns a sequence of tasks while its parameters keep changing. With
+plain gradient-based fine-tuning, learning a new task overwrites what earlier tasks needed: catastrophic
+forgetting. The problem is framed as a stability--plasticity trade-off \lit \citep{khetarpal2022towards,
+kirkpatrick2017overcoming}, and the standard remedies are regularisation towards old parameters
+\citep[EWC;][]{kirkpatrick2017overcoming}, replaying stored experience \citep[CLEAR;][]{rolnick2019experience} and
+isolating parameters per task \citep[e.g. PackNet;][]{mallya2018packnet}.
+
+A second family of remedies is inspired by the brain, and it is popular. Spiking neural networks (SNNs) promise
+event-driven, low-energy computation \lit \citep{fang2023spikingjelly, zhou2026spikingformer}. Local learning rules
+such as STDP and its reward-modulated three-factor variants are proposed as biologically plausible complements or
+alternatives to backpropagation \lit \citep{lee2025brain, huo2025research}. Sleep-like offline replay with local
+plasticity has been reported to recover forgotten tasks \lit \citep{tadros2022sleep}, and homeostatic plasticity
+keeps biological firing rates in a working range \lit \citep{turrigiano2004homeostatic}. These mechanisms are often
+introduced together, in one system, and compared against an unmodified baseline. When such a system does better, it
+is hard to know which mechanism did the work, or whether a simpler non-biological control would have done the same.
+
+We ask a narrower question: \emph{in a controlled continual RL setting, which brain-inspired mechanisms improve
+learning or retention when each is isolated and compared with a matched control?} We build one agent (an SNN or CNN
+encoder, optional Transformer working memory, PPO) and switch six mechanisms on and off: the spiking encoder,
+STDP, homeostasis, direct feedback alignment (DFA) as a weight-transport-free global signal, sleep-like
+consolidation, and shared weights versus parameter isolation, plus Transformer working memory. Each gets a control
+chosen to remove the most obvious alternative explanation: a same-size random update for STDP, a replay baseline
+with an exactly matched number of replayed samples for sleep, total-memory accounting for shared weights, a
+memoryless baseline and a frame stack for the Transformer.
+
+\paragraph{Headline answer.} \ours Mostly no. None of the mechanisms improved accuracy or forgetting beyond its
+matched non-biological control. The one local mechanism with a surviving effect is homeostasis, which speeds up
+DFA-based learning without making it reliable. The spiking encoder reaches a lower operation-count regime than a
+sparsified CNN, at a small accuracy cost; whether that saves energy depends on neuromorphic hardware we did not
+use. The Transformer question remains untested, because our memory benchmark failed.
+
+\paragraph{Contributions.}
+\begin{enumerate}
+  \item A controlled ablation of six brain-inspired mechanisms (plus Transformer memory) for task-incremental
+        continual RL, each against a matched control (Sections~\ref{sec:mechanisms}--\ref{sec:results}).
+  \item Pre-registered tests with effect sizes and 95\% confidence intervals, including a replay-budget-matched
+        sleep--replay comparison and a memory-fair shared-weights--isolation comparison
+        (Section~\ref{sec:setup}).
+  \item A record of five earlier positive findings that did not survive controls, each with its cause
+        (Section~\ref{sec:didnt-survive}). We think this is the most reusable part of the paper.
+  \item Code, frozen results, a script that regenerates every number in this paper from the result files, and a
+        demo of the agents (Section~\ref{sec:reproducibility}).
+\end{enumerate}
+
+\paragraph{How to read the claims.} We label statements as literature claims \lit, results of our experiments
+\ours, or our interpretations \interp. Literature numbers were taken from the cited papers and are marked as such.
+
+% =====================================================================================================
+\section{Related work}
+\label{sec:related}
+
+\paragraph{Continual RL.} \lit \citet{khetarpal2022towards} review continual RL and its desiderata: retention,
+forward transfer, and ideally operation without task identities or boundaries. EWC \citep{kirkpatrick2017overcoming}
+penalises moving parameters that were important for earlier tasks (Fisher-weighted); it protects old tasks at the
+cost of plasticity for new ones. CLEAR \citep{rolnick2019experience} shows that experience replay with behavioural
+cloning on replayed states is a strong and simple continual RL method; we use a CLEAR-style replay baseline.
+Continual World \citep{wolczyk2021continual} argues that forgetting alone is an incomplete metric and that forward
+transfer must be measured; we report their forward-transfer measure. PackNet \citep{mallya2018packnet} isolates
+parameters per task by pruning and freezing, which removes forgetting by construction; our isolation baseline is
+the simpler one-network-per-task variant. We measure forgetting as in \citet{chaudhry2018riemannian}.
+
+\paragraph{Sleep and consolidation.} \lit \citet{tadros2022sleep} implement a sleep-like phase in feed-forward
+networks (offline, noisy input, local unsupervised Hebbian plasticity) and report that it recovers previously
+forgotten tasks in incremental classification. Our sleep phase is \emph{inspired} by this line of work but is
+different: it is offline replay plus distillation in an RL setting, optionally with STDP (Section~\ref{sec:mech-sleep}),
+and it relies on a replay buffer. \citet{yu2025selfconsolidation} distil accumulated experience of LLM agents into
+parameters instead of retrieving raw trajectories, which motivates counting the memory that replay needs
+(Section~\ref{sec:res-shared}).
+
+\paragraph{Spiking networks for RL and control.} \lit SNNs are trained end to end with surrogate gradients
+\citep{neftci2019surrogate}. \citet{vandenberghe2025adaptive} study the surrogate-gradient slope and show that it
+matters much more in RL than in supervised learning; they also describe a warm-up problem for stateful SNNs in RL.
+Our encoder resets its membrane at every environment step, so it avoids that problem, and it has no memory across
+frames (Section~\ref{sec:mech-snn}). \citet{lee2025brain} and \citet{huo2025research} review biologically plausible
+learning rules for SNNs, including STDP and reward-modulated three-factor rules \citep{bi1998synaptic,
+fremaux2016neuromodulated}. The Spiking Decision Transformer \citep{pandey2025spiking} combines spiking attention with
+three-factor plasticity for offline RL on classic control tasks; Spikingformer \citep{zhou2026spikingformer}
+points out that many ``spiking'' architectures hide non-spike floating-point computation, a warning we take into
+account when counting operations. SpikingJelly \citep{fang2023spikingjelly} and snnTorch \citep{eshraghian2023training}
+are common SNN toolkits; we use our own LIF implementation, checked against snnTorch.
+
+\paragraph{Local and weight-transport-free learning.} \lit Direct feedback alignment \citep{nokland2016direct}
+projects the output error to hidden layers through fixed random matrices, avoiding the weight transport that
+backpropagation requires. Homeostatic plasticity \citep{turrigiano2004homeostatic} adjusts excitability to keep
+firing rates near a set point.
+
+\paragraph{Energy proxies.} \lit A common proxy counts synaptic operations and charges an accumulate (about
+\pjAc~pJ) per spike-driven operation and a multiply--accumulate (about \pjMac~pJ) per dense operation, using 45\,nm
+estimates \citep{horowitz2014computing}. Such numbers are estimates, not measured power, and they assume
+event-driven hardware.
+
+% =====================================================================================================
+\section{Setup}
+\label{sec:setup}
+
+\subsection{Environments and task sequences}
+All environments are MiniGrid \citep{chevalierboisvert2023minigrid} gridworlds with the standard $7{\times}7$
+egocentric symbolic view, which we encode as 20 one-hot channels (object type, colour and state).
+
+\paragraph{fetch3 and fetch5 (continual).} A room ($6{\times}6$ interior) contains three (fetch3) or five (fetch5)
+distinct objects at random positions. Task $k$ rewards picking up object $k$ (reward $1-0.9\,t/T_{\max}$, the MiniGrid
+convention); picking up any other object ends the episode with reward 0. Observations are statistically identical
+across tasks, so the same state demands different actions in different tasks: the setting guarantees interference
+under naive fine-tuning, while navigation and pick-up are shared skills that allow forward transfer. The agent is
+given the task identity (a task embedding and one actor--critic head per task). This is the standard
+\emph{task-incremental} setting; without the task identity the tasks are not merely harder but unsolvable, since the
+goal is not visible (Section~\ref{sec:limitations}). Tasks are trained in order for a fixed number of frames each
+(\framesPerTaskFlat per task for the CNN and SNN agents, \framesPerTaskHybrid for the SNN+Transformer agent).
+
+\paragraph{DoorKey-6x6 (single task).} Used for the local-plasticity questions: the agent must pick up a key, open
+a door and reach the goal; \framesDoorKey frames. It is hard enough that the encoder's learning matters (a frozen
+random encoder learns more slowly), and outcomes are bimodal (a run either solves it or stays near zero).
+
+\paragraph{MiniGrid-Memory (S7, S11, S13).} The agent sees a cue object at one end of a corridor and must choose the
+matching object at the other end. We use these maps for the Transformer question (Section~\ref{sec:res-memory}).
+
+\subsection{Agent and training}
+The encoder is either a CNN (three $2{\times}2$ convolutions with \convChannels channels and a linear layer to
+\featDim features) or an SNN with the same topology, leaky integrate-and-fire (LIF) neurons, \snnT timesteps per
+environment step, a learnable leak (initial $\beta=\lifBeta$) and a surrogate gradient (slope \surrogateSlope)
+\citep{neftci2019surrogate}. Actor and critic heads are small MLPs. Training is PPO \citep{schulman2017proximal}
+in a single-file CleanRL-style implementation \citep{huang2022cleanrl}: \numEnvs parallel environments,
+\numSteps steps per rollout, \updateEpochs epochs, minibatches of \minibatch, clip \clipCoef, $\gamma=\gammaVal$,
+GAE $\lambda=\gaeLambda$, early stopping at an approximate KL of \targetKl, Adam with learning rate \lrFlat
+(\lrHybrid for the SNN+Transformer agent). Everything runs on CPU (one thread per run). The shared CNN agent has
+\paramsCnnShared parameters, one isolated CNN network \paramsCnnPerTask, the shared SNN+Transformer agent
+\paramsHybridShared.
+
+\subsection{Metrics}
+$R_{i,j}$ is the mean evaluation return on task $j$ after training on task $i$ (\evalEpisodesCl episodes, actions
+sampled from the policy). For $T$ tasks: ACC $=\frac1T\sum_j R_{T,j}$ (final average performance); BWT
+$=\frac{1}{T-1}\sum_{j<T} (R_{T,j}-R_{j,j})$; FORGET $=\frac{1}{T-1}\sum_{j<T}\big(\max_{i<T}R_{i,j}-R_{T,j}\big)$
+\citep{chaudhry2018riemannian}; forward transfer FWT is the normalised gain in area under the training curve on
+tasks $2..T$ relative to a from-scratch network on the same task and seed \citep{wolczyk2021continual}. For single-task
+runs we report the solve rate (final evaluation return above \solveThreshold over \evalEpisodesSingle episodes) and
+the AUC (mean training return over the run, a sample-efficiency measure).
+
+\paragraph{Memory accounting.} For the shared-weights question we count total memory as fp32 parameters plus the
+replay buffer at its measured storage cost: \bytesPerState bytes per stored state for the CNN and SNN agents
+(observation, mask, task id, teacher logits and value) and \bytesPerStateHybrid bytes for the SNN+Transformer agent
+(4-frame windows), times \bufferPerTask states per task by default.
+
+\subsection{Statistics}
+\label{sec:stats}
+Each arm has \seedRange seeds. For solve rates we use Fisher's exact test and the Newcombe (Wilson score) interval for the
+difference of proportions \citep{newcombe1998interval}; for continuous metrics, Welch's $t$-test
+\citep{welch1947generalization} and the Welch 95\% confidence interval of the difference of means. Where a
+pre-registered family contains several contrasts we apply Holm's correction \citep{holm1979simple}. With so few
+seeds, CIs are wide; we treat them as the primary result and read a non-significant difference as ``no large
+effect'', not as equivalence.
+
+\paragraph{Pre-registration.} The work was done in four sessions. The first two were exploratory. For the last two,
+the comparisons, test statistics, seed counts and stopping rules were written into the project's running log before
+any run started, one planned test per question, and the log was committed to version control before the runs (a
+timestamped record, though not a public registry). The tests we call \emph{pre-registered} below are those.
+Exploratory runs added later are labelled as such and enter no test.
+
+% =====================================================================================================
+\section{Mechanisms and their controls}
+\label{sec:mechanisms}
+
+Table~\ref{tab:mechanisms} lists each mechanism, how it is implemented and what it is compared against.
+
+\begin{table}[t]
+\centering
+\small
+\caption{Mechanisms, implementations and controls. Each row is switched on and off independently.}
+\label{tab:mechanisms}
+\begin{tabular}{>{\raggedright\arraybackslash}p{2.6cm}>{\raggedright\arraybackslash}p{6.2cm}>{\raggedright\arraybackslash}p{4.4cm}}
+\toprule
+Mechanism & Implementation & Control / comparator \\
+\midrule
+Spiking encoder & LIF CNN, \snnT timesteps per frame, surrogate gradients; membrane reset every environment step & Same-topology CNN; op count at matched accuracy \\
+STDP & Reward-modulated three-factor STDP on encoder synapses, added to the backprop update: $\Delta w=\alpha\,\Delta w_{\text{STDP}}+\Delta w_{\text{grad}}$, stabilised by mean-centring and homeostasis & Same-RMS random update + homeostasis; homeostasis alone \\
+Homeostasis & Per-neuron bias pushes firing rate towards \homeoTarget & Same agent without it \\
+DFA & Encoder layers learn from the output error through fixed random feedback (heads exact) & DFA without homeostasis; backprop \\
+Sleep & Offline phases: old-task distillation on stored states + current-task self-distillation & CLEAR-style replay, replayed samples matched exactly; EWC; naive \\
+Shared weights & One trunk, per-task heads & One network per task (isolation), at equal total memory \\
+Transformer memory & Causal Transformer over the last $K$ encoded frames & Memoryless agent; frame stack of $K$ frames \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{Spiking encoder}
+\label{sec:mech-snn}
+The SNN integrates each frame over \snnT internal timesteps and its membrane state is reset at every environment
+step, so it has no memory across frames; we verified this empirically (identical output for identical frames
+regardless of history). We count event-driven operations per frame: synaptic operations for the SNN (non-zero
+presynaptic spikes times fan-out, summed over timesteps) and non-zero-activation multiply--accumulates for a CNN
+whose activations are sparsified with an L1 penalty. The energy proxy multiplies these counts by the literature
+constants above. To compare accuracy against operations without RL noise, the op-count frontier is measured by
+behaviour cloning of a trained DoorKey-6x6 teacher: both encoders plus an identical linear readout are trained with an
+activity penalty swept over a range, and we report held-out action accuracy and the closed-loop return of the cloned
+policy (\rqThreeSeeds seeds per point).
+
+\subsection{STDP and the random-update control}
+\label{sec:mech-stdp}
+After every PPO optimiser step, spikes recorded in the minibatch's forward pass produce a local STDP update for each
+encoder layer (eligibility traces, pre/post pairing), multiplied by a third factor, the normalised PPO advantage of
+the sample (reward-modulated STDP) \citep{fremaux2016neuromodulated, lee2025brain}. The update is normalised to unit
+RMS and scaled by $\alpha$ times the learning rate, so $\alpha=1$ moves each weight about as much as one Adam step.
+The \emph{stabilised} version mean-centres pre- and post-synaptic spikes (a covariance rule, no drift under
+independent firing) and adds homeostasis. The \emph{random} control applies an update with the same per-layer RMS
+but a random direction, also with homeostasis, so it separates ``STDP helps'' from ``any perturbation of this size
+helps''. We use $\alpha=\stdpAlpha$ for the pre-registered comparison.
+
+\subsection{Homeostasis}
+Each spiking neuron's bias is nudged towards a target firing rate: $b\leftarrow b+\eta\,(\text{\homeoTarget}-r)$ with
+$\eta=\homeoLr$ and $r$ the neuron's rate in the minibatch.
+
+\subsection{Direct feedback alignment}
+In the DFA agents, the encoder's layers receive the output error through fixed random feedback matrices instead of
+backpropagated gradients \citep{nokland2016direct}; the actor and critic heads still use exact gradients. This gives a
+global learning signal without weight transport.
+
+\subsection{Sleep-like consolidation and the replay baseline}
+\label{sec:mech-sleep}
+Every \sleepPeriod PPO updates, and once at the end of each task, the agent goes offline for \sleepSteps gradient
+steps on two losses: (i) distillation towards the stored policy and value on states saved at the end of each
+earlier task (KL divergence plus value MSE; the same buffer the replay baseline uses), and (ii) self-distillation of
+the current task towards a frozen snapshot of the network taken at sleep onset, on a reservoir of recent wake states.
+Optionally, local STDP runs on the spikes produced during sleep. The \emph{replay} baseline adds the same distillation
+loss on one replayed minibatch to every PPO minibatch while learning later tasks, as in CLEAR.
+
+\paragraph{Replay budget.} The two methods consume different numbers of replayed states. Replay's count depends on
+how many PPO minibatches run, which varies by seed because of KL early stopping (\matchSamplesMin--\matchSamplesMax
+per SNN+Transformer run); sleep's is fixed by its schedule (\unmatchedSleepSamples). For the pre-registered
+comparison, each sleep run was given a total replay budget equal to the measured count of the same-seed replay run,
+spread evenly over its sleep phases (\emph{sleep, replay-matched}); the match was exact for every seed.
+
+\subsection{Shared weights versus isolation}
+The shared agent keeps one trunk and adds a head per task. Isolation trains a fresh network per task: zero
+forgetting by construction and parameters linear in the number of tasks. We compare them per parameter, as is common,
+and per unit of total memory, which includes the replay buffer that the shared methods need.
+
+\subsection{Transformer working memory}
+The SNN+Transformer agent encodes each of the last $K$ frames and runs a one-layer causal Transformer
+\citep{vaswani2017attention} over them (padding before the episode start is masked); on the fetch tasks $K=\hybridWindow$.
+The non-attention baselines are a frame stack (the last $K$ frames as input channels) and, implemented but not run, a
+GRU over the same encoded frames.
+
+% =====================================================================================================
+\section{Results}
+\label{sec:results}
+
+\subsection{Spiking encoder: a lower operation-count regime, not more accuracy}
+\label{sec:res-snn}
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\linewidth]{figures/fig_frontier.pdf}
+\caption{Operation-count frontier (behaviour cloning of a DoorKey-6x6 teacher, \rqThreeSeeds seeds per point). Each
+point is one activity-penalty setting. Left: held-out action accuracy; right: closed-loop return of the cloned
+policy. The dashed line is the majority-action accuracy.}
+\label{fig:frontier}
+\end{figure}
+
+\ours Where both encoders work, they are equally accurate at matched operation counts (Figure~\ref{fig:frontier}).
+The unpenalised CNN uses \rqThreeCnnDenseOps event-driven operations per frame (accuracy \rqThreeCnnDenseAcc).
+The L1-sparsified CNN still works at \rqThreeCnnFloorOps operations (accuracy \rqThreeCnnFloorAcc), but a stronger
+penalty silences the whole network at once (\rqThreeCnnCollapseOps operations, accuracy \rqThreeCnnCollapseAcc,
+the majority-action rate). The SNN keeps working below that floor: with \snnT timesteps reduced to 2 it reaches
+\rqThreeSnnTwoLowOps operations at accuracy \rqThreeSnnTwoLowAcc and a closed-loop return of
+\rqThreeSnnTwoLowRet, about \rqThreeOpsRatio{}$\times$ fewer operations than the CNN floor; $T=4$ behaves similarly
+(\rqThreeSnnFourLowOps, \rqThreeSnnFourLowAcc). Under the literature energy constants this point costs
+\rqThreeSnnTwoLowEnergy~nJ per frame against \rqThreeCnnFloorEnergy~nJ for the sparsest working CNN and
+\rqThreeCnnDenseEnergy~nJ for the dense CNN.
+
+\interp The SNN's advantage is access to a lower-operation regime, not better accuracy, and the energy numbers assume
+event-driven hardware. Other CNN sparsifiers (e.g.\ k-winner-take-all) might move the CNN floor; we did not test them.
+On the CPU we actually used, the SNN costs \msSnn~ms per training step against \msCnn~ms for the CNN
+(\snnCpuSlowdown{}$\times$), because it simulates \snnT timesteps.
+
+\paragraph{Robustness per unit of compute.} \ours Dividing final continual accuracy (fetch3) by training compute
+(per-step CPU cost times frames), the plain CNN scores \rqFourCnn per unit, \rqFourRatio{}$\times$ the best spiking
+variant (SNN with sleep, \rqFourSnn); SNN with homeostasis scores \rqFourSnnHomeo, DFA with homeostasis
+\rqFourDfaHomeo, stabilised STDP \rqFourStdp and the SNN+Transformer agent \rqFourHybrid. Encoders trained by local
+STDP only never solved DoorKey (\rqFourLocalOnly runs).
+
+\subsection{STDP: no effect beyond a random update of the same size}
+\label{sec:res-stdp}
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=0.78\linewidth]{figures/fig_rq1.pdf}
+\caption{DoorKey-6x6, \framesDoorKey frames, \rqOneBpN seeds per arm. Dots: seeds (filled = solved, i.e.\ final return
+above \solveThreshold); bar: mean and 95\% CI of the AUC; numbers: solve counts.}
+\label{fig:rq1}
+\end{figure}
+
+\begin{table}[t]
+\centering
+\small
+\caption{Pre-registered local-plasticity contrasts on DoorKey-6x6 (\rqOneBpN seeds per arm). Differences are the first arm
+minus the second, with 95\% CIs (Newcombe for solve rates, Welch for AUC). Holm-corrected $p$ across the four
+contrasts, separately per statistic.}
+\label{tab:rq1}
+\footnotesize
+\setlength{\tabcolsep}{4pt}
+\begin{tabular}{lcccc}
+\toprule
+Contrast & $\Delta$ solve rate [95\% CI] & Fisher $p$ (Holm) & $\Delta$ AUC [95\% CI] & Welch $p$ (Holm) \\
+\midrule
+STDP vs homeostasis alone & \rqOneContrASolveCi & \rqOneContrAFisherP~(\rqOneContrAFisherHolm) & \rqOneContrAAucCi & \rqOneContrAAucP~(\rqOneContrAAucHolm) \\
+STDP vs matched random & \rqOneContrBSolveCi & \rqOneContrBFisherP~(\rqOneContrBFisherHolm) & \rqOneContrBAucCi & \rqOneContrBAucP~(\rqOneContrBAucHolm) \\
+homeostasis vs backprop & \rqOneContrCSolveCi & \rqOneContrCFisherP~(\rqOneContrCFisherHolm) & \rqOneContrCAucCi & \rqOneContrCAucP~(\rqOneContrCAucHolm) \\
+random vs homeostasis & \rqOneContrDSolveCi & \rqOneContrDFisherP~(\rqOneContrDFisherHolm) & \rqOneContrDAucCi & \rqOneContrDAucP~(\rqOneContrDAucHolm) \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\ours With backpropagation as the global signal, the four arms solve DoorKey-6x6 at similar rates: backprop
+\rqOneBpSolved, backprop with homeostasis \rqOneHomeoSolved, with stabilised STDP \rqOneStdpSolved, with the matched
+random update \rqOneRandSolved (Figure~\ref{fig:rq1}). All four pre-registered contrasts are null after Holm correction
+(Table~\ref{tab:rq1}). STDP is indistinguishable from a random update of the same size
+(AUC difference \rqOneContrBAucCi, $p=\rqOneContrBAucP$) and, if anything, slightly below homeostasis alone.
+
+\ours Unstabilised STDP hurts. In an earlier DoorKey-5x5 experiment, reward-modulated STDP with $\alpha=1$ solved
+\vanillaStdpSolved runs against \vanillaBpSolved for backprop (AUC difference \vanillaStdpAucCi, $p=\vanillaStdpP$),
+with a mean spike rate of \vanillaStdpRate over the last updates against \bpRate for backprop. A larger stabilised
+$\alpha$ (\stdpAlphaLarge) was also worse (\rqOneStdpLargeSolved solved, context arm).
+\interp The frame is static across the SNN's timesteps, so the same pre--post pairings repeat and a mostly
+potentiating rule feeds back on itself (weights up, rates up, more correlated spikes). Stabilisation removes the
+runaway but leaves nothing measurable beyond a random perturbation.
+
+\ours Inside sleep, the same pattern holds on the SNN trunk (fetch3): vanilla STDP during sleep collapsed performance
+(ACC \snnSleepVanillaStdpAcc, \snnSleepVanillaStdpN seed), while stabilised STDP (\snnSleepStabStdpAcc) was
+indistinguishable from plain sleep (\accSnnSleep).
+
+\subsection{Homeostasis and DFA: faster weight-transport-free learning, not reliable learning}
+\label{sec:res-homeo}
+
+\ours With backprop, homeostasis raised the AUC by \rqOneContrCAucCi (raw $p=\rqOneContrCAucP$), which does not
+survive Holm correction ($p=\rqOneContrCAucHolm$); its solve rate was \rqOneHomeoSolved vs \rqOneBpSolved
+($p=\rqOneContrCFisherP$).
+
+\ours With DFA as the global signal (pre-registered, \rqOneDfaN seeds per arm), homeostasis raised the solve rate from
+\rqOneDfaSolved to \rqOneDfaHomeoSolved (difference \dfaSolveCi; Fisher $p=\dfaFisherP$, Holm \dfaFisherHolm, not
+significant) and the AUC from \rqOneDfaAuc to \rqOneDfaHomeoAuc (difference \dfaAucCi, \dfaAucRatio{}$\times$;
+Welch $p=\dfaAucP$, Holm \dfaAucHolm, significant). The remaining homeostasis seeds still failed outright
+(Figure~\ref{fig:rq1}).
+\interp Homeostasis is a real but partial fix for DFA: it speeds up learning without a weight-transport requirement,
+but it does not make DFA reliable on this task, and backprop with homeostasis (\rqOneHomeoSolved) remains better. In
+continual learning, a DFA+homeostasis encoder with sleep reached only \dfaContinualAcc ACC on fetch3.
+
+\subsection{Sleep-like consolidation: equal to replay at an equal replay budget}
+\label{sec:res-sleep}
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\linewidth]{figures/fig_forgetting.pdf}
+\caption{Forgetting curves. Top: return on the first task after each training stage; bottom: mean return over the
+tasks seen so far. Mean over seeds with 95\% CIs (\nCnnSleep seeds per arm, except the SNN+Transformer agent: replay
+\nHybReplay, replay-matched sleep \nHybSleepMatched, sleep \nHybSleep). Methods are slightly offset horizontally so that overlapping lines stay visible.}
+\label{fig:forgetting}
+\end{figure}
+
+\begin{table}[t]
+\centering
+\small
+\caption{Final ACC (mean $\pm$ SD over seeds) and FORGET on the continual sequences. ``Sleep, matched'' consumes
+exactly as many replayed states as the same-seed replay run (SNN+Transformer only).}
+\label{tab:continual}
+\footnotesize
+\setlength{\tabcolsep}{3.5pt}
+\begin{tabular}{lcccc}
+\toprule
+& CNN, 3 tasks & SNN, 3 tasks & SNN+Transformer, 3 tasks & CNN, 5 tasks \\
+\midrule
+\multicolumn{5}{l}{\emph{Final ACC}} \\
+naive & \accCnnNaive & \accSnnNaive & \accHybNaive & \accCnnFiveNaive \\
+EWC ($\lambda{=}100$) & \accCnnEwc & \accSnnEwc & -- & -- \\
+replay & \accCnnReplay & \accSnnReplay & \accHybReplay & \accCnnFiveReplay \\
+sleep & \accCnnSleep & \accSnnSleep & \accHybSleep & \accCnnFiveSleep \\
+sleep, matched & -- & -- & \accHybSleepMatched & -- \\
+isolation & \accCnnIso & \accSnnIso & \accHybIso & \accCnnFiveIso \\
+\midrule
+\multicolumn{5}{l}{\emph{FORGET (mean)}} \\
+naive & \forgetCnnNaive & \forgetSnnNaive & \forgetHybNaive & \forgetCnnFiveNaive \\
+replay & \forgetCnnReplay & \forgetSnnReplay & \forgetHybReplay & \forgetCnnFiveReplay \\
+sleep & \forgetCnnSleep & \forgetSnnSleep & \forgetHybSleep & \forgetCnnFiveSleep \\
+sleep, matched & -- & -- & \forgetHybSleepMatched & -- \\
+\midrule
+\multicolumn{5}{l}{\emph{sleep $-$ replay, final ACC [95\% Welch CI] (unmatched budget)}} \\
+& \sleepVsReplayCnnCi & \sleepVsReplaySnnCi & \sleepVsReplayHybCi & \sleepVsReplayCnnFiveCi \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\ours Sleep and replay both remove most of naive fine-tuning's forgetting on every agent (Figure~\ref{fig:forgetting},
+Table~\ref{tab:continual}); EWC protects old tasks at a plasticity cost that grows with $\lambda$ (return on the last
+task right after training it: \ewcLastTaskTen, \ewcLastTaskHundred and \ewcLastTaskThousand for $\lambda=10,100,1000$,
+against \naiveLastTaskCnn for naive; CNN). Sleep never differs significantly from replay (last row of
+Table~\ref{tab:continual}).
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=0.8\linewidth]{figures/fig_budget.pdf}
+\caption{SNN+Transformer agent, fetch3: replay, sleep with its replay budget matched exactly to the same-seed replay
+run, and the original sleep runs, which consumed \unmatchedExtraPct\% more replayed states. Lines connect the same
+seed; bars are means with 95\% CIs.}
+\label{fig:budget}
+\end{figure}
+
+\ours \textbf{Pre-registered, replay budget matched.} On the SNN+Transformer agent, where the original sleep runs had
+consumed \unmatchedExtraPct\% more replayed states than replay, sleep with an exactly matched budget ties replay on
+accuracy (\matchAccSleep vs \matchAccReplay; difference \matchAccCi, $p=\matchAccP$, \matchN seeds per arm) and on
+forgetting (\matchForgetSleep vs \matchForgetReplay; difference \matchForgetCi, $p=\matchForgetP$)
+(Figure~\ref{fig:budget}). On the same seeds, the unmatched sleep runs forgot \unmatchedForgetSameSeeds on average and
+the matched ones \matchedForgetSameSeeds; matched minus unmatched ACC was \matchedMinusUnmatchedAccCi (paired,
+descriptive, $p=\matchedMinusUnmatchedAccP$).
+\interp Sleep's small earlier edge on this agent came from its extra replay, not from consolidating offline. This
+matches the literature point that replay is a very strong baseline \citep{rolnick2019experience}: in our implementation
+sleep is a way of scheduling replay, and at equal replay it is not better.
+
+\subsection{Shared weights versus isolation: memory-efficient only with small buffers}
+\label{sec:res-shared}
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\linewidth]{figures/fig_memory.pdf}
+\caption{Final ACC against total memory (fp32 parameters plus replay buffer, log scale). Small dots: seeds; large
+markers: means. Numbers above the axis: replay states stored per task. 5-task SNN runs use the fair budget of
+\framesPerTaskFiveFair frames per task (see Section~\ref{sec:didnt-survive}).}
+\label{fig:memory}
+\end{figure}
+
+\ours Per parameter, the shared agent with sleep is clearly more efficient than isolation: ACC per 100k parameters
+\perParamCnnThreeSleep vs \perParamCnnThreeIso (CNN), \perParamSnnThreeSleep vs \perParamSnnThreeIso (SNN),
+\perParamHybThreeSleep vs \perParamHybThreeIso (SNN+Transformer), \perParamCnnFiveSleep vs \perParamCnnFiveIso (CNN,
+5 tasks). But at the default \bufferPerTask stored states per task the buffer outweighs the extra networks: isolation
+uses less total memory and gets more accuracy per MB everywhere (\memCnnThreeIsoPerMb vs \memCnnThreeSleepPerMb,
+\memSnnThreeIsoPerMb vs \memSnnThreeSleepPerMb, \memHybThreeIsoPerMb vs \memHybThreeSleepPerMb, \memCnnFiveIsoPerMb vs
+\memCnnFiveSleepPerMb per MB; Figure~\ref{fig:memory}).
+
+\ours With small buffers the shared agent is the more memory-efficient one. On the CNN, sleep with 200 states per
+task reaches \smallCnnTwoHundredAcc in \smallCnnTwoHundredMb~MB (\smallCnnTwoHundredPerMb per MB, against
+\memCnnThreeIsoPerMb for isolation). On the SNN, sleep with 200 states per task ties isolation's accuracy
+(\smallSnnTwoHundredAcc vs \snnIsoAcc; difference \snnSleepTwoHundredVsIsoCi, $p=\snnSleepTwoHundredVsIsoP$) in
+\smallSnnTwoHundredMb~MB against \memSnnThreeIsoMb~MB. At \emph{equal} total memory (SNN, 2000 states per task,
+\smallSnnTwoThousandMb vs \memSnnThreeIsoMb~MB) sleep does not beat isolation (difference
+\snnSleepTwoThousandVsIsoCi, $p=\snnSleepTwoThousandVsIsoP$).
+
+\ours Forward transfer depends on the encoder: positive where learning from scratch is slow (SNN \fwtSnn,
+$p=\fwtSnnP$; SNN+Transformer \fwtHyb, $p=\fwtHybP$; 5-task SNN \fiveSnnFairFwt, $p=\fiveSnnFairFwtP$), near zero on
+the 3-task CNN (\fwtCnn) and negative on the 5-task CNN (\fwtCnnFive).
+\interp The shared agents' advantage is memory efficiency when replay is cheap, not higher accuracy at equal
+memory. ``Shared weights are more efficient than isolation'' is only true with the buffer size stated.
+
+\subsection{Transformer working memory: untested, because the benchmark failed}
+\label{sec:res-memory}
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=0.7\linewidth]{figures/fig_probe.pdf}
+\caption{Memory-benchmark probes (CNN, one seed each, learning rate \probeLr): training return on MiniGrid-MemoryS11
+and S13 with a single frame or a stack of the last \memWindow frames. Every run stays at chance.}
+\label{fig:probe}
+\end{figure}
+
+\ours On the fetch tasks, which are fully determined by the current frame, the Transformer has nothing to remember;
+the SNN+Transformer agent needed \framesPerTaskHybrid frames per task where the CNN and SNN agents used
+\framesPerTaskFlat. To test memory we used MiniGrid-Memory. On S7 (pilot, one seed, \sSevenFrames frames) a
+memoryless CNN already succeeded in \sSevenCnnOne of episodes (a 4-frame stack: \sSevenCnnFour), so S7 does not
+isolate memory: in that small map the cue and both choices are visible from one position. The pilot's SNN runs
+(SNN with an 8-frame stack \sSevenSnnEight, SNN+Transformer \sSevenSnnTf) used different learning rates
+(\sSevenLrOther vs \sSevenLrTf) and cannot support a claim.
+
+\ours For the pre-registered benchmark we probed S11 and S13, where the cue is further from the junction than the
+view reaches. The memoryless CNN was at chance, as required (\probeElevenOne and \probeThirteenOne success), but so was
+a CNN with a \memWindow-frame stack (\probeElevenTwelve and \probeThirteenTwelve), with episodes of about
+\probeElevenTwelveLen--\probeThirteenTwelveLen steps (Figure~\ref{fig:probe}). Neither map met the pre-registered
+criterion, so the Transformer comparison was not run. An exploratory run (not pre-registered) of the stacked CNN on
+S11 for \probeLongFrames frames stayed at chance (\probeElevenTwelveLong; training return \probeLongRange throughout).
+\interp The episode lengths show that no agent learned to go back and look at the cue; they walk to the junction and
+guess. The obstacle is exploration and credit assignment, not context length. We discuss this in
+Section~\ref{sec:limitations}.
+
+% =====================================================================================================
+\section{What did not survive controls}
+\label{sec:didnt-survive}
+
+Several results looked positive before the controls were in place. Table~\ref{tab:survive} lists them with the control
+that removed them. All ``before'' numbers are recomputed from the same frozen runs, restricted to the seeds that
+existed at the time.
+
+\begin{table}[t]
+\centering
+\small
+\caption{Earlier positive findings and what happened to them. $p$: Welch unless noted.}
+\label{tab:survive}
+\begin{tabular}{>{\raggedright\arraybackslash}p{3.0cm}>{\raggedright\arraybackslash}p{3.7cm}>{\raggedright\arraybackslash}p{4.1cm}>{\raggedright\arraybackslash}p{2.5cm}}
+\toprule
+Earlier finding & Evidence then & After the control & Cause \\
+\midrule
+Sleep beats replay (SNN+Transformer) & \hybSleepReplayNThreeSeeds: \hybSleepReplayNThreeCi, $p=\hybSleepReplayNThreeP$ &
+\nHybSleep seeds: $p=\hybSleepReplayNSixP$; budget-matched, \matchN seeds: \matchAccCi, $p=\matchAccP$ & seed count; replay-sample budget \\
+Shared weights far more efficient than isolation & ACC per parameter: \perParamRatioRange{}$\times$ &
+per total memory at the default buffer, isolation is \perMbRatioRange{}$\times$ more efficient & memory accounting \\
+Sleep far beats isolation on 5 tasks (SNN) & \framesPerTaskFlat/task, \fiveSnnShortN seeds: \fiveSnnShortSleep vs \fiveSnnShortIso, $p=\fiveSnnShortP$ &
+\framesPerTaskFiveFair/task, \fiveSnnFairN seeds: \fiveSnnFairSleep vs \fiveSnnFairIso, \fiveSnnFairCi, $p=\fiveSnnFairP$ & training budget \\
+Homeostasis helps backprop & \homeoEarlySeeds{} (homeostasis vs backprop): \homeoEarlySolved solved, $p=\homeoEarlyP$ &
+\rqOneBpN seeds: \rqOneContrCAucCi, $p=\rqOneContrCAucP$, Holm \rqOneContrCAucHolm & seed count; multiple comparisons \\
+Homeostasis makes DFA work & \dfaEarlySolvedHomeo vs \dfaEarlySolvedDfa solved, AUC $p$\dfaEarlyAucP &
+\rqOneDfaN seeds: \rqOneDfaHomeoSolved vs \rqOneDfaSolved, Fisher $p=\dfaFisherP$ (AUC effect survives) & seed count \\
+Transformer helps on a memory task & S7 pilot: \sSevenSnnTf vs \sSevenSnnEight (frame stack) &
+memoryless CNN on S7: \sSevenCnnOne; on S11/S13 no memory agent learns & benchmark validity; learning-rate confound \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\paragraph{Seed count.} \interp A handful of seeds was enough to produce $p=\hybSleepReplayNThreeP$ (sleep vs replay)
+and $p=\homeoEarlyP$ (homeostasis vs backprop), and a \dfaEarlySolvedHomeo vs \dfaEarlySolvedDfa split that looked
+decisive (DFA). All three shrank once the seed count was raised. With bimodal outcomes, one failed seed moves a
+small-sample mean a lot.
+
+\paragraph{Training budget.} \interp At \framesPerTaskFlat frames per task, a freshly initialised SNN often had not
+learned its task yet, so isolation (which starts from scratch on every task) was under-trained while the shared agent
+benefited from transfer. At a budget where fresh networks learn (\framesPerTaskFiveFair, chosen by single-task probes
+before the runs), the gap shrank from \fiveSnnShortCi to \fiveSnnFairCi. Sleep still learned more tasks to
+\learnThreshold or above (\fiveSnnFairLearnedSleep vs \fiveSnnFairLearnedIso), which is consistent with some positive
+transfer.
+
+\paragraph{Memory accounting.} \interp Comparing per parameter ignores the replay buffer, which is the price the shared
+methods pay for not forgetting. With the buffer counted, the conclusion reversed at the default buffer size.
+
+\paragraph{Replay-sample budget.} \interp Sleep and replay are usually compared at equal buffer size, but the number of
+replayed samples they consume can differ a lot (here by \unmatchedExtraPct\% on average). Matching it removed the
+difference.
+
+\paragraph{Benchmark validity.} \interp A memory benchmark must fail without memory and be learnable with it. S7 failed
+the first condition; S11 and S13 failed the second at our budget.
+
+% =====================================================================================================
+\section{Limitations}
+\label{sec:limitations}
+
+\paragraph{Task identity is given.} Our setting is task-incremental: the agent knows which task it is doing. Removing
+the task identity from fetch3 would make it unsolvable (the goal is not visible), so a task-agnostic study needs a
+different benchmark, and sleep's distillation, which relies on per-task heads, would need redesigning.
+
+\paragraph{Scale.} All agents are small (\paramsCnnPerTask--\paramsHybridShared parameters), the environments are
+MiniGrid gridworlds, sequences have 3 or 5 tasks, and budgets are \framesPerTaskFlat--\framesPerTaskFiveFair frames per
+task. Results may not transfer to larger agents, longer sequences or visually rich tasks.
+
+\paragraph{CPU only, few seeds.} Everything ran on a 4-core CPU. Many continual arms have only \nCnnSleep seeds, so their CIs are
+wide and ties mean ``no large difference'', not equivalence. The pre-registered comparisons used \matchN--\rqOneBpN seeds.
+
+\paragraph{Energy is a proxy.} The energy numbers multiply operation counts by literature constants for 45\,nm
+arithmetic and assume event-driven hardware. We measured no power. On the CPU we used, the SNN was slower.
+
+\paragraph{Single settings.} Hyperparameters (homeostasis target, $\alpha$, EWC $\lambda$ beyond three values, sleep
+schedule) were not tuned per arm. A different homeostasis target or sleep schedule could change the results.
+
+\paragraph{Baselines are simple.} Isolation uses one full network per task, not PackNet-style masks, which would be
+cheaper and a stronger baseline. Our sleep phase is replay plus distillation, not the sleep replay consolidation of
+\citet{tadros2022sleep}.
+
+\paragraph{The Transformer question is untested.} On S7 memory was unnecessary; on S11 and S13 no agent, including a
+CNN with a \memWindow-frame stack, learned to use the cue, even at \probeLongFrames frames. A usable benchmark needs the
+cue to be seen on the way to the decision (e.g.\ starting in the cue room facing the corridor), an exploration aid, or a
+much larger budget. The Transformer comparison, and the GRU baseline we implemented for it, remain future work.
+
+\paragraph{Pre-registration was informal.} The pre-registered plans live in the project's version-controlled log,
+committed before the runs, not in a public registry. The first two sessions were exploratory, and their positive findings
+are exactly the ones Section~\ref{sec:didnt-survive} revisits.
+
+% =====================================================================================================
+\section{Conclusion}
+\label{sec:conclusion}
+
+We isolated six brain-inspired mechanisms in a small continual RL setting and gave each a matched control. \ours None
+improved accuracy or forgetting beyond its control: STDP was no better than a random update of the same size, sleep was
+no better than replay at an equal replay budget, and shared weights were more memory-efficient than isolation only with
+small replay buffers. Homeostasis was the one local mechanism with a surviving effect, speeding up learning with a
+weight-transport-free global signal without making it reliable. The spiking encoder offered access to a lower
+operation-count regime, whose energy value depends on hardware we did not test. \interp The most consistent lesson is
+methodological: in this setting, each apparent win of a biological mechanism disappeared when the comparison matched
+the resource the mechanism quietly used more of---seeds, frames, memory, or replayed samples. We suggest that claims of
+this kind are reported with those budgets stated and matched.
+
+% =====================================================================================================
+\section*{Reproducibility}
+\label{sec:reproducibility}
+Code, configurations, the frozen run directories and the analysis scripts are in the project repository
+\todo{add repository URL}. \texttt{paper/compute\_numbers.py} regenerates every number in this paper from the result
+files (listed with its source in \texttt{paper/NUMBERS.md}), and \texttt{paper/figures/make\_figures.py} regenerates
+the figures. \texttt{demo/} contains GIFs of the naive and sleep agents after the full fetch3 sequence (final
+accuracy-matrix rows \demoNaiveRow and \demoSleepRow) and a script that runs a trained agent locally.
+
+\section*{AI assistance disclosure}
+\todo{Author to write: which parts of the code, experiments, analysis and text were produced with AI assistance, and
+how they were checked.}
+
+\bibliography{refs}
+\bibliographystyle{tmlr}
+
+% =====================================================================================================
+\appendix
+\section{Protocol constants}
+\label{app:protocol}
+\begin{center}
+\small
+\begin{tabular}{lp{11.5cm}}
+\toprule
+PPO & \numEnvs envs $\times$ \numSteps steps, \updateEpochs epochs, minibatch \minibatch, clip \clipCoef, $\gamma=\gammaVal$, $\lambda_{\text{GAE}}=\gaeLambda$, KL stop \targetKl \\
+Learning rate & \lrFlat (CNN, SNN), \lrHybrid (SNN+Transformer, memory probes) \\
+Frames per task & \framesPerTaskFlat (CNN, SNN), \framesPerTaskHybrid (SNN+Transformer), \framesPerTaskFiveFair (5-task SNN, fair) \\
+SNN & \snnT timesteps, learnable leak (init \lifBeta), threshold 1, surrogate slope \surrogateSlope, membrane reset per frame \\
+Plasticity & $\alpha=\stdpAlpha$ (pre-registered), homeostasis target \homeoTarget, rate \homeoLr \\
+Sleep & every \sleepPeriod updates + end of task, \sleepSteps steps per phase, \bufferPerTask states per task \\
+Evaluation & \evalEpisodesCl episodes per task (continual), \evalEpisodesSingle (single task), sampled actions \\
+Memory accounting & \bytesPerState B/state (CNN, SNN), \bytesPerStateHybrid B/state (SNN+Transformer) \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\section{Additional numbers}
+\label{app:numbers}
+EWC on the CNN (3 tasks): ACC \ewcAccTen, \ewcAccHundred and \ewcAccThousand for $\lambda=10,100,1000$ (forgetting
+\ewcForgetTen, \ewcForgetHundred, \ewcForgetThousand). Isolation on 5 tasks at the fair budget: \memSnnFiveFairIsoMb~MB,
+ACC \memSnnFiveFairIsoAcc; sleep \memSnnFiveFairSleepMb~MB, ACC \memSnnFiveFairSleepAcc. SNN replay with small buffers:
+200 states per task \smallSnnReplayTwoHundredAcc, 2000 states per task \smallSnnReplayTwoThousandAcc. The complete list
+of numbers, with sources, is \texttt{paper/NUMBERS.md}.
+
+\end{document}
