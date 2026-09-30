@@ -1,0 +1,22 @@
+# Pilot round 2 (seeds 101-102; exploratory). SNN jobs first (longest).
+explore/runs/cl_snn/fetch3_lwf_s101/results.json :: python explore/run_cl.py --config configs/cl_snn.yaml --out explore/runs/cl_snn --suite fetch3 --method lwf --seed 101
+explore/runs/cl_snn/fetch3_replay_buf200_s101/results.json :: python explore/run_cl.py --config configs/cl_snn.yaml --out explore/runs/cl_snn --suite fetch3 --method replay --seed 101 --tag _buf200 --mk buffer_per_task=200
+explore/runs/cl/fetch3_packnet_grad_s101/results.json :: python explore/run_cl.py --config configs/cl_cnn.yaml --out explore/runs/cl --suite fetch3 --method packnet --seed 101 --mk prune_start=0.5 prune_steps=5 --tag _grad
+explore/runs/cl/fetch3_packnet_grad_s102/results.json :: python explore/run_cl.py --config configs/cl_cnn.yaml --out explore/runs/cl --suite fetch3 --method packnet --seed 102 --mk prune_start=0.5 prune_steps=5 --tag _grad
+explore/runs/cl/fetch5_packnet_grad_s101/results.json :: python explore/run_cl.py --config configs/cl_cnn.yaml --out explore/runs/cl --suite fetch5 --method packnet --seed 101 --mk prune_start=0.5 prune_steps=5 --tag _grad
+explore/runs/cl/fetch5_lwf_s102/results.json :: python explore/run_cl.py --config configs/cl_cnn.yaml --out explore/runs/cl --suite fetch5 --method lwf --seed 102
+explore/runs/cl/fetch3_lwf_int8_s101/results.json :: python explore/run_cl.py --config configs/cl_cnn.yaml --out explore/runs/cl --suite fetch3 --method lwf --seed 101 --tag _int8 --mk teacher_int8=true
+explore/runs/cl/fetch5_lwf_int8_s101/results.json :: python explore/run_cl.py --config configs/cl_cnn.yaml --out explore/runs/cl --suite fetch5 --method lwf --seed 101 --tag _int8 --mk teacher_int8=true
+explore/runs/cl/fetch3_replay_buf1378_s101/results.json :: python explore/run_cl.py --config configs/cl_cnn.yaml --out explore/runs/cl --suite fetch3 --method replay --seed 101 --tag _buf1378 --mk buffer_per_task=1378
+explore/runs/cl/fetch5_replay_buf973_s101/results.json :: python explore/run_cl.py --config configs/cl_cnn.yaml --out explore/runs/cl --suite fetch5 --method replay --seed 101 --tag _buf973 --mk buffer_per_task=973
+# idea 5: sleep vs replay at ~10% and ~2% of replay's usual replayed-sample count (CNN fetch3)
+explore/runs/cl/fetch3_replay_b13_s101/results.json :: python explore/run_cl.py --config configs/cl_cnn.yaml --out explore/runs/cl --suite fetch3 --method replay --seed 101 --tag _b13 --mk batch=13
+explore/runs/cl/fetch3_sleep_rb55040_s101/results.json :: python explore/run_cl.py --config configs/cl_cnn.yaml --out explore/runs/cl --suite fetch3 --method sleep --seed 101 --tag _rb55040 --mk replay_budget=55040
+explore/runs/cl/fetch3_replay_b3_s101/results.json :: python explore/run_cl.py --config configs/cl_cnn.yaml --out explore/runs/cl --suite fetch3 --method replay --seed 101 --tag _b3 --mk batch=3
+explore/runs/cl/fetch3_sleep_rb10880_s101/results.json :: python explore/run_cl.py --config configs/cl_cnn.yaml --out explore/runs/cl --suite fetch3 --method sleep --seed 101 --tag _rb10880 --mk replay_budget=10880
+explore/runs/dfa/dfae_homeo005_s101/eval.json :: python explore/run_single.py --config configs/rq1_v2.yaml --set seed=101 run_name=dfae_homeo005_s101 out_dir=explore/runs/dfa dfa=true dfa_scope=encoder "stdp={alpha: 0.0, homeo: 0.05}"
+explore/runs/dfa/dfae_homeo005_s102/eval.json :: python explore/run_single.py --config configs/rq1_v2.yaml --set seed=102 run_name=dfae_homeo005_s102 out_dir=explore/runs/dfa dfa=true dfa_scope=encoder "stdp={alpha: 0.0, homeo: 0.05}"
+explore/runs/dfa/dfae_homeo03_s101/eval.json :: python explore/run_single.py --config configs/rq1_v2.yaml --set seed=101 run_name=dfae_homeo03_s101 out_dir=explore/runs/dfa dfa=true dfa_scope=encoder "stdp={alpha: 0.0, homeo: 0.3}"
+explore/runs/dfa/dfae_homeo03_s102/eval.json :: python explore/run_single.py --config configs/rq1_v2.yaml --set seed=102 run_name=dfae_homeo03_s102 out_dir=explore/runs/dfa dfa=true dfa_scope=encoder "stdp={alpha: 0.0, homeo: 0.3}"
+explore/runs/dfa/dfae_homeo015_s101/eval.json :: python explore/run_single.py --config configs/rq1_v2.yaml --set seed=101 run_name=dfae_homeo015_s101 out_dir=explore/runs/dfa dfa=true dfa_scope=encoder "stdp={alpha: 0.0, homeo: 0.15}"
+explore/runs/dfa/dfae_homeo015_s102/eval.json :: python explore/run_single.py --config configs/rq1_v2.yaml --set seed=102 run_name=dfae_homeo015_s102 out_dir=explore/runs/dfa dfa=true dfa_scope=encoder "stdp={alpha: 0.0, homeo: 0.15}"
