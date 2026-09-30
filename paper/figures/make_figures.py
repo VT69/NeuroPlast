@@ -10,8 +10,11 @@ Figures:
   fig_budget       hybrid sleep vs replay with replayed samples matched exactly (session 4, block 1)
   fig_probe        memory-benchmark probes: training return vs frames on MemoryS11/S13
 
-Colour follows the method (validated palette: slots 1-5 and 7 of the reference categorical palette; passes the
-adjacent CVD/normal-vision gates; low-contrast slots are relieved by direct labels and markers).
+Colour follows the method and matches the dashboard (validated palette: slots 1-5 and 7 of the reference categorical
+palette; passes the adjacent CVD/normal-vision gates; low-contrast slots are relieved by direct labels and markers).
+Series that are not continual-learning methods (encoders, probe runs, RQ1 arms) use grey and violet, so blue, orange
+and green always mean sleep, replay and isolation. Text is set in Computer Modern to match the paper body, and each
+figure is drawn at the width it is printed at (6.5 in = TMLR text width, or less), so font sizes are the printed sizes.
 """
 from __future__ import annotations
 
@@ -37,6 +40,7 @@ from scripts.rq1_stats import load as load_rq1  # noqa: E402
 
 OUT = "paper/figures"
 INK, INK2, MUTED, GRID = "#0b0b0b", "#52514e", "#8a8984", "#e6e5e0"
+NEUTRAL, VIOLET, VIOLET2 = "#52514e", "#4a3aa7", "#9085e9"  # non-method series
 M = {  # method -> (label, colour, marker, linestyle)
     "sleep": ("sleep", "#2a78d6", "o", "-"),
     "replay": ("replay", "#eb6834", "s", "-"),
@@ -46,10 +50,13 @@ M = {  # method -> (label, colour, marker, linestyle)
     "sleep_matched": ("sleep, replay-matched", "#4a3aa7", "P", "-"),
 }
 plt.rcParams.update({
-    "font.size": 8, "axes.titlesize": 8.5, "axes.labelsize": 8, "xtick.labelsize": 7, "ytick.labelsize": 7,
-    "legend.fontsize": 7, "axes.edgecolor": MUTED, "axes.labelcolor": INK2, "xtick.color": INK2, "ytick.color": INK2,
+    "font.size": 8.5, "axes.titlesize": 9, "axes.labelsize": 8.5, "xtick.labelsize": 7.5, "ytick.labelsize": 7.5,
+    "legend.fontsize": 7.5, "axes.edgecolor": MUTED, "axes.labelcolor": INK2, "xtick.color": INK2, "ytick.color": INK2,
     "axes.titlecolor": INK, "axes.linewidth": 0.6, "xtick.major.width": 0.6, "ytick.major.width": 0.6,
-    "font.family": "DejaVu Sans", "pdf.fonttype": 42, "savefig.dpi": 200,
+    # Computer Modern, as in the paper body (matplotlib ships cmr10; cmr10 has no minus glyph, so ticks use mathtext)
+    "font.family": "serif", "font.serif": ["cmr10"], "mathtext.fontset": "cm", "axes.formatter.use_mathtext": True,
+    "axes.unicode_minus": False, "pdf.fonttype": 42, "savefig.dpi": 300,
+    "lines.solid_capstyle": "round", "lines.solid_joinstyle": "round", "lines.dash_capstyle": "round",
 })
 
 
@@ -91,7 +98,7 @@ def fig_forgetting():
               ("SNN+Transformer, 3 tasks", "runs/continual_hybrid", "fetch3"),
               ("CNN, 5 tasks", "runs/continual5_cnn", "fetch5")]
     dodge = {"naive": -0.15, "ewc_lam100": -0.09, "replay": -0.03, "sleep": 0.03, "sleep_matched": 0.09, "isolation": 0.15}
-    fig, axes = plt.subplots(2, 4, figsize=(7.0, 3.6), sharey=True)
+    fig, axes = plt.subplots(2, 4, figsize=(6.5, 3.6), sharey=True)
     for c, (title, root, suite) in enumerate(panels):
         for m in ("naive", "ewc_lam100", "replay", "sleep", "sleep_matched", "isolation"):
             runs = cl(root, m, suite)
@@ -143,7 +150,7 @@ def fig_memory():
               ("SNN+Transformer, 3 tasks", "fetch3", {"Hybrid"}), ("5 tasks, CNN and SNN", "fetch5", {"CNN", "SNN"})]
     ticks = [[0.5, 1, 2, 3], [1, 2, 3], [3, 5, 10], [3, 4, 5, 6]]
     tm = {"CNN": "o", "SNN": "s", "Hybrid": "^"}
-    fig, axes = plt.subplots(1, 4, figsize=(7.0, 2.6), sharey=True, gridspec_kw={"wspace": 0.12})
+    fig, axes = plt.subplots(1, 4, figsize=(6.5, 2.7), sharey=True, gridspec_kw={"wspace": 0.12})
     for k, (ax, (title, suite, trunks)) in enumerate(zip(axes, panels)):
         labels = {}
         for (s, trunk, name), runs in g.items():
@@ -163,22 +170,23 @@ def fig_memory():
             if m != "isolation":
                 labels[(round(x, 1), runs[0]["buf_per_task"])] = x
         for i, ((_, bpt), x) in enumerate(sorted(labels.items(), key=lambda kv: kv[1])):
-            ax.text(x, 0.335 + 0.035 * (i % 2), f"{bpt}", ha="center", fontsize=6, color=INK2)
+            ax.text(x, 0.515 + 0.035 * (i % 2), f"{bpt}", ha="center", fontsize=7, color=INK2)
         ax.set_xscale("log")
         ax.set_xticks(ticks[k])
         ax.xaxis.set_minor_locator(LogLocator(base=10, subs=()))
         ax.xaxis.set_major_formatter(FuncFormatter(lambda v, _: f"{v:g}"))
         style(ax, "both")
-        ax.set_title(title, fontsize=7.5)
-        ax.set_ylim(0.3, 1.02)
+        ax.set_title(title, fontsize=8.5)
+        ax.set_ylim(0.5, 1.02)
         ax.margins(x=0.12)
     axes[0].set_ylabel("final ACC")
     fig.supxlabel("total memory, MB (fp32 parameters + replay buffer; log scale); numbers above the axis = replay states per task",
-                  fontsize=7.5, color=INK2, y=-0.01)
+                  fontsize=8, color=INK2, y=-0.01)
     h = [plt.Line2D([], [], ls="", marker="o", color=M[m][1], label=M[m][0]) for m in ("isolation", "sleep", "replay")]
-    h += [plt.Line2D([], [], ls="", marker=v, color=INK2, markerfacecolor="none", label=f"{k}") for k, v in tm.items()]
+    h += [plt.Line2D([], [], ls="", marker=v, color=INK2, markerfacecolor="none", label="SNN+Transformer" if k == "Hybrid" else k)
+          for k, v in tm.items()]
     fig.legend(handles=h, loc="upper center", ncol=6, frameon=False, bbox_to_anchor=(0.5, 1.06), labelcolor=INK2)
-    fig.subplots_adjust(left=0.07, right=0.99, top=0.84, bottom=0.17)
+    fig.subplots_adjust(left=0.085, right=0.99, top=0.83, bottom=0.18)
     save(fig, "fig_memory")
 
 
@@ -188,7 +196,7 @@ def fig_rq1():
             ("dfae", "DFA"), ("dfae_homeo", "DFA + homeo-\nstasis")]
     fig, ax = plt.subplots(figsize=(5.6, 2.7))
     xs = [0, 1, 2, 3, 4.8, 5.8]
-    col = "#2a78d6"
+    col = NEUTRAL
     for x, (k, lab) in zip(xs, arms):
         r = load_rq1(k)
         a = np.array([v["auc"] for v in r.values()])
@@ -197,10 +205,10 @@ def fig_rq1():
         ax.scatter(x + jit[solved], a[solved], s=14, color=col, alpha=0.85, edgecolor="white", linewidth=0.5, zorder=3)
         ax.scatter(x + jit[~solved], a[~solved], s=14, facecolor="white", edgecolor=col, linewidth=0.9, zorder=3)
         ax.errorbar(x + 0.32, a.mean(), yerr=ci95(a), fmt="_", color=INK, ms=9, elinewidth=1.2, capsize=0, zorder=4)
-        ax.text(x, 1.0, f"{solved.sum()}/{len(a)}", ha="center", va="bottom", fontsize=7, color=INK2)
+        ax.text(x, 1.0, f"{solved.sum()}/{len(a)}", ha="center", va="bottom", fontsize=7.5, color=INK2)
     ax.axvline(3.9, color=GRID, lw=1)
-    ax.text(1.5, 1.17, "global signal: backprop", ha="center", fontsize=7.5, color=INK)
-    ax.text(5.3, 1.17, "global signal: DFA", ha="center", fontsize=7.5, color=INK)
+    ax.text(1.5, 1.17, "global signal: backprop", ha="center", fontsize=8.5, color=INK)
+    ax.text(5.3, 1.17, "global signal: DFA", ha="center", fontsize=8.5, color=INK)
     ax.set_xticks(xs)
     ax.set_xticklabels([lab for _, lab in arms])
     ax.set_ylim(-0.05, 1.24)
@@ -221,10 +229,10 @@ def fig_frontier():
     for line in open("runs/rq3_doorkey6/results.jsonl"):
         r = json.loads(line)
         g[(r["kind"], r["T"])].append(r)
-    series = [(("cnn", 1), "CNN (L1-sparsified)", "#2a78d6", "o"), (("snn", 2), "SNN, T=2", "#eb6834", "s"),
-              (("snn", 4), "SNN, T=4", "#1baf7a", "D")]
-    fig, axes = plt.subplots(1, 2, figsize=(7.0, 2.5))
-    for key, lab, col, mk in series:
+    series = [(("cnn", 1), "CNN (L1-sparsified)", NEUTRAL, "o", "-"), (("snn", 2), "SNN, $T=2$", VIOLET, "s", "-"),
+              (("snn", 4), "SNN, $T=4$", VIOLET2, "D", "--")]
+    fig, axes = plt.subplots(1, 2, figsize=(6.5, 2.6))
+    for key, lab, col, mk, ls in series:
         by = defaultdict(list)
         for r in g[key]:
             by[r["lam"]].append(r)
@@ -233,14 +241,17 @@ def fig_frontier():
         for ax, k in ((axes[0], "acc"), (axes[1], "return_mean")):
             y = np.array([np.mean([r[k] for r in by[l]]) for l in lams])
             o = np.argsort(ops)
-            ax.plot(ops[o], y[o], color=col, marker=mk, ms=3.8, lw=1.4, label=lab, markeredgecolor="white", markeredgewidth=0.5)
+            ax.plot(ops[o], y[o], color=col, marker=mk, ms=3.8, lw=1.4, ls=ls, label=lab, markeredgecolor="white", markeredgewidth=0.5)
+    from matplotlib.ticker import FuncFormatter
     for ax, yl in ((axes[0], "behaviour-cloning test accuracy"), (axes[1], "closed-loop return of cloned policy")):
         ax.set_xscale("log")
+        ax.set_xticks([10, 20, 50, 100, 200])
+        ax.xaxis.set_major_formatter(FuncFormatter(lambda v, _: f"{v:g}"))
         ax.set_xlabel("event-driven operations per frame (thousands, log)")
         ax.set_ylabel(yl)
         style(ax, "both")
     axes[0].axhline(0.5244, color=MUTED, lw=0.8, ls="--")
-    axes[0].text(8, 0.55, "majority action", fontsize=6.5, color=INK2)
+    axes[0].text(8, 0.55, "majority action", fontsize=7.5, color=INK2)
     axes[0].legend(frameon=False, loc="lower right", labelcolor=INK2)
     fig.tight_layout()
     save(fig, "fig_frontier")
@@ -249,7 +260,7 @@ def fig_frontier():
 # ------------------------------------------------------------------ block 1: replay budget
 def fig_budget():
     sm, rp, su = cl("runs/continual_hybrid", "sleep_matched"), cl("runs/continual_hybrid", "replay"), cl("runs/continual_hybrid", "sleep")
-    fig, axes = plt.subplots(1, 2, figsize=(6.2, 2.4))
+    fig, axes = plt.subplots(1, 2, figsize=(6.0, 2.5))
     arms = [("replay", rp), ("sleep_matched", sm), ("sleep", su)]
     extra = 100 * (np.mean([su[k]["replay_samples"] for k in su]) / np.mean([rp[k]["replay_samples"] for k in su]) - 1)
     labels = ["replay", "sleep\n(matched)", f"sleep\n(+{extra:.0f}% replay)"]
@@ -266,7 +277,7 @@ def fig_budget():
         ax.set_xlim(-0.4, 2.6)
         ax.set_ylabel(yl)
         style(ax)
-    axes[0].set_title("hybrid, fetch3: accuracy", loc="left")
+    axes[0].set_title("SNN+Transformer, fetch3: accuracy", loc="left")
     axes[1].set_title("forgetting (lower is better)", loc="left")
     fig.tight_layout()
     save(fig, "fig_budget")
@@ -274,10 +285,10 @@ def fig_budget():
 
 # ------------------------------------------------------------------ memory probes
 def fig_probe():
-    runs = [("probe_S11_cnn_fs1_s1", "S11, single frame", "#2a78d6", "-"), ("probe_S11_cnn_fs12_s1", "S11, 12-frame stack", "#eb6834", "-"),
-            ("probe_S13_cnn_fs1_s1", "S13, single frame", "#2a78d6", ":"), ("probe_S13_cnn_fs12_s1", "S13, 12-frame stack", "#eb6834", ":"),
-            ("probe_S11_cnn_fs12_6M_s1", "S11, 12-frame stack, 6M frames (exploratory)", "#4a3aa7", "-")]
-    fig, ax = plt.subplots(figsize=(5.2, 2.3))
+    runs = [("probe_S11_cnn_fs1_s1", "S11, single frame", NEUTRAL, "-"), ("probe_S11_cnn_fs12_s1", "S11, 12-frame stack", VIOLET, "-"),
+            ("probe_S13_cnn_fs1_s1", "S13, single frame", NEUTRAL, ":"), ("probe_S13_cnn_fs12_s1", "S13, 12-frame stack", VIOLET, ":"),
+            ("probe_S11_cnn_fs12_6M_s1", "S11, 12-frame stack, 6M frames (exploratory)", VIOLET2, "-")]
+    fig, ax = plt.subplots(figsize=(5.4, 2.5))
     for d, lab, col, ls in runs:
         rows = list(csv.DictReader(open(f"runs/s4_mem_probe/{d}/metrics.csv")))
         f = np.array([int(x["frames"]) for x in rows]) / 1e6
@@ -286,12 +297,12 @@ def fig_probe():
         sm = np.convolve(r, np.ones(k) / k, mode="valid")
         ax.plot(f[k - 1:], sm, color=col, lw=1.3, ls=ls, label=lab)
     ax.axhline(0.5, color=MUTED, lw=0.8, ls="--")
-    ax.text(5.95, 0.52, "chance at the junction", fontsize=6.5, color=INK2, ha="right")
+    ax.text(5.95, 0.545, "chance at the junction", fontsize=7.5, color=INK2, ha="right")
     ax.set_ylim(0, 1)
     ax.set_xlabel("training frames (millions)")
     ax.set_ylabel("training return (25-update mean)")
     style(ax)
-    ax.legend(frameon=False, fontsize=6.5, loc="upper left", ncol=2, labelcolor=INK2)
+    ax.legend(frameon=False, fontsize=7.5, loc="upper left", ncol=2, labelcolor=INK2)
     fig.tight_layout()
     save(fig, "fig_probe")
 

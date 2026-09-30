@@ -1,0 +1,213 @@
+\begin{thebibliography}{28}
+\providecommand{\natexlab}[1]{#1}
+\providecommand{\url}[1]{\texttt{#1}}
+\expandafter\ifx\csname urlstyle\endcsname\relax
+  \providecommand{\doi}[1]{doi: #1}\else
+  \providecommand{\doi}{doi: \begingroup \urlstyle{rm}\Url}\fi
+
+\bibitem[Bi \& Poo(1998)Bi and Poo]{bi1998synaptic}
+Guo-qiang Bi and Mu-ming Poo.
+\newblock Synaptic modifications in cultured hippocampal neurons: Dependence on
+  spike timing, synaptic strength, and postsynaptic cell type.
+\newblock \emph{Journal of Neuroscience}, 18\penalty0 (24):\penalty0
+  10464--10472, 1998.
+
+\bibitem[Chaudhry et~al.(2018)Chaudhry, Dokania, Ajanthan, and
+  Torr]{chaudhry2018riemannian}
+Arslan Chaudhry, Puneet~K. Dokania, Thalaiyasingam Ajanthan, and Philip H.~S.
+  Torr.
+\newblock Riemannian walk for incremental learning: Understanding forgetting
+  and intransigence.
+\newblock In \emph{Proceedings of the European Conference on Computer Vision
+  (ECCV)}, 2018.
+
+\bibitem[Chevalier-Boisvert et~al.(2023)Chevalier-Boisvert, Dai, Towers,
+  de~Lazcano, Willems, Lahlou, Pal, Castro, and
+  Terry]{chevalierboisvert2023minigrid}
+Maxime Chevalier-Boisvert, Bolun Dai, Mark Towers, Rodrigo de~Lazcano, Lucas
+  Willems, Salem Lahlou, Suman Pal, Pablo~Samuel Castro, and Jordan Terry.
+\newblock Minigrid \& miniworld: Modular \& customizable reinforcement learning
+  environments for goal-oriented tasks.
+\newblock In \emph{Advances in Neural Information Processing Systems (Datasets
+  and Benchmarks Track)}, 2023.
+
+\bibitem[Eshraghian et~al.(2023)Eshraghian, Ward, Neftci, Wang, Lenz, Dwivedi,
+  Bennamoun, Jeong, and Lu]{eshraghian2023training}
+Jason~K. Eshraghian, Max Ward, Emre~O. Neftci, Xinxin Wang, Gregor Lenz, Girish
+  Dwivedi, Mohammed Bennamoun, Doo~Seok Jeong, and Wei~D. Lu.
+\newblock Training spiking neural networks using lessons from deep learning.
+\newblock \emph{Proceedings of the IEEE}, 111\penalty0 (9):\penalty0
+  1016--1054, 2023.
+
+\bibitem[Fang et~al.(2023)Fang, Chen, Ding, Yu, Masquelier, Chen, Huang, Zhou,
+  Li, and Tian]{fang2023spikingjelly}
+Wei Fang, Yanqi Chen, Jianhao Ding, Zhaofei Yu, Timoth{\'e}e Masquelier, Ding
+  Chen, Liwei Huang, Huihui Zhou, Guoqi Li, and Yonghong Tian.
+\newblock {SpikingJelly}: An open-source machine learning infrastructure
+  platform for spike-based intelligence.
+\newblock \emph{Science Advances}, 9:\penalty0 eadi1480, 2023.
+
+\bibitem[Fr{\'e}maux \& Gerstner(2016)Fr{\'e}maux and
+  Gerstner]{fremaux2016neuromodulated}
+Nicolas Fr{\'e}maux and Wulfram Gerstner.
+\newblock Neuromodulated spike-timing-dependent plasticity, and theory of
+  three-factor learning rules.
+\newblock \emph{Frontiers in Neural Circuits}, 9:\penalty0 85, 2016.
+
+\bibitem[Holm(1979)]{holm1979simple}
+Sture Holm.
+\newblock A simple sequentially rejective multiple test procedure.
+\newblock \emph{Scandinavian Journal of Statistics}, 6\penalty0 (2):\penalty0
+  65--70, 1979.
+
+\bibitem[Horowitz(2014)]{horowitz2014computing}
+Mark Horowitz.
+\newblock Computing's energy problem (and what we can do about it).
+\newblock In \emph{IEEE International Solid-State Circuits Conference (ISSCC)},
+  pp.\  10--14, 2014.
+
+\bibitem[Huang et~al.(2022)Huang, Dossa, Ye, Braga, Chakraborty, Mehta, and
+  Ara{\'u}jo]{huang2022cleanrl}
+Shengyi Huang, Rousslan Fernand~Julien Dossa, Chang Ye, Jeff Braga, Dipam
+  Chakraborty, Kinal Mehta, and Jo{\~a}o G.~M. Ara{\'u}jo.
+\newblock {CleanRL}: High-quality single-file implementations of deep
+  reinforcement learning algorithms.
+\newblock \emph{Journal of Machine Learning Research}, 23\penalty0
+  (274):\penalty0 1--18, 2022.
+
+\bibitem[Huo et~al.(2025)Huo, Li, Peng, Chen, Xin, and Wang]{huo2025research}
+Bingqiang Huo, Fang Li, Siyu Peng, Hongwei Chen, Sudan Xin, and Hongjun Wang.
+\newblock Research on {SNN} learning algorithms and networks based on
+  biological plausibility.
+\newblock \emph{IEEE Access}, 2025.
+\newblock \doi{10.1109/ACCESS.2025.3566717}.
+
+\bibitem[Khetarpal et~al.(2022)Khetarpal, Riemer, Rish, and
+  Precup]{khetarpal2022towards}
+Khimya Khetarpal, Matthew Riemer, Irina Rish, and Doina Precup.
+\newblock Towards continual reinforcement learning: A review and perspectives.
+\newblock \emph{Journal of Artificial Intelligence Research}, 75:\penalty0
+  1401--1476, 2022.
+
+\bibitem[Kirkpatrick et~al.(2017)Kirkpatrick, Pascanu, Rabinowitz, Veness,
+  Desjardins, Rusu, Milan, Quan, Ramalho, Grabska-Barwinska, Hassabis, Clopath,
+  Kumaran, and Hadsell]{kirkpatrick2017overcoming}
+James Kirkpatrick, Razvan Pascanu, Neil Rabinowitz, Joel Veness, Guillaume
+  Desjardins, Andrei~A. Rusu, Kieran Milan, John Quan, Tiago Ramalho, Agnieszka
+  Grabska-Barwinska, Demis Hassabis, Claudia Clopath, Dharshan Kumaran, and
+  Raia Hadsell.
+\newblock Overcoming catastrophic forgetting in neural networks.
+\newblock \emph{Proceedings of the National Academy of Sciences}, 114\penalty0
+  (13):\penalty0 3521--3526, 2017.
+
+\bibitem[Lee et~al.(2025)Lee, Park, Yoon, Lee, Cho, and Park]{lee2025brain}
+Choongseop Lee, Yuntae Park, Sungmin Yoon, Jiwoon Lee, Youngho Cho, and
+  Cheolsoo Park.
+\newblock Brain-inspired learning rules for spiking neural network-based
+  control: A tutorial.
+\newblock \emph{Biomedical Engineering Letters}, 15:\penalty0 37--55, 2025.
+\newblock \doi{10.1007/s13534-024-00436-6}.
+
+\bibitem[Mallya \& Lazebnik(2018)Mallya and Lazebnik]{mallya2018packnet}
+Arun Mallya and Svetlana Lazebnik.
+\newblock {PackNet}: Adding multiple tasks to a single network by iterative
+  pruning.
+\newblock In \emph{Proceedings of the IEEE Conference on Computer Vision and
+  Pattern Recognition (CVPR)}, 2018.
+
+\bibitem[Neftci et~al.(2019)Neftci, Mostafa, and Zenke]{neftci2019surrogate}
+Emre~O. Neftci, Hesham Mostafa, and Friedemann Zenke.
+\newblock Surrogate gradient learning in spiking neural networks.
+\newblock \emph{IEEE Signal Processing Magazine}, 36\penalty0 (6):\penalty0
+  51--63, 2019.
+
+\bibitem[Newcombe(1998)]{newcombe1998interval}
+Robert~G. Newcombe.
+\newblock Interval estimation for the difference between independent
+  proportions: Comparison of eleven methods.
+\newblock \emph{Statistics in Medicine}, 17\penalty0 (8):\penalty0 873--890,
+  1998.
+
+\bibitem[N{\o}kland(2016)]{nokland2016direct}
+Arild N{\o}kland.
+\newblock Direct feedback alignment provides learning in deep neural networks.
+\newblock In \emph{Advances in Neural Information Processing Systems}, 2016.
+
+\bibitem[Pandey \& Biswas(2025)Pandey and Biswas]{pandey2025spiking}
+Vishal Pandey and Debasmita Biswas.
+\newblock Spiking decision transformers: Local plasticity, phase-coding, and
+  dendritic routing for low-power sequence control.
+\newblock arXiv:2508.21505, 2025.
+
+\bibitem[Rolnick et~al.(2019)Rolnick, Ahuja, Schwarz, Lillicrap, and
+  Wayne]{rolnick2019experience}
+David Rolnick, Arun Ahuja, Jonathan Schwarz, Timothy~P. Lillicrap, and Greg
+  Wayne.
+\newblock Experience replay for continual learning.
+\newblock In \emph{Advances in Neural Information Processing Systems}, 2019.
+
+\bibitem[Schulman et~al.(2017)Schulman, Wolski, Dhariwal, Radford, and
+  Klimov]{schulman2017proximal}
+John Schulman, Filip Wolski, Prafulla Dhariwal, Alec Radford, and Oleg Klimov.
+\newblock Proximal policy optimization algorithms.
+\newblock arXiv:1707.06347, 2017.
+
+\bibitem[Tadros et~al.(2022)Tadros, Krishnan, Ramyaa, and
+  Bazhenov]{tadros2022sleep}
+Timothy Tadros, Giri~P. Krishnan, Ramyaa Ramyaa, and Maxim Bazhenov.
+\newblock Sleep-like unsupervised replay reduces catastrophic forgetting in
+  artificial neural networks.
+\newblock \emph{Nature Communications}, 13:\penalty0 7742, 2022.
+\newblock \doi{10.1038/s41467-022-34938-7}.
+
+\bibitem[Turrigiano \& Nelson(2004)Turrigiano and
+  Nelson]{turrigiano2004homeostatic}
+Gina~G. Turrigiano and Sacha~B. Nelson.
+\newblock Homeostatic plasticity in the developing nervous system.
+\newblock \emph{Nature Reviews Neuroscience}, 5\penalty0 (2):\penalty0 97--107,
+  2004.
+
+\bibitem[Van~den Berghe et~al.(2025)Van~den Berghe, Stroobants, Reddi, and
+  de~Croon]{vandenberghe2025adaptive}
+Korneel Van~den Berghe, Stein Stroobants, Vijay~Janapa Reddi, and G.~C. H.~E.
+  de~Croon.
+\newblock Adaptive surrogate gradients for sequential reinforcement learning in
+  spiking neural networks.
+\newblock In \emph{Advances in Neural Information Processing Systems}, 2025.
+
+\bibitem[Vaswani et~al.(2017)Vaswani, Shazeer, Parmar, Uszkoreit, Jones, Gomez,
+  Kaiser, and Polosukhin]{vaswani2017attention}
+Ashish Vaswani, Noam Shazeer, Niki Parmar, Jakob Uszkoreit, Llion Jones,
+  Aidan~N. Gomez, {\L}ukasz Kaiser, and Illia Polosukhin.
+\newblock Attention is all you need.
+\newblock In \emph{Advances in Neural Information Processing Systems}, 2017.
+
+\bibitem[Welch(1947)]{welch1947generalization}
+B.~L. Welch.
+\newblock The generalization of ``{Student's}'' problem when several different
+  population variances are involved.
+\newblock \emph{Biometrika}, 34\penalty0 (1/2):\penalty0 28--35, 1947.
+
+\bibitem[Wo{\l}czyk et~al.(2021)Wo{\l}czyk, Zaj{\k{a}}c, Pascanu, Kuci{\'n}ski,
+  and Mi{\l}o{\'s}]{wolczyk2021continual}
+Maciej Wo{\l}czyk, Micha{\l} Zaj{\k{a}}c, Razvan Pascanu, {\L}ukasz
+  Kuci{\'n}ski, and Piotr Mi{\l}o{\'s}.
+\newblock Continual world: A robotic benchmark for continual reinforcement
+  learning.
+\newblock In \emph{Advances in Neural Information Processing Systems}, 2021.
+
+\bibitem[Yu et~al.(2025)Yu, Zhu, Xie, and Shao]{yu2025selfconsolidation}
+Hongzhuo Yu, Fei Zhu, Guo-Sen Xie, and Ling Shao.
+\newblock Self-consolidation for self-evolving agents, 2025.
+\newblock TODO: venue and year not printed on the local PDF; check before
+  submission.
+
+\bibitem[Zhou et~al.(2026)Zhou, Yu, Zhou, Zhang, Wang, Zhou, Ma, and
+  Tian]{zhou2026spikingformer}
+Chenlin Zhou, Liutao Yu, Zhaokun Zhou, Han Zhang, Jiaqi Wang, Huihui Zhou,
+  Zhengyu Ma, and Yonghong Tian.
+\newblock Spikingformer: A key foundation model for spiking neural networks.
+\newblock In \emph{Proceedings of the AAAI Conference on Artificial
+  Intelligence}, 2026.
+
+\end{thebibliography}
