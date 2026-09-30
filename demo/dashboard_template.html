@@ -562,8 +562,9 @@ code { font: 12.5px/1.4 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace
     const p = h("p");
     p.appendChild(h("b", null, "Key result (SNN, 3 tasks): "));
     p.appendChild(document.createTextNode(
-      `sleep with only ${K.buf} stored states per task matches isolation's accuracy (${K.sleepAcc} vs ${K.isoAcc}; ` +
-      `difference ${K.diffCi}, p = ${K.p}, ${K.n} seeds per arm) in ${K.sleepMb} MB instead of ${K.isoMb} MB. ` +
+      `sleep with only ${K.buf} stored states per task reaches a similar mean accuracy to isolation (${K.sleepAcc} vs ` +
+      `${K.isoAcc}) in ${K.sleepMb} MB instead of ${K.isoMb} MB. With ${K.n} seeds per arm the interval is wide ` +
+      `(difference ${K.diffCi}, p = ${K.p}), so this is a similar mean, not evidence of equal accuracy. ` +
       `With the default ${K.bigBuf} states per task, isolation is the more memory-efficient choice.`));
     host.appendChild(p);
   })();
@@ -611,8 +612,8 @@ code { font: 12.5px/1.4 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace
       const yA = Math.min(Y(a.acc), Y(b.acc)) - 30;
       el("path", {d: `M${X(a.mb)},${Y(a.acc) - 11} V${yA} H${X(b.mb)} V${Y(b.acc) - 11}`, style: `fill:none;stroke:var(--ink2);stroke-width:1.25;stroke-dasharray:3 4;${LINE}`}, svg);
       const tx = (X(a.mb) + X(b.mb)) / 2;
-      el("text", {x: tx, y: yA - 24, class: "ann", "text-anchor": "middle"}, svg).textContent = "same accuracy,";
-      el("text", {x: tx, y: yA - 8, class: "ann", "text-anchor": "middle"}, svg).textContent = `${K.ratioPct}% of the memory`;
+      el("text", {x: tx, y: yA - 24, class: "ann", "text-anchor": "middle"}, svg).textContent = "similar mean accuracy,";
+      el("text", {x: tx, y: yA - 8, class: "ann", "text-anchor": "middle"}, svg).textContent = `${K.ratioPct}% of the memory (${K.n} seeds)`;
     }
     const sorted = P.slice().sort((a, b) => (a.seq === seq) - (b.seq === seq));
     const labelled = new Set();

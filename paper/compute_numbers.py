@@ -447,6 +447,14 @@ def rq5():
             f"runs/continual_snn_budget/fetch3_{name}_s*, runs/continual_snn/fetch3_isolation_s* (results/rq5_stats.md)")
         put(f"snnSleep{tag}VsIsoP", pf(p), "its Welch p", "results/rq5_stats.md")
     put("snnIsoAcc", msd(iso_snn), "SNN fetch3 isolation ACC", "runs/continual_snn/fetch3_isolation_s*/results.json")
+    # mean-only values, seed counts and memory ratio for the small-buffer wording (SNN, 200 states/task vs isolation)
+    a200, r200 = grp("fetch3", "SNN", "fetch3_sleep_buf200 @150k")
+    _, riso = grp("fetch3", "SNN", "fetch3_isolation @150k")
+    put("smallSnnTwoHundredMean", f3(np.mean(a200)), "SNN fetch3 sleep_buf200: mean ACC", srcm)
+    put("snnIsoMean", f3(iso_snn.mean()), "SNN fetch3 isolation: mean ACC", "runs/continual_snn/fetch3_isolation_s*/results.json")
+    put("smallSnnTwoHundredN", str(min(len(a200), len(iso_snn))), "seeds per arm, SNN sleep_buf200 vs isolation", srcm)
+    put("smallSnnTwoHundredMemPct", f"{100 * r200['total_mb'] / riso['total_mb']:.0f}",
+        "SNN sleep_buf200 total memory as % of isolation's", srcm)
     # fetch5 SNN: short budget (n=2) vs fair budget (n=3)
     for tag, root in (("Short", "runs/continual5_snn"), ("Fair", "runs/continual5_snn_450k")):
         s, i = cl(root, "sleep", "fetch5"), cl(root, "isolation", "fetch5")

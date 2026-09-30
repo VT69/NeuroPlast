@@ -428,8 +428,9 @@ def build():
                                          f"{N['rqOneDfaHomeoSolved']} vs {N['rqOneDfaSolved']} (n.s.)",
         "Homeostasis, with backprop": f"ΔAUC {N['rqOneContrCAucCi']}; Holm p = {N['rqOneContrCAucHolm']}",
         "Sleep-like consolidation": f"sleep − replay ΔACC {N['matchAccCi']}, p = {N['matchAccP']}",
-        "One shared network": f"200 states/task: ties isolation in {N['smallSnnTwoHundredMb']} vs {N['memSnnThreeIsoMb']} MB",
-        "Transformer working memory": "no learnable memory benchmark within budget",
+        "One shared network": f"200 states/task: similar mean ACC ({N['smallSnnTwoHundredMean']} vs {N['snnIsoMean']}; "
+                              f"{N['smallSnnTwoHundredN']} seeds, wide CI) in {N['smallSnnTwoHundredMb']} vs {N['memSnnThreeIsoMb']} MB",
+        "Transformer working memory": "no benchmark both required memory and was learnable in budget",
     }
     y0, rh = 1.9, 0.66
     txt(s, M + 0.2, y0 - 0.02, 3.6, 0.3, [dict(t="MECHANISM", size=10.5, bold=True, color=MUTED)])
@@ -446,8 +447,8 @@ def build():
     positive but did not survive the multiple-comparison correction; and sleep, which removes forgetting but ties replay
     once the replay budget is matched. The spiking encoder is a trade-off: it works at fewer operations, but costs more
     CPU time to train and the energy savings are only an estimate. The two exceptions are homeostasis when the network
-    is trained without backprop, and one shared network when the replay buffer is small. The Transformer question could
-    not be tested. The next slides go through each row.""")
+    is trained without backprop, and one shared network with a small replay buffer, which reaches a similar mean accuracy
+    in less than half the memory, with only three seeds and a wide interval. The Transformer question could not be tested. The next slides go through each row.""")
 
     # 8 ---- forgetting
     s = new()
@@ -469,13 +470,13 @@ def build():
 
     # 9 ---- memory
     s = new()
-    title(s, "A shared network wins only with a small replay buffer", "Memory trade-off")
+    title(s, "A shared network is competitive only with a small buffer", "Memory trade-off")
     image(s, f"{FIG}/fig_memory.png", M - 0.1, 1.85, 8.5, 3.9)
     txt(s, M, 5.85, 8.3, 0.9, [dict(t="Total memory = fp32 parameters + replay buffer. Numbers above the axis: replay states "
                                        "stored per task.", size=12, color=MUTED)])
     x0 = 9.2
-    stat(s, x0, 1.9, 3.6, f"{key['ratioPct']}%", f"of the memory: SNN sleep with {key['buf']} states/task ties isolation "
-                                                 f"({key['sleepAcc']} vs {key['isoAcc']}; {key['sleepMb']} vs {key['isoMb']} MB)",
+    stat(s, x0, 1.9, 3.6, f"{key['ratioPct']}%", f"of the memory: SNN sleep, {key['buf']} states/task, similar mean ACC to "
+                                                 f"isolation ({key['sleepAcc']} vs {key['isoAcc']}; {key['n']} seeds, wide CI)",
          color=SLEEP, big_size=48)
     stat(s, x0, 3.55, 3.6, f"{N['perParamRatioRange']}×", "more accuracy per parameter for the shared network", big_size=34)
     stat(s, x0, 4.95, 3.6, f"{N['perMbRatioRange']}×", f"more accuracy per MB for isolation at the default "
@@ -484,10 +485,11 @@ def build():
     parameter, the shared network looks {N['perParamRatioRange']} times more efficient, which is the usual way this is
     reported. But the shared network needs a replay buffer, and at the default {N['bufferPerTask']} states per task the
     buffer outweighs the extra networks: isolation gets {N['perMbRatioRange']} times more accuracy per megabyte. The
-    exception is a small buffer: on the SNN, sleep with {key['buf']} states per task ties isolation's accuracy,
-    {key['sleepAcc']} against {key['isoAcc']}, in {key['sleepMb']} instead of {key['isoMb']} megabytes, about
-    {key['ratioPct']} percent of the memory. With three seeds the confidence interval is wide, so this is 'no large
-    difference', not proof of equality.""")
+    exception is a small buffer: on the SNN, sleep with {key['buf']} states per task reaches a similar mean accuracy to
+    isolation, {key['sleepAcc']} against {key['isoAcc']}, in {key['sleepMb']} instead of {key['isoMb']} megabytes, about
+    {key['ratioPct']} percent of the memory. But this is {key['n']} seeds per arm, and the 95 percent interval for the
+    difference runs from {key['diffCi'].split('[')[1].rstrip(']').replace(', ', ' to ')}, so it is a similar mean, not evidence
+    of equal accuracy.""")
 
     # 10 ---- local plasticity
     s = new()
@@ -556,22 +558,23 @@ def build():
     cols_w = [3.6, 2.6, 3.65, W - M - 10.75]
     for j, hd in enumerate(["EARLIER FINDING", "EVIDENCE THEN", "AFTER THE CONTROL", "CAUSE"]):
         txt(s, cols_x[j] + 0.15, 1.88, cols_w[j], 0.3, [dict(t=hd, size=10.5, bold=True, color=MUTED)])
-    rh = 0.7
+    rh = 0.66
     for i, r in enumerate(rows):
-        y = 2.25 + i * rh
+        y = 2.22 + i * rh
         card(s, M, y, W - 2 * M, rh - 0.1, fill=CARD if i % 2 == 0 else "FAFAF8", radius=0.2)
         for j, t in enumerate(r):
             txt(s, cols_x[j] + 0.15, y, cols_w[j] - 0.2, rh - 0.1,
                 [dict(t=t, size=13 if j else 13.5, bold=(j == 0), color=INK if j in (0, 3) else INK2)], anchor=MSO_ANCHOR.MIDDLE)
-    txt(s, M, 6.55, W - 2 * M, 0.4, [dict(t="Each apparent win disappeared once the resource it quietly used more of was matched.",
+    txt(s, M, 6.25, W - 2 * M, 0.6, [dict(t="Effects shrank or disappeared once seeds, training budgets, replay budgets and memory accounting were made fair; the homeostasis-DFA speed-up survived.",
                                            size=14, italic=True, color=INK2)])
     notes(s, f"""This slide is, I think, the most useful part of the project. Six findings looked positive early on,
     and each shrank or disappeared once the right control was in place. Sleep beating replay came from three seeds and
     from sleep replaying more data. Shared weights looked far more efficient only because the replay buffer was not
     counted as memory. Sleep beating isolation on five tasks came from a training budget too small for fresh networks.
     The two homeostasis results came from small seed counts, and the Transformer result came from a benchmark that did
-    not need memory at all. The common pattern: each apparent win disappeared when the resource it quietly used more of,
-    whether seeds, frames, memory or replayed samples, was matched.""")
+    not need memory at all. The common pattern: the effects shrank or disappeared once the seed counts, training budgets,
+    replay budgets and memory accounting were made fair. The one that survived is the speed-up homeostasis gives DFA,
+    in its area-under-the-curve, not its solve rate.""")
 
     # 13 ---- live demo
     s = new()
@@ -602,7 +605,7 @@ def build():
         f"Small scale: MiniGrid, ≤{N['paramsHybridShared']} parameters, 3–5 tasks",
         f"Few seeds: many continual arms have {N['nCnnSleep']}, so CIs are wide",
         "Energy is an estimate from operation counts; no hardware was measured",
-        "Transformer memory untested: no benchmark was learnable in budget",
+        "Transformer memory untested: no benchmark both required memory and was learnable in budget",
     ], size=16, gap=12)
     box(s, 6.75, 1.85, W - M - 6.75, 4.3, "Future work", [], accent=SLEEP)
     bullets(s, 6.97, 2.45, W - M - 7.1, 4.1, [
@@ -615,7 +618,7 @@ def build():
     ], size=16, gap=12)
     notes(s, f"""The limitations are real. The agent is told which task it is doing, the scale is small, many
     continual arms have only {N['nCnnSleep']} seeds, the energy numbers are estimates, and the Transformer question is
-    untested because no memory benchmark was learnable within budget. For future work, the most direct next step is a
+    untested because no benchmark we tried both required memory and was learnable within budget. For future work, the most direct next step is a
     memory benchmark that agents can actually learn. The idea I find most promising is compressed replay: since the size
     of the replay buffer is what decides whether a shared network beats one network per task, making the buffer cheaper
     moves that trade-off directly, for example by storing quantised targets, fewer but better-chosen states, or a small
@@ -627,10 +630,11 @@ def build():
     txt(s, M + 0.1, 1.4, 11.8, 1.0, [dict(t="Mostly no, with two specific exceptions.", size=40, bold=True, font=HEAD,
                                          color=WHITE)])
     items = [("No mechanism beat its matched control", "on final accuracy or forgetting: STDP ≈ random update, sleep ≈ replay"),
-             ("Two exceptions", "homeostasis speeds up learning without backprop; a shared network is more memory-"
-                                "efficient with a small replay buffer"),
-             ("The lesson is methodological", "every apparent win vanished once the resource it quietly used more "
-                                              "of (seeds, frames, memory, replayed samples) was matched")]
+             ("Two exceptions", "homeostasis speeds up learning without backprop; with a small replay buffer a shared "
+                                f"network reaches similar mean accuracy in less than half the memory ({N['smallSnnTwoHundredN']} "
+                                "seeds, wide CI)"),
+             ("The lesson is methodological", "effects shrank or disappeared once seeds, training budgets, replay budgets "
+                                              "and memory accounting were made fair; the homeostasis-DFA speed-up survived")]
     for i, (hd, body) in enumerate(items):
         y = 2.75 + i * 1.2
         num = s.shapes.add_shape(MSO_SHAPE.OVAL, Inches(M + 0.1), Inches(y + 0.02), Inches(0.5), Inches(0.5))
@@ -644,9 +648,10 @@ def build():
     txt(s, M + 0.1, 6.35, 11, 0.5, [dict(t="Thank you. Questions?", size=20, bold=True, color=WHITE)])
     notes(s, """To conclude. None of the brain-inspired mechanisms beat its matched control on accuracy or forgetting.
     There are two specific exceptions: homeostasis speeds up learning when the network is trained without backprop, and
-    a shared network is more memory-efficient than one network per task when the replay buffer is small. The broader
-    lesson is methodological: in this project, every apparent win of a biological mechanism disappeared once I matched
-    the resource it was quietly using more of. My suggestion for this field is to report and match those budgets.
+    with a small replay buffer a shared network reaches a similar mean accuracy to one network per task in less than half
+    the memory, although with three seeds that interval is wide. The broader lesson is methodological: in this project,
+    effects shrank or disappeared once seed counts, training budgets, replay budgets and memory accounting were made
+    fair; the speed-up homeostasis gives DFA is the one that survived. My suggestion for this field is to report and match those budgets.
     Thank you; I'm happy to take questions. There are backup slides with the full tables and references.""")
 
     # B1 ---- continual table

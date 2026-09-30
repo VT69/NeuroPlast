@@ -144,10 +144,12 @@ def scorecard(N):
              ev=f"pre-registered, replayed samples matched exactly, {N['matchN']} seeds per arm; both beat naive fine-tuning"),
         dict(mech="One shared network", kind="helps", verdict="Only with small replay buffers",
              q="Is one shared network more memory-efficient than a separate network per task (isolation)?",
-             num=f"SNN: sleep with 200 states per task ties isolation ({N['smallSnnTwoHundredAcc']} vs {N['snnIsoAcc']}) in "
+             num=f"SNN: sleep with 200 states per task reaches a similar mean accuracy to isolation "
+                 f"({N['smallSnnTwoHundredMean']} vs {N['snnIsoMean']}; difference {N['snnSleepTwoHundredVsIsoCi']}) in "
                  f"{N['smallSnnTwoHundredMb']} vs {N['memSnnThreeIsoMb']} MB. At 5,000 states per task isolation gets "
                  f"{N['perMbRatioRange']}× more accuracy per MB.",
-             ev="3 seeds per arm; per parameter the shared network always wins"),
+             ev=f"{N['smallSnnTwoHundredN']} seeds per arm, so the interval is wide; per parameter the shared network "
+                "always wins"),
         dict(mech="Transformer working memory", kind="untested", verdict="Untested: no usable benchmark",
              q="Does Transformer working memory help on a task that needs memory?",
              num=f"On MemoryS11/S13 a memoryless CNN ({N['probeElevenOne']}, {N['probeThirteenOne']}) and a "

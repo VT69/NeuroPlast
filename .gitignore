@@ -27,3 +27,6 @@ runs/**/tmp/
 Thumbs.db
 *.lock
 runs/**/data.pt
+
+# Publisher PDFs of the cited papers: kept locally only, never committed (removed from the whole history)
+relevant_literature/

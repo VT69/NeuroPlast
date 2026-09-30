@@ -49,13 +49,21 @@ M = {  # method -> (label, colour, marker, linestyle)
     "naive": ("naive", "#e87ba4", "v", ":"),
     "sleep_matched": ("sleep, replay-matched", "#4a3aa7", "P", "-"),
 }
+from matplotlib import font_manager  # noqa: E402
+
+for _f in glob.glob("/usr/share/fonts/truetype/cmu/cmun*.ttf"):  # register CMU fonts even if the font cache is stale
+    font_manager.fontManager.addfont(_f)
 plt.rcParams.update({
     "font.size": 8.5, "axes.titlesize": 9, "axes.labelsize": 8.5, "xtick.labelsize": 7.5, "ytick.labelsize": 7.5,
     "legend.fontsize": 7.5, "axes.edgecolor": MUTED, "axes.labelcolor": INK2, "xtick.color": INK2, "ytick.color": INK2,
     "axes.titlecolor": INK, "axes.linewidth": 0.6, "xtick.major.width": 0.6, "ytick.major.width": 0.6,
-    # Computer Modern, as in the paper body (matplotlib ships cmr10; cmr10 has no minus glyph, so ticks use mathtext)
-    "font.family": "serif", "font.serif": ["cmr10"], "mathtext.fontset": "cm", "axes.formatter.use_mathtext": True,
-    "axes.unicode_minus": False, "pdf.fonttype": 42, "savefig.dpi": 300,
+    # Computer Modern, as in the paper body, from CMU Serif (TrueType with a real Unicode map, so the embedded text
+    # extracts correctly: U+2212 minus, U+03BB lambda). Math uses the same font ("custom" mathtext set). pdf.fonttype 42
+    # embeds TrueType. Needs the CMU fonts (Debian/Ubuntu: fonts-cmu).
+    "font.family": "serif", "font.serif": ["CMU Serif", "DejaVu Serif"], "mathtext.fontset": "custom",
+    "mathtext.rm": "CMU Serif", "mathtext.it": "CMU Serif:italic", "mathtext.bf": "CMU Serif:bold",
+    "axes.formatter.use_mathtext": False, "axes.unicode_minus": True, "pdf.fonttype": 42, "ps.fonttype": 42,
+    "savefig.dpi": 300,
     "lines.solid_capstyle": "round", "lines.solid_joinstyle": "round", "lines.dash_capstyle": "round",
 })
 
@@ -114,8 +122,10 @@ def fig_forgetting():
                 ax = axes[row, c]
                 mu = y.mean(0)
                 e = np.array([ci95(y[:, i]) for i in range(T)])
+                # returns live in [0, 1]: clip the CI whiskers to that range (3-seed CIs can exceed it)
+                lo_err, hi_err = mu - np.clip(mu - e, 0, 1), np.clip(mu + e, 0, 1) - mu
                 xd = x + dodge[m]
-                ax.errorbar(xd, mu, yerr=e, fmt="none", ecolor=col, elinewidth=0.7, alpha=0.6, capsize=0)
+                ax.errorbar(xd, mu, yerr=[lo_err, hi_err], fmt="none", ecolor=col, elinewidth=0.7, alpha=0.6, capsize=0)
                 ax.plot(xd, mu, color=col, marker=mk, ms=4, lw=1.5, ls=ls, label=f"{lab} (n={len(runs)})",
                         markeredgecolor="white", markeredgewidth=0.6)
         for row in (0, 1):

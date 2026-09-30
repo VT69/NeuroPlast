@@ -17,15 +17,18 @@ latexmk -pdf -jobname=main_anonymous \
 ```
 
 Needs TeX Live (latex-recommended, latex-extra, fonts-recommended, science), lmodern and cm-super.
+The figures use the CMU Serif fonts (Debian/Ubuntu package `fonts-cmu`), which carry a proper Unicode map, so
+minus signs (U+2212) and λ extract correctly from the embedded TrueType fonts.
 
 - `main.tex` contains no hand-typed result numbers: each one is a macro from `numbers.tex`, and `NUMBERS.md` lists
   every macro with its value, meaning and source file in `runs/` or `results/`.
 - The anonymous build is selected by defining `\anonymousbuild`: it loads `tmlr` without `[preprint]` and replaces the
   repository URL with "an anonymised repository provided as supplementary material".
-- Figures are drawn at their printed width (at most 6.5 in, the TMLR text width) in Computer Modern, with the same
-  method colours as the dashboard (`demo/index.html`). Sleep is blue, replay orange, isolation green, EWC yellow,
+- Figures are drawn at their printed width (at most 6.5 in, the TMLR text width) in Computer Modern (CMU Serif,
+  embedded as TrueType), with the same method colours as the dashboard (`demo/index.html`). Sleep is blue, replay orange, isolation green, EWC yellow,
   naive pink and replay-matched sleep violet; non-method series use grey and violet.
-- `refs.bib`: entries checked against the PDFs in `relevant_literature/` are marked `[local PDF]`. The others are
+- `refs.bib`: entries checked against the author's local copies of the cited PDFs (not distributed with the repository)
+  are marked `[local PDF]`. The others are
   standard references from well-known metadata, marked `TODO verify` in a comment above the entry.
 - Visible `TODO`s in the PDF: author affiliation and email (preprint only), the AI-assistance disclosure, and the
   venue of Yu et al. (Self-Consolidation).
