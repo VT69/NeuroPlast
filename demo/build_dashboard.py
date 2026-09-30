@@ -32,7 +32,7 @@ def ci95(x):
 
 
 def numbers():
-    for fn in (cn.protocol, cn.rq3, cn.rq1, cn.dfa, cn.rq2, cn.rq5, cn.memory, cn.rq4, cn.demo, cn.seeds):
+    for fn in (cn.protocol, cn.rq3, cn.rq1, cn.dfa, cn.rq2, cn.rq5, cn.memory, cn.rq4, cn.demo, cn.seeds, cn.compute_budget):
         fn()
     # typographic minus for negative numbers ("-0.167" -> "−0.167"); ranges already use an en dash
     return {k: re.sub(r"(?<![\w.])-(?=\d)", "−", v[1].replace("$\\pm$", "±").replace("--", "–")) for k, v in cn.N.items()}
