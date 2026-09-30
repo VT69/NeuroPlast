@@ -114,7 +114,59 @@ Where the frozen results leave room ([ours], from `PROGRESS.md` / `paper/`):
 outcomes.
 
 ## Phase B: pilot log
-(filled in as pilots finish; failures stay in)
+(filled in as pilots finish; failures stay in. Frozen references are means of the capstone's seeds 1-3.)
+
+### Idea 3: int8 storage audit (done; 0.03 core-h). [pilot, paired]
+27 frozen checkpoints were checked: CNN and SNN fetch3 (isolation, sleep, replay, sleep@200) and CNN fetch5 (isolation,
+sleep). Each network was evaluated in fp32 and with every weight matrix in symmetric per-tensor int8, on the same 100
+held-out episodes with the same RNG state. The fp32 − int8 ACC difference has mean −0.0003 (SD 0.006, range −0.015 to
++0.012; one-sample t p = 0.78, n = 27). int8 storage costs no detectable accuracy here.
+- **Consequence for the memory frontier** [interp, arithmetic]:
+  - Parameters shrink 4× for every method. Buffer states barely shrink: 188 → 157 B with int8 targets, or → 66 B if the
+    uint8 view is also bit-packed (object 4 bits + colour 3 + state 2 = 9 bits/cell).
+  - CNN fetch3 with int8 parameters and packed states:
+    | arm | memory | ACC |
+    |---|---|---|
+    | isolation | 0.48 MB | 0.979 |
+    | sleep@200 | 0.23 MB | 0.964 |
+    | sleep@5000 | 1.18 MB | 0.978 |
+  - The ordering is unchanged. Isolation still wins at the default buffer and loses at 200 states/task. So the paper's
+    memory conclusion is robust to storage precision; it just moves every point left.
+- Files: `explore/quant/quant_audit.json`, `explore/quant_audit.py`.
+
+### Idea 4: CueFirst-S11 memory benchmark. KILLED (kill criterion met). [pilot, seed 101, 1M frames]
+| agent (CNN encoder, lr 3e-4) | eval success | episode length |
+|---|---|---|
+| memoryless (fs1) | 0.49 | 13.9 |
+| 12-frame stack | 0.51 | 16.4 |
+| GRU over 12 frames | 0.49 | 14.4 |
+| Transformer over 12 frames | 0.485 | 14.0 |
+- The benchmark does require memory: the memoryless agent is at chance, and the cue is visible at step 0 and invisible
+  at the junction (checked).
+- But no memory agent learned to use the cue in 1M frames. All of them learn to walk straight to the junction and guess,
+  which already earns 50% of the reward. Seeing the cue on the way removed the exploration problem, but not the
+  credit-assignment problem.
+- Kill criterion (fs12 < 0.8 at 1M) met, so no further runs. The Transformer question stays open.
+- [interp] A next attempt would need a denser signal, e.g. a penalty for the wrong choice instead of 0, or a
+  curriculum with a short corridor. That is a benchmark-design project, not a pilot.
+
+### Idea 1: PackNet (one-shot pruning at 75% of each task). [pilot]
+- **fetch3 s101: ACC 0.681.** Task 0 learned (return 0.98), then collapsed right after its one-shot prune of 2/3 of the
+  encoder. Entropy fell from 0.25 to 0.06 and the near-deterministic policy got stuck in timeouts, with no reward
+  signal to recover. Tasks 1 and 2 were fine (0.98, 0.87). Forgetting 0 by construction.
+- **fetch5 s101: ACC 0.872, FORGET 0.000.** Tasks 1-4 reached 0.94-0.98, but the last task only 0.51. With a 1/5
+  share and frozen earlier weights, late tasks lose plasticity.
+- Both are below the kill line (isolation − 0.05). The one allowed change is gradual magnitude pruning (Zhu & Gupta
+  2017): 5 steps between 50% and 75% of the task's updates, with the same final split and the same frames. It runs in
+  round 2; if it also misses the line, PackNet is killed.
+
+### Idea 2: LwF (buffer-free distillation on current-task states). [pilot]
+- **fetch3 s101: ACC 0.977, FORGET 0.0006**, with 595k distilled samples (replay uses about 0.55-0.59M). R rows:
+  0.979 / 0.978, 0.979 / 0.978, 0.978, 0.975.
+- This beats my prediction (0.85-0.95). It is on par with replay@5000 (0.970) and isolation (0.979), and above
+  replay@200 (0.946) and replay@50 (0.885), while storing no states.
+- Persistent memory 0.78 MB (the same as naive). Peak memory during training 1.55 MB (student + snapshot).
+
 
 ## Phase C: pre-registration
 (written and committed before any confirmation run starts)
