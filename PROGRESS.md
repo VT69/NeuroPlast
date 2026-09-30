@@ -13,6 +13,48 @@ rerun on the frozen data at 01:25 UTC (`rq1_stats.py`, `memory_fair.py`, `rq5_st
 Results went in as they came out, including the nulls: session 4 turned two earlier positive hints into nulls
 (sleep > replay; DFA+homeostasis solve rate) and found no usable memory benchmark.
 
+## Session 5 (2026-09-30): paper draft and demo dashboard (no new experiments; results stay frozen)
+Produced (all on `session-3`: paper in 557b23c, dashboard in 8f9da01):
+* **Paper draft** `paper/main.pdf` (15 pages, TMLR style, builds with `cd paper && latexmk -pdf main.tex`, no LaTeX
+  errors). Sections: intro, related work, setup (pre-registration, Welch, Fisher, Holm), mechanisms, one results
+  subsection per mechanism, "what didn't survive controls", limitations, conclusion, reproducibility, AI-assistance
+  disclosure (TODO for you), appendices (protocol constants, extra figures).
+* **Numbers pipeline** `paper/compute_numbers.py` regenerates `paper/numbers.tex` (359 LaTeX macros) and
+  `paper/NUMBERS.md` (each number with its description and source file in `runs/` or `results/`). The text contains
+  no hand-typed result numbers; every result goes through a macro. All values were cross-checked against the
+  pre-registered session 3/4 tables.
+* **Figures** `paper/figures/make_figures.py`: forgetting curves by method, accuracy vs total memory, the RQ1 arms,
+  the op-count frontier, the Block 1 replay-budget comparison, and the memory probes (PDF and PNG).
+* **Bibliography** `paper/refs.bib`: entries checked against `docs/papers/` PDFs, plus well-known external entries
+  marked `% TODO verify`. No invented references.
+* **Dashboard** `demo/index.html`: a single self-contained page (2.0 MB, data and GIFs embedded, works offline).
+  It contains the scorecard (built from the paper's own numbers pipeline, so it matches the paper), the naive vs
+  sleep GIFs with the run's real accuracy matrix and the 3-seed mean, forgetting curves for every method on 4
+  sequences, accuracy vs total memory, table views, and dark mode. Rebuild: `python demo/build_dashboard.py`.
+  Checked at 1280 px (light and dark) and 390 px: no console errors, no horizontal overflow.
+* **Live episode** `demo/live_episode.py --agent {naive,sleep} --task {0,1,2} [--window] [--gif out.gif]`: one
+  CPU episode from `runs/demo_ckpt/`, printed step by step, followed by the agent's measured accuracy matrix.
+
+### Left for you to review
+1. Paper TODOs (red in the PDF):
+   * your affiliation and email
+   * the repository URL (Reproducibility section)
+   * **the AI-assistance disclosure text**; only you can write this accurately
+2. Bibliography (`paper/refs.bib`):
+   * entries marked `% TODO verify` (external, not in `docs/papers/`): Chaudhry, Neftci, Eshraghian, Bi & Poo,
+     Frémaux, Turrigiano, Nøkland, Horowitz, Schulman, Huang, Vaswani, Welch, Holm, Newcombe
+   * Khetarpal: volume and pages
+   * Mallya: venue
+   * Yu et al. (Self-Consolidation): venue and year are unknown and show as a visible note in the PDF
+3. Submission mode: `\usepackage[preprint]{tmlr}` shows your name. An anonymous TMLR submission needs the option
+   removed (then also drop the repo URL and author block).
+4. Claim labels (`\lit`, `\ours`, `\interp`): check that every interpretive sentence is tagged the way you would tag it.
+5. Protocol constants in appendix A were read from code and configs (see `NUMBERS.md` sources); worth one look.
+6. The GRU memory baseline is implemented and tested but was never run (the Transformer question is untested). The
+   paper says so.
+7. The dashboard GIFs are 3 episodes per task in fixed evaluation rooms; the matrices next to them are the scored
+   values. Nothing was chosen by outcome.
+
 ## Session 4 (2026-09-29/30) — final experimental session before the results freeze (complete, 01:25 UTC)
 Machine: fresh container, 4 cores, 15 GB RAM, 20 GB free disk; 4 workers, OMP_NUM_THREADS=1. Heartbeat Monitor
 (4-min status line) runs whenever the queue runs: the container is reclaimed ~5 min after the session goes idle
@@ -601,6 +643,8 @@ Persistent membrane state as an SNN memory mechanism is a new mechanism: it need
 justification first.
 
 ## What to look at first when you're back
+0. **Session 5** at the top: the paper draft (`paper/main.pdf`, numbers in `paper/NUMBERS.md`), the dashboard
+   (`demo/index.html`), and the review list (TODOs only you can fill in).
 1. **RESULTS FREEZE** note at the top, then "Answers so far" and "Evidence hierarchy" (both final).
 2. Session 4 at the top: the pre-registration, then the four block results. Block 1 (sleep = replay once the replay
    budget is matched, p=0.42), Block 2 (homeostasis speeds DFA learning, AUC Holm p=0.017, but the solve rate 7/10
