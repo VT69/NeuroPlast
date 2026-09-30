@@ -205,6 +205,17 @@ batch 128, coef 1.0).
 - **H4.** Final ACC differs (two-sided Welch, α = 0.05; 95% CI).
 - **H5.** FORGET differs (Welch). Holm correction over H4-H5.
 
+### C3: sleep vs replay when replay is scarce (CNN fetch3; separate family; added before any C3 run)
+- **Motivation (pilots, seed 101).** At about 10% of the usual budget, replay reached 0.935 and sleep 0.841. At about
+  2%, replay reached 0.957 (FORGET 0.001) and sleep 0.585 (FORGET 0.59).
+- **Arms and seeds.** Sleep with `replay_budget=14080` (110 sleep steps of 128) vs replay with `batch=3` (3 replayed
+  states per PPO minibatch, about 13.7-14.0k in total). Seeds 201-208 (8 per arm), 16 runs.
+  `configs/cl_cnn.yaml`, default buffer 5,000/task, same frames, lr and seeds.
+- **Budget matching is conservative towards sleep.** 14,080 is at least the largest replay count expected from the
+  capstone's replay runs (4,566-4,653 minibatches × 3). The exact counts are reported.
+- **H6.** Final ACC differs (two-sided Welch, α = 0.05; 95% CI).
+- **H7.** FORGET differs (Welch). Holm correction over H6-H7.
+
 ### Stopping rule
 - Run every listed run once; no early stopping, no interim tests.
 - A run killed by an infrastructure failure (for example a container restart) is rerun from scratch with the same

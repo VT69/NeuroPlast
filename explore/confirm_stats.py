@@ -102,6 +102,11 @@ if __name__ == "__main__":
                   [("LwF-int8", "lwf_int8"), ("replay@1380", "replay_buf1380")],
                   [("H4", "LwF-int8", "replay@1380", "ACC"), ("H5", "LwF-int8", "replay@1380", "FORGET")],
                   range(201, 209))
+    out += [""]
+    out += family("C3: CNN fetch3, replay scarce (about 2% of the usual budget), seeds 201-208", "explore/runs/confirm",
+                  "fetch3", 3, [("sleep@14080", "sleep_rb14080"), ("replay b=3", "replay_b3")],
+                  [("H6", "sleep@14080", "replay b=3", "ACC"), ("H7", "sleep@14080", "replay b=3", "FORGET")],
+                  range(201, 209))
     text = "\n".join(out) + "\n"
     print(text)
     open("explore/confirm_results.md", "w").write(text)
