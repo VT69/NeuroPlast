@@ -9,3 +9,10 @@ END rc=0 956s runs/rq1_v2/rq1v2_dfae_homeo_s10/eval.json
 START runs/continual_hybrid/fetch3_sleep_matched_s2/results.json
 END rc=0 5554s runs/continual_hybrid/fetch3_sleep_matched_s2/results.json
 START runs/continual_hybrid/fetch3_sleep_matched_s6/results.json
+END rc=0 5918s runs/continual_hybrid/fetch3_sleep_matched_s6/results.json
+0 jobs pending
+2 jobs pending
+=== restart 2026-09-29T23:58:40Z ===
+0 jobs pending
+0 jobs pending
+1 jobs pending

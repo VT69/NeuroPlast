@@ -19,3 +19,10 @@ END rc=0 5319s runs/continual_hybrid/fetch3_sleep_matched_s4/results.json
 1 jobs pending
 2 jobs pending
 START runs/continual_hybrid/fetch3_sleep_matched_s7/results.json
+END rc=0 4981s runs/continual_hybrid/fetch3_sleep_matched_s7/results.json
+=== restart 2026-09-29T23:58:31Z ===
+0 jobs pending
+0 jobs pending
+1 jobs pending
+START runs/continual_hybrid/fetch3_sleep_matched_s8/results.json
+END rc=0 5035s runs/continual_hybrid/fetch3_sleep_matched_s8/results.json
