@@ -34,8 +34,11 @@ from neuroplast.models.agent import snapshot
 
 # ---------------------------------------------------------------- PackNet
 class PackNet:
-    def __init__(self, prune_frac=0.75):
-        self.prune_frac = prune_frac
+    def __init__(self, prune_frac=0.75, prune_start=None, prune_steps=1):
+        """prune_steps=1: one-shot pruning at prune_frac of the task's updates (pilot round 1; this collapsed task 0
+        on fetch3 s101). prune_steps>1: gradual magnitude pruning (Zhu & Gupta 2017) in prune_steps equal steps
+        between prune_start and prune_frac; the final capacity split is the same."""
+        self.prune_frac, self.prune_start, self.prune_steps = prune_frac, prune_start, prune_steps
         self.owner = None      # name -> int8 owner map (0 = free)
         self.T = None
         self.current = 0
@@ -92,7 +95,15 @@ class _PackNetHook:
         self.pn, self.t = pn, t
         self.num_updates = max(cfg.total_frames // (cfg.num_envs * cfg.num_steps), 1)
         last = t == pn.T - 1
-        self.prune_update = None if last else max(1, round(pn.prune_frac * self.num_updates))
+        if last:
+            self.schedule = []
+        elif pn.prune_steps <= 1:
+            self.schedule = [max(1, round(pn.prune_frac * self.num_updates))]
+        else:
+            a, b = pn.prune_start * self.num_updates, pn.prune_frac * self.num_updates
+            self.schedule = [max(1, round(a + (b - a) * i / (pn.prune_steps - 1))) for i in range(pn.prune_steps)]
+        self.cand = {n: (pn.owner[n] == 0).clone() for n in pn._packed(agent)}   # weights this task may keep
+        self.n_cand = {n: int(c.sum()) for n, c in self.cand.items()}
         self._freeze(agent)
 
     def _freeze(self, agent):
@@ -113,20 +124,29 @@ class _PackNetHook:
 
     @torch.no_grad()
     def after_update(self, agent, update, stats):
-        if update != self.prune_update:
+        if update not in self.schedule:
             return
+        step = self.schedule.index(update) + 1
+        final = step == len(self.schedule)
         remaining = self.pn.T - self.t
         for n, p in self.pn._packed(agent).items():
-            own = self.pn.owner[n]
-            free = own == 0
-            k = int(round(int(free.sum()) / remaining))
-            mag = torch.where(free, p.data.abs(), torch.full_like(p.data, -1.0)).flatten()
-            keep = torch.zeros_like(free).flatten()
+            cand = self.cand[n]
+            target = self.n_cand[n] / remaining                     # final share: equal split of what was free
+            k = int(round(self.n_cand[n] - (self.n_cand[n] - target) * step / len(self.schedule)))
+            mag = torch.where(cand, p.data.abs(), torch.full_like(p.data, -1.0)).flatten()
+            keep = torch.zeros_like(cand).flatten()
             keep[mag.topk(k).indices] = True
-            keep = keep.view_as(free) & free
-            own[keep] = self.t + 1
-            p.data[free & ~keep] = 0.0
-        self._freeze(agent)  # now only this task's kept weights are trainable; pruned ones stay at zero
+            keep = keep.view_as(cand) & cand
+            p.data[cand & ~keep] = 0.0
+            cand &= keep
+            if final:
+                self.pn.owner[n][keep] = self.t + 1
+        # free weights not in cand are pruned: frozen at zero; kept candidates stay trainable
+        self.frozen = {}
+        for n, p in self.pn._packed(agent).items():
+            self.frozen[n] = (self.cand[n].clone(), p.data.clone())
+        for n, p in self.pn._others(agent).items():
+            self.frozen[n] = (torch.full_like(p, self.t == 0, dtype=torch.bool), p.data.clone())
 
 
 # ---------------------------------------------------------------- LwF
