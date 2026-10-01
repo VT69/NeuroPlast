@@ -209,8 +209,10 @@ def build():
     # 1 ---- title
     s = new(dark=True)
     txt(s, M + 0.1, 1.0, 11, 0.4, [dict(t="CAPSTONE PROJECT · FINAL REVIEW", size=13, bold=True, color="9CC3F2")])
-    txt(s, M + 0.1, 1.5, 11.8, 2.0, [dict(t="Testing Brain-Inspired Mechanisms for Task-Incremental Continual "
-                                             "Reinforcement Learning", size=36, bold=True, font=HEAD, color=WHITE, line=1.0)])
+    txt(s, M + 0.1, 1.5, 12.3, 2.0, [dict(t="Testing Brain-Inspired Mechanisms for", size=32, bold=True, font=HEAD,
+                                             color=WHITE, line=1.0),
+                                        dict(t="Task-Incremental Continual Reinforcement Learning", size=32, bold=True,
+                                             font=HEAD, color=WHITE, line=1.0)])
     txt(s, M + 0.1, 3.45, 11, 0.5, [dict(t="A Controlled Ablation Study", size=22, color="C3C2B7")])
     rows = [("Vaibhav Tiwari", True), ("Roll number: [to fill in]", False), ("Guide: [to fill in]", False),
             ("Department: [to fill in]", False), ("Institution: [to fill in]", False), ("Date: [to fill in]", False)]
@@ -427,7 +429,8 @@ def build():
 
     # 7 ---- scorecard
     s = new()
-    title(s, "No reliable improvement beyond the matched controls", "Mechanism scorecard: results at a glance")
+    title(s, "No reliable improvement in final accuracy or forgetting beyond the matched controls",
+          "Mechanism scorecard: results at a glance")
     short = {
         "Spiking encoder": f"works at {N['rqThreeSnnTwoLowOps']} ops/frame where the CNN needs {N['rqThreeCnnFloorOps']}; "
                            f"measured CPU cost {N['snnCpuSlowdown']}×",
@@ -441,7 +444,7 @@ def build():
                                             f"({N['postNarrowMean']} vs {N['postLwfMean']})",
         "Transformer working memory": "benchmark validity not established (no map both needed memory and was learnable)",
     }
-    y0, rh = 1.9, 0.66
+    y0, rh = 2.0, 0.64
     txt(s, M + 0.2, y0 - 0.02, 3.6, 0.3, [dict(t="MECHANISM", size=10.5, bold=True, color=MUTED)])
     txt(s, 4.2, y0 - 0.02, 3.4, 0.3, [dict(t="VERDICT", size=10.5, bold=True, color=MUTED)])
     txt(s, 7.85, y0 - 0.02, 5, 0.3, [dict(t="KEY NUMBER (95% CI)", size=10.5, bold=True, color=MUTED)])
@@ -483,7 +486,7 @@ def build():
 
     # 9 ---- memory
     s = new()
-    title(s, "A shared trunk is competitive only with a small buffer and full-width isolation", "Memory trade-off")
+    title(s, "A shared trunk is competitive only with a small buffer, and only against full-width isolation", "Memory trade-off")
     image(s, f"{FIG}/fig_memory.png", M - 0.1, 1.85, 8.5, 3.9)
     txt(s, M, 5.85, 8.3, 0.9, [dict(t="Total memory = fp32 parameters + replay buffer. Numbers above the axis: replay states "
                                        "stored per task.", size=12, color=MUTED)])
@@ -745,9 +748,9 @@ def build():
     # 15 ---- conclusion
     s = new(dark=True)
     txt(s, M + 0.1, 0.7, 11, 0.4, [dict(t="CONCLUSION", size=13, bold=True, color="9CC3F2")])
-    txt(s, M + 0.1, 1.1, 12, 1.0, [dict(t="No statistically reliable improvement beyond the matched controls", size=28,
-                                       bold=True, font=HEAD, color=WHITE)])
-    txt(s, M + 0.1, 1.85, 12, 0.5, [dict(t="Given the seed counts, this rules out large effects rather than showing "
+    txt(s, M + 0.1, 1.1, 12, 1.0, [dict(t="No statistically reliable improvement in final accuracy or forgetting beyond "
+                                         "the matched controls", size=28, bold=True, font=HEAD, color=WHITE, line=1.0)])
+    txt(s, M + 0.1, 2.25, 12, 0.5, [dict(t="Given the seed counts, this rules out large effects rather than showing "
                                            "equivalence, and only where the intervals are narrow.", size=15, color="C3C2B7")])
     items = [("Survived", "homeostasis speeds up learning with backprop-free encoder credit assignment (DFA; heads exact), "
                           "without making it reliable"),
@@ -758,7 +761,7 @@ def build():
              ("Unresolved", "Transformer working memory (benchmark validity not established); the SNN version of the "
                             "isolation-width test")]
     for i, (hd, body) in enumerate(items):
-        y = 2.75 + i * 0.88
+        y = 2.98 + i * 0.83
         num = s.shapes.add_shape(MSO_SHAPE.OVAL, Inches(M + 0.1), Inches(y + 0.02), Inches(0.42), Inches(0.42))
         num.fill.solid()
         num.fill.fore_color.rgb = rgb("2A2A28")
