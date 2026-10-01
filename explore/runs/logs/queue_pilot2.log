@@ -1,0 +1,25 @@
+20 jobs pending
+START explore/runs/cl_snn/fetch3_lwf_s101/results.json
+START explore/runs/cl_snn/fetch3_replay_buf200_s101/results.json
+START explore/runs/cl/fetch3_packnet_grad_s101/results.json
+START explore/runs/cl/fetch3_packnet_grad_s102/results.json
+END rc=0 205s explore/runs/cl/fetch3_packnet_grad_s102/results.json
+START explore/runs/cl/fetch5_packnet_grad_s101/results.json
+END rc=0 210s explore/runs/cl/fetch3_packnet_grad_s101/results.json
+START explore/runs/cl/fetch5_lwf_s102/results.json
+END rc=0 330s explore/runs/cl/fetch5_packnet_grad_s101/results.json
+START explore/runs/cl/fetch3_lwf_int8_s101/results.json
+END rc=0 410s explore/runs/cl/fetch5_lwf_s102/results.json
+START explore/runs/cl/fetch5_lwf_int8_s101/results.json
+END rc=0 665s explore/runs/cl_snn/fetch3_replay_buf200_s101/results.json
+START explore/runs/cl/fetch3_replay_buf1378_s101/results.json
+END rc=0 710s explore/runs/cl_snn/fetch3_lwf_s101/results.json
+START explore/runs/cl/fetch5_replay_buf973_s101/results.json
+END rc=0 245s explore/runs/cl/fetch3_lwf_int8_s101/results.json
+START explore/runs/cl/fetch3_replay_b13_s101/results.json
+END rc=0 230s explore/runs/cl/fetch3_replay_buf1378_s101/results.json
+START explore/runs/cl/fetch3_sleep_rb55040_s101/results.json
+END rc=0 210s explore/runs/cl/fetch3_replay_b13_s101/results.json
+START explore/runs/cl/fetch3_replay_b3_s101/results.json
+END rc=0 410s explore/runs/cl/fetch5_lwf_int8_s101/results.json
+START explore/runs/cl/fetch3_sleep_rb10880_s101/results.json

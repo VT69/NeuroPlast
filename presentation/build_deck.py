@@ -36,8 +36,8 @@ def rgb(h):
 INK, INK2, MUTED, HAIR = "151514", "52514E", "85837D", "E6E5E0"
 WHITE, CARD, CARD2, DARK = "FFFFFF", "F4F4F1", "EBEAE4", "151514"
 SLEEP, REPLAY, ISO, EWC, NAIVE, MATCHED = "2A78D6", "EB6834", "1BAF7A", "EDA100", "E87BA4", "4A3AA7"
-BADGE = {"helps": ("E3F4EC", "0F6B4A", "◐"), "tradeoff": ("FBF0D9", "7A5300", "⇄"),
-         "none": ("EFEEE9", "52514E", "○"), "untested": ("EFEEE9", "52514E", "?")}
+BADGE = {"survived": ("E3F4EC", "0F6B4A", "✓"), "conditional": ("FBF0D9", "7A5300", "◐"),
+         "notsurvived": ("EFEEE9", "52514E", "○"), "unresolved": ("EFEEE9", "52514E", "?")}
 HEAD, BODY = "Cambria", "Calibri"
 W, H = 13.333, 7.5
 M = 0.6  # side margin (in)
@@ -209,9 +209,9 @@ def build():
     # 1 ---- title
     s = new(dark=True)
     txt(s, M + 0.1, 1.0, 11, 0.4, [dict(t="CAPSTONE PROJECT · FINAL REVIEW", size=13, bold=True, color="9CC3F2")])
-    txt(s, M + 0.1, 1.5, 11.6, 2.0, [dict(t="Do Brain-Inspired Mechanisms Help Continual Reinforcement Learning?",
-                                           size=40, bold=True, font=HEAD, color=WHITE, line=1.0)])
-    txt(s, M + 0.1, 3.45, 11, 0.5, [dict(t="A controlled ablation study with spiking agents", size=22, color="C3C2B7")])
+    txt(s, M + 0.1, 1.5, 11.8, 2.0, [dict(t="Testing Brain-Inspired Mechanisms for Task-Incremental Continual "
+                                             "Reinforcement Learning", size=36, bold=True, font=HEAD, color=WHITE, line=1.0)])
+    txt(s, M + 0.1, 3.45, 11, 0.5, [dict(t="A Controlled Ablation Study", size=22, color="C3C2B7")])
     rows = [("Vaibhav Tiwari", True), ("Roll number: [to fill in]", False), ("Guide: [to fill in]", False),
             ("Department: [to fill in]", False), ("Institution: [to fill in]", False), ("Date: [to fill in]", False)]
     txt(s, M + 0.1, 4.55, 7, 2.4, [dict(t=t, size=18 if b else 15, bold=b, color=WHITE if b else "C3C2B7", space_after=3)
@@ -219,7 +219,8 @@ def build():
     notes(s, """Good morning. My project asks a simple question: when people add brain-inspired mechanisms to a
     reinforcement-learning agent, such as spiking neurons, local learning rules or a sleep phase, which of them actually
     help? I built one agent, switched each mechanism on and off against a matched control, and measured the effect. The
-    short answer, which I will justify over the next fourteen slides, is: mostly no, with two specific exceptions.
+    short answer is that no mechanism gave a statistically reliable improvement beyond its matched control; one narrow
+    effect survived and two are conditional.
     Every number in this talk comes from the frozen results and is the same number that appears in the paper.""")
 
     # 2 ---- problem
@@ -228,7 +229,7 @@ def build():
     bullets(s, M, 1.9, 5.6, 4.5, [
         "An agent learns tasks one after another: fetch the red ball, then the green key, then the blue box",
         "Plain fine-tuning overwrites what earlier tasks needed: catastrophic forgetting",
-        "Standard fixes: penalise weight changes (EWC), replay stored experience, or one network per task",
+        "Three standard strategies: regularisation (EWC), replay of stored experience, capacity isolation (one network per task)",
         "Brain-inspired fixes (spikes, local plasticity, sleep) are popular, but are usually added all at once",
     ], size=17)
     cnn = fg["cnn3"]
@@ -278,22 +279,23 @@ def build():
     with three objects and must fetch a different object in each task. With plain fine-tuning, learning the second and
     third tasks destroys the first: on the right, the naive agent's return on task 1 drops from about
     {cnn['series'][0]['first'][0]['mean']:.2f} to {cnn['series'][0]['first'][-1]['mean']:.2f}. Replay and sleep keep it
-    near 1. The standard remedies are regularisation like EWC, replaying stored experience, or giving each task its own
-    network. Brain-inspired remedies are popular, but papers usually add several at once, so it is hard to say which
+    near 1. The standard remedies follow three strategies: regularisation like EWC, replaying stored experience, or
+    capacity isolation, which gives each task its own network. Brain-inspired remedies are popular, but papers usually add several at once, so it is hard to say which
     one did the work. That is the gap this project addresses.""")
 
     # 3 ---- research question
     s = new()
     title(s, "Which brain-inspired mechanisms actually help?", "Research question")
     txt(s, M, 1.95, W - 2 * M, 0.8, [dict(t="Switch each mechanism on alone and compare it with a control that is not "
-                                           "brain-inspired but matches its resources.", size=18, color=INK2)])
+                                           "brain-inspired but matches its resources. Six were tested; the seventh was "
+                                           "inconclusive.", size=18, color=INK2)])
     mechs = [("Spiking encoder", "same-shape CNN, matched operations"),
              ("STDP (local plasticity)", "a random update of the same size"),
              ("Homeostasis", "the same agent without it"),
-             ("DFA: learning without backprop", "ordinary backpropagation"),
+             ("DFA: backprop-free encoder credit", "ordinary backpropagation (heads exact in both)"),
              ("Sleep-like consolidation", "replay with an exactly matched replay budget"),
-             ("One shared network", "one network per task, at equal total memory"),
-             ("Transformer working memory", "no memory, and a stack of recent frames")]
+             ("Shared trunk, per-task heads", "one network per task, at equal total memory"),
+             ("Transformer memory (inconclusive)", "no memory, and a stack of recent frames")]
     cw, chh, gx, gy = 2.87, 1.5, 0.25, 0.22
     for i, (m, c) in enumerate(mechs):
         r, k = divmod(i, 4)
@@ -309,14 +311,17 @@ def build():
     alternative explanation. For example, if STDP helps, is it because STDP is useful, or because any extra update of
     that size helps? So STDP is compared with a random update of exactly the same size. If sleep helps, is it because
     of sleep, or because it replays more old data? So sleep is compared with replay at the same number of replayed
-    samples. The project was set up so that negative results are results, not failures.""")
+    samples. Six of these were tested. The Transformer comparison is inconclusive, because no benchmark we tried both
+    required memory and was learnable, so benchmark validity was never established. The project was set up so that
+    negative results are results, not failures.""")
 
     # 4 ---- related work
     s = new()
     title(s, "Related work", "Where this sits")
-    rw = [("Continual RL", ["EWC: protect important weights (Kirkpatrick et al., 2017)",
-                            "CLEAR: replay + behavioural cloning, a very strong baseline (Rolnick et al., 2019)",
-                            "PackNet: isolate parameters per task (Mallya & Lazebnik, 2018)"], ISO),
+    rw = [("Continual RL: three strategies", ["Regularisation: EWC (Kirkpatrick et al., 2017); LwF distils old outputs, "
+                                              "no stored data (Li & Hoiem, 2018)",
+                                              "Replay: CLEAR, a very strong baseline (Rolnick et al., 2019)",
+                                              "Isolation: PackNet, parameters per task (Mallya & Lazebnik, 2018)"], ISO),
           ("Sleep and consolidation", ["Sleep-like unsupervised replay recovers forgotten tasks in classifiers "
                                        "(Tadros et al., 2022)",
                                        "Ours: offline replay + distillation in RL, compared with CLEAR-style replay"], SLEEP),
@@ -333,7 +338,8 @@ def build():
     txt(s, M, 6.4, W - 2 * M, 0.5, [dict(runs=[dict(t="Gap: ", bold=True), dict(
         t="these mechanisms are usually tested together, against an unmodified baseline, so it is unclear which one did the work.")],
         size=14, color=INK2)])
-    notes(s, """Four strands of work. In continual RL, the standard baselines are EWC, replay, and parameter isolation;
+    notes(s, """Four strands of work. In continual RL, the standard baselines follow three strategies: regularisation
+    such as EWC (and LwF, which I added in a follow-up), replay, and parameter isolation;
     the CLEAR paper showed that replay with behavioural cloning is extremely strong, which is why it is my main
     comparator for sleep. Tadros and colleagues showed a sleep-like phase can recover forgotten tasks in classifiers; my
     sleep phase is inspired by that but is replay plus distillation in RL. On the spiking side, surrogate gradients make
@@ -364,7 +370,7 @@ def build():
     arrow(s, xs[0] + bw / 2, ly, xs[0] + bw / 2, by + bh + 0.05)
     lab = card(s, W / 2 - 0.5, ly - 0.17, 1.0, 0.34, fill=WHITE, radius=0.5)
     txt(s, W / 2 - 0.5, ly - 0.17, 1.0, 0.34, [dict(t="action", size=12, color=MUTED, align=PP_ALIGN.CENTER)], anchor=MSO_ANCHOR.MIDDLE)
-    txt(s, M, 4.45, 12, 0.35, [dict(t="Continual training of the sleep variant: wake and sleep phases alternate on the same shared network",
+    txt(s, M, 4.45, 12, 0.35, [dict(t="Continual training of the sleep variant: wake and sleep phases alternate on the same shared trunk",
                                     size=13, color=MUTED)])
     py, ph = 4.9, 1.6
     box(s, M, py, 4.6, ph, "Wake: online learning", ["PPO on the current task, acting in the environment",
@@ -383,7 +389,8 @@ def build():
     notes(s, f"""This is the agent. The environment gives a 7 by 7 view of the room and the task ID. The encoder is a
     spiking network: three convolutional layers of leaky integrate-and-fire neurons, simulated for {A['T']} time steps
     per frame; the control is an ordinary CNN with the same shape. Optionally a small Transformer attends over the last
-    {A['window']} frames. Actor-critic heads, one per task, are trained with PPO. For continual learning, the sleep
+    {A['window']} frames. The encoder is a shared trunk; each task adds an actor-critic head and a task embedding,
+    {N['paramsPerTaskShared']} parameters per task, trained with PPO. For continual learning, the sleep
     variant alternates two phases: in the wake phase the agent learns the current task online; at the end of each task
     it stores {A['buffer']} states in a replay buffer. Every {A['period']} updates it sleeps: {A['steps']} offline
     gradient steps that distil its old policies from the buffer, with no environment interaction. Every part can be
@@ -407,30 +414,32 @@ def build():
         "STDP vs a random update of exactly the same size",
         "Sleep vs replay with the number of replayed samples matched exactly",
         "Memory counted as parameters plus replay buffer, not parameters alone",
-        "Pre-registered tests; Welch / Fisher; Holm correction; 95% CIs",
+        "Tests prospectively specified in a version-controlled experiment log; same seeds in every arm; Welch / Fisher; Holm; 95% CIs",
     ], size=16, gap=12)
     notes(s, f"""The experiments use MiniGrid. The continual sequences are fetch3 and fetch5, where the agent is told
     which task it is doing. DoorKey is used for the plasticity questions, and the Memory maps for the Transformer
     question. All agents are small and train with PPO on a CPU; in total the frozen results are {N['computeRuns']} runs
     and about {N['computeCoreHours']} CPU hours. The right-hand side is the part I want to stress. Each comparison keeps
     everything else equal, and in two places I matched a resource that is usually ignored: the number of replayed
-    samples, and total memory including the replay buffer. The final tests were written down before the runs, with
-    Holm correction where several tests share a family.""")
+    samples, and total memory including the replay buffer. The final tests were prospectively specified in a
+    version-controlled experiment log before the runs, with Holm correction where several tests share a family, and all
+    arms of each comparison used the same seeds. I label every result as confirmatory, exploratory or descriptive.""")
 
     # 7 ---- scorecard
     s = new()
-    title(s, "Results at a glance: mostly no, with two exceptions", "Mechanism scorecard")
+    title(s, "No reliable improvement beyond the matched controls", "Mechanism scorecard: results at a glance")
     short = {
         "Spiking encoder": f"works at {N['rqThreeSnnTwoLowOps']} ops/frame where the CNN needs {N['rqThreeCnnFloorOps']}; "
-                           f"{N['snnCpuSlowdown']}× CPU cost",
-        "Local learning rule (STDP)": f"vs random update: ΔAUC {N['rqOneContrBAucCi']}, p = {N['rqOneContrBAucP']}",
-        "Homeostasis, without backprop": f"ΔAUC {N['dfaAucCi']}, Holm p = {N['dfaAucHolm']}; solved "
-                                         f"{N['rqOneDfaHomeoSolved']} vs {N['rqOneDfaSolved']} (n.s.)",
+                           f"measured CPU cost {N['snnCpuSlowdown']}×",
+        "Local learning rule (STDP)": f"tested rule vs random update: ΔAUC {N['rqOneContrBAucCi']}, p = {N['rqOneContrBAucP']}",
+        "Homeostasis, backprop-free encoder": f"ΔAUC {N['dfaAucCi']}, Holm p = {N['dfaAucHolm']}; solved "
+                                              f"{N['rqOneDfaHomeoSolved']} vs {N['rqOneDfaSolved']} (n.s.)",
         "Homeostasis, with backprop": f"ΔAUC {N['rqOneContrCAucCi']}; Holm p = {N['rqOneContrCAucHolm']}",
         "Sleep-like consolidation": f"sleep − replay ΔACC {N['matchAccCi']}, p = {N['matchAccP']}",
-        "One shared network": f"200 states/task: similar mean ACC ({N['smallSnnTwoHundredMean']} vs {N['snnIsoMean']}; "
-                              f"{N['smallSnnTwoHundredN']} seeds, wide CI) in {N['smallSnnTwoHundredMb']} vs {N['memSnnThreeIsoMb']} MB",
-        "Transformer working memory": "no benchmark both required memory and was learnable in budget",
+        "Shared trunk with per-task heads": f"200 states/task: similar mean ACC in {N['smallSnnTwoHundredMb']} vs "
+                                            f"{N['memSnnThreeIsoMb']} MB; post-freeze, quarter-width isolation beat it "
+                                            f"({N['postNarrowMean']} vs {N['postLwfMean']})",
+        "Transformer working memory": "benchmark validity not established (no map both needed memory and was learnable)",
     }
     y0, rh = 1.9, 0.66
     txt(s, M + 0.2, y0 - 0.02, 3.6, 0.3, [dict(t="MECHANISM", size=10.5, bold=True, color=MUTED)])
@@ -442,17 +451,19 @@ def build():
         txt(s, M + 0.2, y, 3.5, rh - 0.1, [dict(t=r["mech"], size=14.5, bold=True)], anchor=MSO_ANCHOR.MIDDLE)
         pill(s, 4.2, y + 0.1, r["verdict"], r["kind"], size=12, w=3.45)
         txt(s, 7.85, y, W - M - 7.95, rh - 0.1, [dict(t=short[r["mech"]], size=13, color=INK2)], anchor=MSO_ANCHOR.MIDDLE)
-    notes(s, """This is the whole result on one slide. Three mechanisms had no effect beyond their control: STDP, which
-    was indistinguishable from a random update of the same size; homeostasis with ordinary backprop, which looked
-    positive but did not survive the multiple-comparison correction; and sleep, which removes forgetting but ties replay
-    once the replay budget is matched. The spiking encoder is a trade-off: it works at fewer operations, but costs more
-    CPU time to train and the energy savings are only an estimate. The two exceptions are homeostasis when the network
-    is trained without backprop, and one shared network with a small replay buffer, which reaches a similar mean accuracy
-    in less than half the memory, with only three seeds and a wide interval. The Transformer question could not be tested. The next slides go through each row.""")
+    notes(s, """This is the whole result on one slide, grouped the same way as the conclusion. Did not survive: the
+    tested STDP rule, which was not distinguishable from a random update of the same size, with a wide interval;
+    homeostasis with ordinary backprop, which looked positive but did not survive the multiple-comparison correction; and
+    sleep, which removes forgetting but showed no detectable advantage over replay once the replay budget was matched.
+    Survived: homeostasis speeds up learning when the encoder's credit assignment is backprop-free, with DFA. Conditional:
+    the spiking encoder works at fewer operations in an estimate, but its measured CPU cost is higher; and a shared trunk
+    with a small buffer matches full-width isolation in less memory, but a post-freeze follow-up showed narrower
+    isolation networks beat it. Unresolved: the Transformer question, because benchmark validity was not established.
+    The next slides go through each row.""")
 
     # 8 ---- forgetting
     s = new()
-    title(s, "Sleep and replay stop forgetting; sleep does not beat replay", "Forgetting")
+    title(s, "Sleep and replay stop forgetting; no detectable sleep advantage at a matched budget", "Forgetting")
     image(s, f"{FIG}/fig_forgetting.png", M - 0.1, 1.8, 8.3, 4.9)
     x0 = 9.0
     stat(s, x0, 1.9, 3.8, mean("accCnnNaive"), "naive fine-tuning, final ACC (CNN, 3 tasks)", color=NAIVE)
@@ -464,13 +475,15 @@ def build():
     over tasks seen so far. Naive fine-tuning, in pink, forgets: its final accuracy on the 3-task CNN sequence is
     {mean('accCnnNaive')}. Replay and sleep both remove almost all of that forgetting, reaching {mean('accCnnReplay')}
     and {mean('accCnnSleep')}. On the SNN plus Transformer agent sleep originally looked slightly better than replay,
-    but it was replaying {N['unmatchedExtraPct']} percent more data. In the pre-registered test with the replayed samples
-    matched exactly, the difference is {N['matchAccCi']}, p = {N['matchAccP']}, with {N['matchN']} seeds per arm. So in
-    my implementation sleep is a way of scheduling replay, and at equal replay it is not better.""")
+    but it was replaying {N['unmatchedExtraPct']} percent more data. In the prospectively specified test with the replayed
+    samples matched exactly, the difference is {N['matchAccCi']}, p = {N['matchAccP']}, with {N['matchN']} seeds per arm,
+    the same seeds in both. That interval is narrow, so it excludes a large accuracy difference in this setup. In my
+    implementation sleep is a way of scheduling replay, and at an equal replay budget I found no advantage for it. That
+    is one sleep schedule on one agent, not proof that offline consolidation can never help.""")
 
     # 9 ---- memory
     s = new()
-    title(s, "A shared network is competitive only with a small buffer", "Memory trade-off")
+    title(s, "A shared trunk is competitive only with a small buffer and full-width isolation", "Memory trade-off")
     image(s, f"{FIG}/fig_memory.png", M - 0.1, 1.85, 8.5, 3.9)
     txt(s, M, 5.85, 8.3, 0.9, [dict(t="Total memory = fp32 parameters + replay buffer. Numbers above the axis: replay states "
                                        "stored per task.", size=12, color=MUTED)])
@@ -478,43 +491,90 @@ def build():
     stat(s, x0, 1.9, 3.6, f"{key['ratioPct']}%", f"of the memory: SNN sleep, {key['buf']} states/task, similar mean ACC to "
                                                  f"isolation ({key['sleepAcc']} vs {key['isoAcc']}; {key['n']} seeds, wide CI)",
          color=SLEEP, big_size=48)
-    stat(s, x0, 3.55, 3.6, f"{N['perParamRatioRange']}×", "more accuracy per parameter for the shared network", big_size=34)
+    stat(s, x0, 3.55, 3.6, f"{N['perParamRatioRange']}×", "more accuracy per parameter for the shared trunk", big_size=34)
     stat(s, x0, 4.95, 3.6, f"{N['perMbRatioRange']}×", f"more accuracy per MB for isolation at the default "
                                                       f"{N['bufferPerTask']} states/task", color=ISO, big_size=34)
     notes(s, f"""Isolation, one network per task, never forgets by construction, so the fair question is memory. Per
-    parameter, the shared network looks {N['perParamRatioRange']} times more efficient, which is the usual way this is
-    reported. But the shared network needs a replay buffer, and at the default {N['bufferPerTask']} states per task the
+    parameter, the shared trunk with per-task heads looks {N['perParamRatioRange']} times more efficient, which is the usual
+    way this is reported. But the shared trunk needs a replay buffer, and at the default {N['bufferPerTask']} states per task the
     buffer outweighs the extra networks: isolation gets {N['perMbRatioRange']} times more accuracy per megabyte. The
     exception is a small buffer: on the SNN, sleep with {key['buf']} states per task reaches a similar mean accuracy to
     isolation, {key['sleepAcc']} against {key['isoAcc']}, in {key['sleepMb']} instead of {key['isoMb']} megabytes, about
     {key['ratioPct']} percent of the memory. But this is {key['n']} seeds per arm, and the 95 percent interval for the
     difference runs from {key['diffCi'].split('[')[1].rstrip(']').replace(', ', ' to ')}, so it is a similar mean, not evidence
-    of equal accuracy.""")
+    of equal accuracy. And all of this is against full-width isolation, which the next slide revisits.""")
+
+    # 9b ---- post-freeze follow-up (C4)
+    s = new()
+    title(s, "Post-freeze follow-up: narrower isolation networks win at equal memory", "Isolation width")
+    arms = [("Isolation, quarter width", "Narrow", ISO), ("Shared trunk + LwF (int8 teacher)", "Lwf", MATCHED),
+            (f"Shared trunk + replay ({N['postReplayBuf']} states/task)", "Replay", REPLAY), ("Isolation, full width", "Iso", ISO)]
+    txt(s, M, 1.9, 7.6, 0.4, [dict(t=f"CNN, 5 tasks · {N['postN']} seeds per arm (seeds {N['postSeeds']}, the same in every arm) · "
+                                     "confirmatory, post-freeze", size=13, color=MUTED)])
+    lo, hi, x0b, wb = 0.85, 1.0, M + 3.75, 2.9
+    for i, (lab, k, col) in enumerate(arms):
+        y = 2.5 + i * 0.78
+        card(s, M, y, 8.35, 0.64, fill=CARD if i % 2 == 0 else "FAFAF8", radius=0.2)
+        txt(s, M + 0.2, y, 3.6, 0.64, [dict(t=lab, size=13.5, bold=True)], anchor=MSO_ANCHOR.MIDDLE)
+        ln = s.shapes.add_connector(MSO_CONNECTOR.STRAIGHT, Inches(x0b), Inches(y + 0.32), Inches(x0b + wb), Inches(y + 0.32))
+        ln.line.color.rgb, ln.line.width = rgb(HAIR), Pt(2)
+        v = float(mean(f"post{k}Acc"))
+        d = s.shapes.add_shape(MSO_SHAPE.OVAL, Inches(x0b + (v - lo) / (hi - lo) * wb - 0.09), Inches(y + 0.23), Inches(0.18), Inches(0.18))
+        d.fill.solid()
+        d.fill.fore_color.rgb = rgb(col)
+        d.line.color.rgb = rgb(WHITE)
+        txt(s, x0b + wb + 0.2, y, 1.45, 0.64, [dict(t=f"{N[f'post{k}Mean']} · {N[f'post{k}Mb']} MB", size=12, color=INK2)],
+            anchor=MSO_ANCHOR.MIDDLE)
+    txt(s, x0b - 0.2, 5.62, 0.6, 0.3, [dict(t="0.85", size=10.5, color=MUTED)])
+    txt(s, x0b + wb - 0.3, 5.62, 0.6, 0.3, [dict(t="1.00", size=10.5, color=MUTED, align=PP_ALIGN.RIGHT)])
+    txt(s, M, 5.95, 8.0, 0.8, [dict(t="Dots: mean final accuracy on a 0.85–1.00 scale. Memory: fp32 parameters plus stored "
+                                     "states. The shared trunk was not shrunk the same way; the SNN case is untested.",
+                                     size=12, color=MUTED)])
+    x0 = 9.3
+    stat(s, x0, 1.9, 3.45, N["postHEightCi"].split(" [")[0], f"quarter-width isolation − shared trunk + LwF, at equal memory; "
+                                                          f"95% CI {N['postHEightCi'].split(' ', 1)[1]}, Holm p = {N['postHEightHolm']}",
+         color=ISO, big_size=34)
+    stat(s, x0, 3.45, 3.45, N["postHNineCi"].split(" [")[0], f"vs shared trunk + replay with twice the memory; "
+                                                          f"95% CI {N['postHNineCi'].split(' ', 1)[1]}, Holm p = {N['postHNineHolm']}",
+         color=ISO, big_size=34)
+    stat(s, x0, 5.0, 3.45, N["postHTenCi"].split(" [")[0], f"vs full-width isolation at {float(N['postIsoMb']) / float(N['postNarrowMb']):.1f}× the memory: no large difference",
+         big_size=34)
+    notes(s, f"""After freezing the results I ran one more prospectively specified test, because the memory comparison had
+    kept isolation's networks at full width. On the five-task CNN sequence, with {N['postN']} fresh seeds per arm, I shrank
+    each isolated network to a quarter of the width. At {N['postNarrowMb']} megabytes it reached {N['postNarrowMean']},
+    against {N['postLwfMean']} for a shared trunk trained with LwF at {N['postLwfMb']} megabytes and {N['postReplayMean']}
+    for the same trunk with replay at {N['postReplayMb']}. Both differences are significant after Holm correction, and the
+    narrow networks lose almost nothing against full width. So the small-buffer advantage of the shared trunk holds only
+    against full-width isolation. Two limits: I did not shrink the shared trunk the same way, and the SNN case is untested,
+    because the only narrow SNN runs were a two-seed pilot at too small a training budget.""")
 
     # 10 ---- local plasticity
     s = new()
-    title(s, "STDP adds nothing; homeostasis speeds up DFA", "Local plasticity")
+    title(s, "Tested STDP rule ≈ a same-size random update; homeostasis speeds up DFA", "Local plasticity")
     image(s, f"{FIG}/fig_rq1.png", M - 0.1, 1.85, 7.9, 3.9)
-    txt(s, M, 5.85, 7.6, 0.8, [dict(t=f"DoorKey-6x6, {N['rqOneBpN']} seeds per arm, pre-registered. Dots: seeds (filled = "
+    txt(s, M, 5.85, 7.6, 0.8, [dict(t=f"DoorKey-6x6, {N['rqOneBpN']} seeds per arm (same seeds), confirmatory. Dots: seeds (filled = "
                                        f"solved); bars: mean and 95% CI; numbers: seeds solved.", size=12, color=MUTED)])
     bullets(s, 8.55, 1.95, W - M - 8.55, 4.6, [
-        [dict(t="STDP ≈ random update: ", bold=True), dict(t=f"ΔAUC {N['rqOneContrBAucCi']}, p = {N['rqOneContrBAucP']}")],
+        [dict(t="Tested STDP rule ≈ random update: ", bold=True), dict(t=f"ΔAUC {N['rqOneContrBAucCi']}, p = "
+                                                                    f"{N['rqOneContrBAucP']} (wide interval)")],
         [dict(t="Unstabilised STDP hurts: ", bold=True), dict(t=f"solved {N['vanillaStdpSolved']} vs {N['vanillaBpSolved']} "
                                                               "with backprop (runaway firing)")],
         [dict(t="Homeostasis + backprop: ", bold=True), dict(t=f"raw p = {N['rqOneContrCAucP']}, Holm p = "
                                                              f"{N['rqOneContrCAucHolm']}: not significant")],
-        [dict(t="Homeostasis + DFA: ", bold=True), dict(t=f"ΔAUC {N['dfaAucCi']}, Holm p = {N['dfaAucHolm']}; solved "
+        [dict(t="Homeostasis + DFA (backprop-free encoder): ", bold=True), dict(t=f"ΔAUC {N['dfaAucCi']}, Holm p = {N['dfaAucHolm']}; solved "
                                                         f"{N['rqOneDfaHomeoSolved']} vs {N['rqOneDfaSolved']} "
                                                         f"(Holm p = {N['dfaFisherHolm']})")],
     ], size=15, gap=12)
     notes(s, f"""This is DoorKey, a task where the encoder's learning matters. On the left, backprop is the learning
-    signal. Adding stabilised, reward-modulated STDP does not beat a random update of the same size: the AUC difference
-    is {N['rqOneContrBAucCi']}, p = {N['rqOneContrBAucP']}. Without stabilisation, STDP makes things worse through
+    signal. The tested rule, stabilised reward-modulated STDP added to backprop, was not distinguishable from a random
+    update of the same size: the AUC difference is {N['rqOneContrBAucCi']}, p = {N['rqOneContrBAucP']}. That interval is
+    wide, so it does not rule out a large effect; it is no detectable effect for this rule in this setup. Without stabilisation, STDP makes things worse through
     runaway firing. Homeostasis with backprop looked positive, raw p = {N['rqOneContrCAucP']}, but not after Holm
-    correction. On the right the encoder learns with direct feedback alignment instead of backprop. Here homeostasis
+    correction. On the right the encoder's credit assignment is backprop-free, by direct feedback alignment; the heads
+    still use exact gradients. Here homeostasis
     clearly speeds up learning: AUC difference {N['dfaAucCi']}, Holm p = {N['dfaAucHolm']}. It solved
     {N['rqOneDfaHomeoSolved']} runs against {N['rqOneDfaSolved']}, but that difference is not significant, so it makes
-    DFA faster, not reliable. This is the first of the two exceptions.""")
+    DFA faster, not reliable. This is the one effect that survived.""")
 
     # 11 ---- spiking encoder
     s = new()
@@ -527,15 +587,17 @@ def build():
     stat(s, x0, 1.9, 3.6, N["rqThreeSnnTwoLowOps"], f"ops/frame: the SNN still works (accuracy {N['rqThreeSnnTwoLowAcc']})",
          color=MATCHED, big_size=40)
     stat(s, x0, 3.35, 3.6, N["rqThreeCnnFloorOps"], "ops/frame: below this the sparsified CNN stops working", big_size=40)
-    stat(s, x0, 4.8, 3.6, f"{N['snnCpuSlowdown']}×", f"CPU time per training step ({N['msSnn']} vs {N['msCnn']} ms); "
-                                                   "energy savings are only an estimate", color=REPLAY, big_size=40)
+    stat(s, x0, 4.8, 3.6, f"{N['snnCpuSlowdown']}×", f"measured cost in our implementation: CPU ms per training step on "
+                                                   f"256 observations, 1 thread ({N['msSnn']} vs {N['msCnn']}); energy is an "
+                                                   "estimated arithmetic proxy", color=REPLAY, big_size=40)
     notes(s, f"""To compare encoders without RL noise, both were trained to copy a DoorKey teacher, with a penalty that
     trades operations for accuracy. Where both work, they are equally accurate. The difference is at the low end: the
     sparsified CNN collapses below about {N['rqThreeCnnFloorOps']} operations per frame, while the SNN still works at
     {N['rqThreeSnnTwoLowOps']}, with accuracy {N['rqThreeSnnTwoLowAcc']}. So the SNN reaches a lower-operation regime,
-    not higher accuracy. Two caveats: on the CPU I actually used, the SNN is {N['snnCpuSlowdown']} times slower to train,
-    because it simulates several time steps; and the energy numbers are estimates that assume neuromorphic hardware,
-    which I did not measure.""")
+    not higher accuracy. Two caveats: the measured cost in my implementation, CPU process time for one training step on a
+    minibatch of 256 observations on one thread, is {N['msSnn']} milliseconds for the SNN against {N['msCnn']} for the
+    CNN, {N['snnCpuSlowdown']} times more, because it simulates several time steps; and the energy numbers are an
+    estimated arithmetic energy proxy that assumes neuromorphic hardware, which I did not measure.""")
 
     # 12 ---- didn't survive
     s = new()
@@ -543,7 +605,7 @@ def build():
     rows = [
         ("Sleep beats replay (SNN+Transformer)", f"p = {N['hybSleepReplayNThreeP']} with 3 seeds",
          f"tie at a matched replay budget: p = {N['matchAccP']}, {N['matchN']} seeds", "seeds; replay budget"),
-        ("Shared weights far more efficient", f"{N['perParamRatioRange']}× per parameter",
+        ("Shared trunk far more efficient", f"{N['perParamRatioRange']}× per parameter",
          f"isolation {N['perMbRatioRange']}× better per MB", "memory accounting"),
         ("Sleep far beats isolation, 5 tasks (SNN)", f"gap {N['fiveSnnShortCi']}",
          f"gap {N['fiveSnnFairCi']} at a fair budget", "training budget"),
@@ -553,27 +615,32 @@ def build():
          f"{N['rqOneDfaHomeoSolved']} vs {N['rqOneDfaSolved']}, p = {N['dfaFisherP']} (AUC effect survives)", "seeds"),
         ("Transformer helps on a memory task", f"S7 pilot {N['sSevenSnnTf']} vs {N['sSevenSnnEight']}",
          f"no memory needed on S7 (memoryless CNN {N['sSevenCnnOne']})", "benchmark validity"),
+        ("Small buffer: shared trunk beats isolation", f"vs full-width isolation: {N['smallCnnTwoHundredPerMb']} vs "
+         f"{N['memCnnThreeIsoPerMb']} ACC/MB (CNN)", f"quarter-width isolation {N['postNarrowMean']} vs LwF {N['postLwfMean']} "
+         f"at {N['postNarrowMb']} vs {N['postLwfMb']} MB", "network width (post-freeze)"),
     ]
     cols_x = [M, 4.3, 7.0, 10.75]
     cols_w = [3.6, 2.6, 3.65, W - M - 10.75]
     for j, hd in enumerate(["EARLIER FINDING", "EVIDENCE THEN", "AFTER THE CONTROL", "CAUSE"]):
         txt(s, cols_x[j] + 0.15, 1.88, cols_w[j], 0.3, [dict(t=hd, size=10.5, bold=True, color=MUTED)])
-    rh = 0.66
+    rh = 0.575
     for i, r in enumerate(rows):
-        y = 2.22 + i * rh
-        card(s, M, y, W - 2 * M, rh - 0.1, fill=CARD if i % 2 == 0 else "FAFAF8", radius=0.2)
+        y = 2.2 + i * rh
+        card(s, M, y, W - 2 * M, rh - 0.07, fill=CARD if i % 2 == 0 else "FAFAF8", radius=0.2)
         for j, t in enumerate(r):
-            txt(s, cols_x[j] + 0.15, y, cols_w[j] - 0.2, rh - 0.1,
-                [dict(t=t, size=13 if j else 13.5, bold=(j == 0), color=INK if j in (0, 3) else INK2)], anchor=MSO_ANCHOR.MIDDLE)
-    txt(s, M, 6.25, W - 2 * M, 0.6, [dict(t="Effects shrank or disappeared once seeds, training budgets, replay budgets and memory accounting were made fair; the homeostasis-DFA speed-up survived.",
+            txt(s, cols_x[j] + 0.15, y, cols_w[j] - 0.2, rh - 0.07,
+                [dict(t=t, size=12 if j else 12.5, bold=(j == 0), color=INK if j in (0, 3) else INK2)], anchor=MSO_ANCHOR.MIDDLE)
+    txt(s, M, 6.3, W - 2 * M, 0.6, [dict(t="Effects shrank or disappeared once seeds, training budgets, replay budgets, memory accounting and network width were made fair; the homeostasis-DFA speed-up survived.",
                                            size=14, italic=True, color=INK2)])
-    notes(s, f"""This slide is, I think, the most useful part of the project. Six findings looked positive early on,
+    notes(s, f"""This slide is, I think, the most useful part of the project. Seven findings looked positive early on,
     and each shrank or disappeared once the right control was in place. Sleep beating replay came from three seeds and
     from sleep replaying more data. Shared weights looked far more efficient only because the replay buffer was not
     counted as memory. Sleep beating isolation on five tasks came from a training budget too small for fresh networks.
     The two homeostasis results came from small seed counts, and the Transformer result came from a benchmark that did
-    not need memory at all. The common pattern: the effects shrank or disappeared once the seed counts, training budgets,
-    replay budgets and memory accounting were made fair. The one that survived is the speed-up homeostasis gives DFA,
+    not need memory at all. The last row is from the post-freeze follow-up: the shared trunk's small-buffer advantage
+    disappeared once isolation's networks were allowed to be narrower. The common pattern: the effects shrank or
+    disappeared once the seed counts, training budgets, replay budgets, memory accounting and network width were made
+    fair. The one that survived is the speed-up homeostasis gives DFA,
     in its area-under-the-curve, not its solve rate.""")
 
     # 13 ---- live demo
@@ -596,63 +663,121 @@ def build():
     {bd.demo_agents()['sleep']['R'][-1][0]:.3f}. If time allows I will also run one live episode on the CPU with
     live_episode.py, first the naive agent, then the sleep agent, on task 0.""")
 
-    # 14 ---- limitations + future
+    # 14 ---- limitations
     s = new()
-    title(s, "Limitations and future work", "What this does not show")
-    box(s, M, 1.85, 5.9, 4.3, "Limitations", [], accent=REPLAY)
-    bullets(s, M + 0.22, 2.45, 5.5, 4.1, [
-        "Task ID is given (task-incremental), so this says nothing about task-agnostic learning",
-        f"Small scale: MiniGrid, ≤{N['paramsHybridShared']} parameters, 3–5 tasks",
-        f"Few seeds: many continual arms have {N['nCnnSleep']}, so CIs are wide",
-        "Energy is an estimate from operation counts; no hardware was measured",
-        "Transformer memory untested: no benchmark both required memory and was learnable in budget",
-    ], size=16, gap=12)
-    box(s, 6.75, 1.85, W - M - 6.75, 4.3, "Future work", [], accent=SLEEP)
-    bullets(s, 6.97, 2.45, W - M - 7.1, 4.1, [
-        "A memory benchmark agents can learn (the cue seen on the way to the choice)",
-        [dict(t="Compressed replay (idea, untested): ", bold=True), dict(
-            t="the buffer size decides the shared-vs-isolation trade-off, so shrink it: quantised targets, "
-              "fewer but better-chosen states, or generative replay")],
-        "Homeostasis target sweep: is the DFA effect robust?",
-        "More seeds for the operation-count frontier",
-    ], size=16, gap=12)
-    notes(s, f"""The limitations are real. The agent is told which task it is doing, the scale is small, many
-    continual arms have only {N['nCnnSleep']} seeds, the energy numbers are estimates, and the Transformer question is
-    untested because no benchmark we tried both required memory and was learnable within budget. For future work, the most direct next step is a
-    memory benchmark that agents can actually learn. The idea I find most promising is compressed replay: since the size
-    of the replay buffer is what decides whether a shared network beats one network per task, making the buffer cheaper
-    moves that trade-off directly, for example by storing quantised targets, fewer but better-chosen states, or a small
-    generative model. This is an idea, not a result.""")
+    title(s, "Limitations", "What this does not show")
+    lim = [("Task identity is given", "task-incremental only; says nothing about task-agnostic learning"),
+           ("Small scale", f"MiniGrid, ≤{N['paramsHybridShared']} parameters, 3–5 tasks"),
+           ("Few seeds", f"many continual arms have {N['nCnnSleep']}; a tie rules out large effects only where the CI is narrow"),
+           ("Energy", "an estimated arithmetic energy proxy from operation counts; no hardware power was measured"),
+           ("Isolation width", "full width in the frozen study; the shared trunk was never shrunk the same way"),
+           ("Transformer memory", "inconclusive: no benchmark both required memory and was learnable in budget"),
+           ("Informal prospective specification", "a version-controlled experiment log, not a public registry")]
+    for i, (k, v) in enumerate(lim):
+        y = 1.95 + i * 0.62
+        card(s, M, y, W - 2 * M, 0.54, fill=CARD if i % 2 == 0 else "FAFAF8", radius=0.2)
+        txt(s, M + 0.2, y, 3.9, 0.54, [dict(t=k, size=15, bold=True)], anchor=MSO_ANCHOR.MIDDLE)
+        txt(s, 4.75, y, W - M - 4.85, 0.54, [dict(t=v, size=14.5, color=INK2)], anchor=MSO_ANCHOR.MIDDLE)
+    notes(s, f"""The limitations are real. The agent is told which task it is doing, the scale is small, many continual
+    arms have only {N['nCnnSleep']} seeds, the energy numbers are an estimated proxy, the frozen isolation baseline used
+    full-width networks while the shared trunk was never shrunk, and the Transformer question is inconclusive because no
+    benchmark we tried both required memory and was learnable within budget. The tests were specified in advance, but in
+    a version-controlled project log rather than a public registry. The next two slides are the plan for addressing the
+    biggest of these, which is scale.""")
+
+    # 14b ---- next phase: scaling up (plan, validation, timeline)
+    s = new()
+    title(s, "Next phase: scaling up", "Proposed plan")
+    box(s, M, 1.9, 5.9, 2.2, "Why", ["Every experiment ran on a 4-core CPU.",
+                                    "The bottleneck was CPU-bound environment stepping, not model size: it is what "
+                                    "limited seeds, sequence length and training budgets."], accent=REPLAY, line_size=13.5)
+    box(s, 6.75, 1.9, W - M - 6.75, 2.2, "Plan", ["Port agent, mechanisms and baselines to JAX; run on cloud GPUs.",
+                                                "XLand-MiniGrid (Nikulin et al., 2024): GPU-native MiniGrid, reported to run "
+                                                "millions of steps/s on one GPU, with a rule/goal system for many related tasks."],
+        accent=SLEEP, line_size=13.5)
+    box(s, M, 4.3, 5.9, 2.25, "Validation first", ["Before trusting anything new, replicate on XLand-MiniGrid's MiniGrid ports:",
+                                                  "· sleep vs replay at a matched replay budget",
+                                                  "· STDP vs a same-size random update",
+                                                  "· the post-freeze isolation-width result (C4)"], accent=ISO, line_size=13.5)
+    box(s, 6.75, 4.3, W - M - 6.75, 2.25, "Rough timeline", ["Port and replication: about 1–2 weeks",
+                                                           "Scaled study: about 2–4 weeks",
+                                                           "Then: paper revision and journal submission (TMLR first choice)"],
+        accent=MATCHED, line_size=13.5)
+    notes(s, """These two slides are plans, not results. The main limitation of this project is scale, and the reason is
+    specific: the agents are small, but everything ran on a four-core CPU and most of the time went to stepping the
+    environments. The plan is to port the agent, the mechanisms and the baselines to JAX and run them on cloud GPUs with
+    XLand-MiniGrid, a GPU-native version of MiniGrid that its authors report runs millions of steps per second on one GPU
+    and can generate many related tasks. Validation comes first: before trusting anything new, I will replicate three
+    headline results on its MiniGrid ports. The rough timeline is one to two weeks for the port and the replication, two
+    to four weeks for the scaled study, then revising the paper and submitting it, with TMLR as the first choice.""")
+
+    # 14c ---- next phase: questions and smaller follow-ups
+    s = new()
+    title(s, "Next phase: open questions", "Proposed plan")
+    box(s, M, 1.9, 6.4, 4.65, "Questions the scaled study will address", [], accent=SLEEP)
+    bullets(s, M + 0.22, 2.5, 6.0, 4.0, [
+        "10–50 related tasks; accuracy-vs-memory curves with every method shrunk along its own size setting",
+        "10–20 seeds per arm, power analysis and equivalence tests, so nulls become informative",
+        "A learnable memory benchmark; then Transformer vs GRU vs frame stack, and a stateful SNN",
+        f"The SNN version of C4 at {N['framesPerTaskFiveFair']} frames per task",
+        "Do the conclusions change with network size? A task-agnostic setting with observable goals",
+    ], size=14, gap=8)
+    box(s, 7.25, 1.9, W - M - 7.25, 4.65, "Smaller follow-ups", [], accent=ISO)
+    bullets(s, 7.47, 2.5, W - M - 7.6, 4.0, [
+        "Replay-budget sweep: sleep vs interleaved replay (motivated by an exploratory result only)",
+        "Sleep split: offline replay alone vs replay + self-distillation",
+        "Plots of the STDP runaway mechanism",
+        "Stronger CNN sparsifier (k-winners-take-all)",
+        "Compressed or generative replay; a PackNet that can regrow capacity",
+        "One standard benchmark, such as Continual World",
+    ], size=13.5, gap=6)
+    txt(s, M, 6.65, W - 2 * M, 0.4, [dict(t="Same methodology throughout: prospectively specified tests, fresh seeds for "
+                                           "confirmation, matched resources, every failure logged.", size=13, italic=True,
+                                           color=INK2)])
+    notes(s, f"""The questions for the scaled study: longer sequences of ten to fifty related tasks, where transfer matters,
+    with accuracy-versus-memory curves in which every method is shrunk along its own size setting, so isolation width,
+    shared-trunk width and buffer size; ten to twenty seeds per arm, with a power analysis and equivalence tests, so that
+    today's no-large-effect nulls become informative; a memory benchmark that agents can actually learn, so that the
+    Transformer question can be answered; the SNN version of the isolation-width test at {N['framesPerTaskFiveFair']}
+    frames per task; network size; and a task-agnostic setting. On the right are smaller follow-ups. The replay-budget
+    sweep is motivated by an exploratory observation only. None of this is a prediction of what the study will find.""")
 
     # 15 ---- conclusion
     s = new(dark=True)
-    txt(s, M + 0.1, 0.9, 11, 0.4, [dict(t="CONCLUSION", size=13, bold=True, color="9CC3F2")])
-    txt(s, M + 0.1, 1.4, 11.8, 1.0, [dict(t="Mostly no, with two specific exceptions.", size=40, bold=True, font=HEAD,
-                                         color=WHITE)])
-    items = [("No mechanism beat its matched control", "on final accuracy or forgetting: STDP ≈ random update, sleep ≈ replay"),
-             ("Two exceptions", "homeostasis speeds up learning without backprop; with a small replay buffer a shared "
-                                f"network reaches similar mean accuracy in less than half the memory ({N['smallSnnTwoHundredN']} "
-                                "seeds, wide CI)"),
-             ("The lesson is methodological", "effects shrank or disappeared once seeds, training budgets, replay budgets "
-                                              "and memory accounting were made fair; the homeostasis-DFA speed-up survived")]
+    txt(s, M + 0.1, 0.7, 11, 0.4, [dict(t="CONCLUSION", size=13, bold=True, color="9CC3F2")])
+    txt(s, M + 0.1, 1.1, 12, 1.0, [dict(t="No statistically reliable improvement beyond the matched controls", size=28,
+                                       bold=True, font=HEAD, color=WHITE)])
+    txt(s, M + 0.1, 1.85, 12, 0.5, [dict(t="Given the seed counts, this rules out large effects rather than showing "
+                                           "equivalence, and only where the intervals are narrow.", size=15, color="C3C2B7")])
+    items = [("Survived", "homeostasis speeds up learning with backprop-free encoder credit assignment (DFA; heads exact), "
+                          "without making it reliable"),
+             ("Conditional", "shared trunk + small buffer ≈ full-width isolation in less memory, but quarter-width isolation "
+                             "beat it after the freeze; spiking encoder: fewer operations in an estimate, higher measured CPU cost"),
+             ("Did not survive", "the tested STDP rule vs a same-size random update; homeostasis with backprop; sleep vs replay "
+                                 "at a matched budget; and the earlier findings on the 'didn't survive' slide"),
+             ("Unresolved", "Transformer working memory (benchmark validity not established); the SNN version of the "
+                            "isolation-width test")]
     for i, (hd, body) in enumerate(items):
-        y = 2.75 + i * 1.2
-        num = s.shapes.add_shape(MSO_SHAPE.OVAL, Inches(M + 0.1), Inches(y + 0.02), Inches(0.5), Inches(0.5))
+        y = 2.75 + i * 0.88
+        num = s.shapes.add_shape(MSO_SHAPE.OVAL, Inches(M + 0.1), Inches(y + 0.02), Inches(0.42), Inches(0.42))
         num.fill.solid()
         num.fill.fore_color.rgb = rgb("2A2A28")
         num.line.fill.background()
-        txt(s, M + 0.1, y + 0.02, 0.5, 0.5, [dict(t=str(i + 1), size=16, bold=True, color="9CC3F2", align=PP_ALIGN.CENTER)],
+        txt(s, M + 0.1, y + 0.02, 0.42, 0.42, [dict(t=BADGE[["survived", "conditional", "notsurvived", "unresolved"][i]][2],
+                                                  size=14, bold=True, color="9CC3F2", align=PP_ALIGN.CENTER)],
             anchor=MSO_ANCHOR.MIDDLE)
-        txt(s, M + 0.85, y - 0.03, 11, 0.4, [dict(t=hd, size=19, bold=True, color=WHITE)])
-        txt(s, M + 0.85, y + 0.38, 11, 0.6, [dict(t=body, size=15, color="C3C2B7")])
+        txt(s, M + 0.75, y - 0.02, 2.3, 0.45, [dict(t=hd, size=17, bold=True, color=WHITE)], anchor=MSO_ANCHOR.MIDDLE)
+        txt(s, M + 3.0, y - 0.04, 9.1, 0.8, [dict(t=body, size=14, color="C3C2B7")])
     txt(s, M + 0.1, 6.35, 11, 0.5, [dict(t="Thank you. Questions?", size=20, bold=True, color=WHITE)])
-    notes(s, """To conclude. None of the brain-inspired mechanisms beat its matched control on accuracy or forgetting.
-    There are two specific exceptions: homeostasis speeds up learning when the network is trained without backprop, and
-    with a small replay buffer a shared network reaches a similar mean accuracy to one network per task in less than half
-    the memory, although with three seeds that interval is wide. The broader lesson is methodological: in this project,
-    effects shrank or disappeared once seed counts, training budgets, replay budgets and memory accounting were made
-    fair; the speed-up homeostasis gives DFA is the one that survived. My suggestion for this field is to report and match those budgets.
-    Thank you; I'm happy to take questions. There are backup slides with the full tables and references.""")
+    notes(s, """To conclude. No brain-inspired mechanism gave a statistically reliable improvement in accuracy or
+    forgetting beyond its matched control, and with these seed counts that rules out large effects only where the
+    intervals are narrow; it never shows equivalence. One effect survived: homeostasis speeds up learning when the
+    encoder's credit assignment is backprop-free. Two are conditional: the shared trunk with a small buffer, which
+    narrower isolation networks beat after the freeze, and the spiking encoder, whose energy advantage is only an
+    estimate while its measured CPU cost is higher. STDP, homeostasis with backprop and sleep against matched replay did
+    not survive, and the Transformer question and the SNN width test are unresolved. The broader lesson is
+    methodological: effects shrank or disappeared once seed counts, training budgets, replay budgets, memory accounting
+    and network width were made fair. Thank you; I'm happy to take questions.""")
 
     # B1 ---- continual table
     s = new()
@@ -693,12 +818,12 @@ def build():
                                            f"sleep {N['nHybSleep']}, sleep matched {N['nHybSleepMatched']}). Paper Table 3.",
                                            size=12, color=MUTED)])
     notes(s, """Backup: the full continual results table from the paper, final accuracy with standard deviation over
-    seeds, and forgetting. Sleep, matched is the pre-registered budget-matched arm, run only on the SNN plus Transformer
+    seeds, and forgetting. Sleep, matched is the prospectively specified budget-matched arm, run only on the SNN plus Transformer
     agent, where the replay budgets differed.""")
 
     # B2 ---- RQ1 contrasts
     s = new()
-    title(s, "Backup: pre-registered local-plasticity contrasts", "Backup")
+    title(s, "Backup: prospectively specified local-plasticity contrasts", "Backup")
     hdr = ["Contrast", "Δ solve rate [95% CI]", "Fisher p (Holm)", "Δ AUC [95% CI]", "Welch p (Holm)"]
     rows = []
     for k, lab in (("A", "STDP vs homeostasis alone"), ("B", "STDP vs matched random"), ("C", "homeostasis vs backprop"),
@@ -724,9 +849,9 @@ def build():
             r.font.color.rgb = rgb(INK if i == 0 else INK2)
             tf.paragraphs[0].alignment = PP_ALIGN.LEFT if j == 0 else PP_ALIGN.CENTER
     txt(s, M, 5.55, W - 2 * M, 0.8, [dict(t=f"DoorKey-6x6, {N['rqOneBpN']} seeds per arm. First four rows: one Holm family per "
-                                           "statistic (backprop as the global signal). Last row: the DFA family (pre-registered "
+                                           "statistic (backprop as the global signal). Last row: the DFA family (specified "
                                            "separately). Newcombe CIs for solve rates, Welch for AUC.", size=12, color=MUTED)])
-    notes(s, """Backup: the exact pre-registered contrasts. The only effect that survives correction is the AUC effect
+    notes(s, """Backup: the exact prospectively specified contrasts. The only effect that survives correction is the AUC effect
     of homeostasis under DFA, in the last row.""")
 
     # B3 ---- protocol
@@ -761,8 +886,10 @@ def build():
             "Holm (1979). A simple sequentially rejective multiple test procedure. Scand. J. Statistics.",
             "Khetarpal et al. (2022). Towards continual reinforcement learning: a review. JAIR.",
             "Kirkpatrick et al. (2017). Overcoming catastrophic forgetting in neural networks. PNAS.",
+            "Li & Hoiem (2018). Learning without forgetting. IEEE TPAMI.",
             "Mallya & Lazebnik (2018). PackNet. CVPR.",
             "Neftci, Mostafa & Zenke (2019). Surrogate gradient learning in SNNs. IEEE Signal Proc. Mag.",
+            "Nikulin et al. (2024). XLand-MiniGrid. NeurIPS Datasets and Benchmarks.",
             "Nøkland (2016). Direct feedback alignment. NeurIPS.",
             "Pandey & Biswas (2025). Spiking decision transformers. arXiv:2508.21505.",
             "Rolnick et al. (2019). Experience replay for continual learning (CLEAR). NeurIPS.",
@@ -777,7 +904,7 @@ def build():
     notes(s, "Backup: the main references. The full list, with the verification status of each entry, is in "
              "paper/refs.bib.")
 
-    total_main = 15
+    total_main = 18
     for i, (sl, dark) in enumerate(slides):
         n = i + 1
         footer(sl, n if n <= total_main else f"B{n - total_main}", total_main, dark)

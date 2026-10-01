@@ -1,4 +1,4 @@
-\begin{thebibliography}{28}
+\begin{thebibliography}{31}
 \providecommand{\natexlab}[1]{#1}
 \providecommand{\url}[1]{\texttt{#1}}
 \expandafter\ifx\csname urlstyle\endcsname\relax
@@ -108,6 +108,12 @@ Choongseop Lee, Yuntae Park, Sungmin Yoon, Jiwoon Lee, Youngho Cho, and
 \newblock \emph{Biomedical Engineering Letters}, 15:\penalty0 37--55, 2025.
 \newblock \doi{10.1007/s13534-024-00436-6}.
 
+\bibitem[Li \& Hoiem(2018)Li and Hoiem]{li2017learning}
+Zhizhong Li and Derek Hoiem.
+\newblock Learning without forgetting.
+\newblock \emph{IEEE Transactions on Pattern Analysis and Machine
+  Intelligence}, 40\penalty0 (12):\penalty0 2935--2947, 2018.
+
 \bibitem[Mallya \& Lazebnik(2018)Mallya and Lazebnik]{mallya2018packnet}
 Arun Mallya and Svetlana Lazebnik.
 \newblock {PackNet}: Adding multiple tasks to a single network by iterative
@@ -127,6 +133,15 @@ Robert~G. Newcombe.
   proportions: Comparison of eleven methods.
 \newblock \emph{Statistics in Medicine}, 17\penalty0 (8):\penalty0 873--890,
   1998.
+
+\bibitem[Nikulin et~al.(2024)Nikulin, Kurenkov, Zisman, Agarkov, Sinii, and
+  Kolesnikov]{nikulin2024xland}
+Alexander Nikulin, Vladislav Kurenkov, Ilya Zisman, Artem Agarkov, Viacheslav
+  Sinii, and Sergey Kolesnikov.
+\newblock {XLand-MiniGrid}: Scalable meta-reinforcement learning environments
+  in {JAX}.
+\newblock In \emph{Advances in Neural Information Processing Systems (Datasets
+  and Benchmarks Track)}, 2024.
 
 \bibitem[N{\o}kland(2016)]{nokland2016direct}
 Arild N{\o}kland.
@@ -151,6 +166,11 @@ David Rolnick, Arun Ahuja, Jonathan Schwarz, Timothy~P. Lillicrap, and Greg
 John Schulman, Filip Wolski, Prafulla Dhariwal, Alec Radford, and Oleg Klimov.
 \newblock Proximal policy optimization algorithms.
 \newblock arXiv:1707.06347, 2017.
+
+\bibitem[Shin et~al.(2017)Shin, Lee, Kim, and Kim]{shin2017continual}
+Hanul Shin, Jung~Kwon Lee, Jaehong Kim, and Jiwon Kim.
+\newblock Continual learning with deep generative replay.
+\newblock In \emph{Advances in Neural Information Processing Systems}, 2017.
 
 \bibitem[Tadros et~al.(2022)Tadros, Krishnan, Ramyaa, and
   Bazhenov]{tadros2022sleep}

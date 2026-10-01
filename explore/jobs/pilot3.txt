@@ -1,0 +1,3 @@
+# Idea 8: isolation at LwF's memory (quarter-width per-task networks), CNN fetch5, pilot seeds
+explore/runs/cl/fetch5_isolation_narrow_s101/results.json :: python explore/run_cl.py --config configs/cl_cnn.yaml --suite fetch5 --method isolation --seed 101 --tag _narrow --set "enc_kwargs={channels: [8, 16, 32]}" feat_dim=64 hidden=64
+explore/runs/cl/fetch5_isolation_narrow_s102/results.json :: python explore/run_cl.py --config configs/cl_cnn.yaml --suite fetch5 --method isolation --seed 102 --tag _narrow --set "enc_kwargs={channels: [8, 16, 32]}" feat_dim=64 hidden=64

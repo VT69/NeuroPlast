@@ -3,7 +3,9 @@
 Two PDFs are built from the one source, `main.tex`:
 
 - `main.pdf`: preprint with the author's name and the repository URL (for the final review).
-- `main_anonymous.pdf`: TMLR double-blind submission format ("Anonymous authors", no name, no repository URL).
+- `main_anonymous.pdf`: TMLR double-blind submission format ("Anonymous authors", no name, no repository URL). Its
+  future work is one concise paragraph without a timeline; the preprint has the full section "Future Work and Proposed
+  Next Phase" with the rough timeline.
 
 To rebuild everything from the frozen results:
 
@@ -21,7 +23,11 @@ The figures use the CMU Serif fonts (Debian/Ubuntu package `fonts-cmu`), which c
 minus signs (U+2212) and λ extract correctly from the embedded TrueType fonts.
 
 - `main.tex` contains no hand-typed result numbers: each one is a macro from `numbers.tex`, and `NUMBERS.md` lists
-  every macro with its value, meaning and source file in `runs/` or `results/`.
+  every macro with its value, meaning and source file in `runs/` or `results/`, or, for the labelled post-freeze
+  follow-up (C4, Section 5.5 and the last row of Table 4), in `explore/runs/confirm/` (`explore/EXPLORE.md` is that
+  follow-up's experiment log).
+- Every result in the text is labelled [confirmatory] (prospectively specified in the version-controlled experiment
+  log), [exploratory] or [descriptive]; Table 4 has a Label column.
 - The anonymous build is selected by defining `\anonymousbuild`: it loads `tmlr` without `[preprint]` and replaces the
   repository URL with "an anonymised repository provided as supplementary material".
 - Figures are drawn at their printed width (at most 6.5 in, the TMLR text width) in Computer Modern (CMU Serif,

@@ -83,10 +83,26 @@ button { font: inherit; color: inherit; }
 /* badges */
 .badge { display: inline-flex; align-items: center; gap: 7px; border-radius: 14px; padding: 4px 12px 4px 10px; font-size: 13px; font-weight: 560; transition: background-color .35s ease, color .35s ease; }
 .badge .ic { font-size: 13px; line-height: 1; }
-.badge.helps { background: var(--b-helps); color: var(--b-helps-ink); }
-.badge.tradeoff { background: var(--b-trade); color: var(--b-trade-ink); }
-.badge.none { background: var(--b-none); color: var(--b-none-ink); }
-.badge.untested { background: var(--b-untested); color: var(--b-untested-ink); }
+.badge.survived { background: var(--b-helps); color: var(--b-helps-ink); }
+.badge.conditional { background: var(--b-trade); color: var(--b-trade-ink); }
+.badge.notsurvived { background: var(--b-none); color: var(--b-none-ink); }
+.badge.unresolved { background: var(--b-untested); color: var(--b-untested-ink); }
+.lab-tag { display: inline-block; font-size: 11.5px; color: var(--muted); border: 1px solid var(--grid); border-radius: 8px; padding: 0 7px; margin-right: 6px; }
+/* post-freeze follow-up and what's next */
+.post { margin-top: 22px; padding-top: 18px; border-top: 1px solid var(--grid); }
+.post h3 { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 10px; }
+.post h3 small { color: var(--muted); font-weight: 400; font-size: 13.5px; }
+.postbars { display: grid; grid-template-columns: minmax(0, 15em) minmax(0, 1fr) auto; gap: 10px 14px; align-items: center; font-size: 14px; font-variant-numeric: tabular-nums; margin-top: 16px; }
+.postbars .track { position: relative; height: 16px; }
+.postbars .track::before { content: ""; position: absolute; left: 0; right: 0; top: 7px; height: 2px; background: var(--grid); border-radius: 1px; }
+.postbars .dot { position: absolute; top: 2px; width: 12px; height: 12px; margin-left: -6px; border-radius: 50%; border: 2px solid var(--surface); }
+.postbars .axis { display: flex; justify-content: space-between; color: var(--muted); font-size: 12px; }
+.postbars .v { color: var(--ink2); white-space: nowrap; }
+.next { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; }
+.next h3 { margin-bottom: 6px; }
+.next p, .next li { color: var(--ink2); font-size: 15px; }
+.next ul { margin: 6px 0 0; padding-left: 20px; }
+.next li { margin-bottom: 4px; }
 
 /* architecture */
 .arch svg { display: block; width: 100%; height: auto; }
@@ -184,6 +200,9 @@ code { font: 12.5px/1.4 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace
   table.score tbody tr:hover td { background: transparent; }
   .keyres { grid-template-columns: 1fr; }
   .topbar { align-items: flex-start; }
+  .next { grid-template-columns: 1fr; }
+  .postbars { grid-template-columns: minmax(0, 8.5em) minmax(0, 1fr); font-size: 13px; }
+  .postbars .v { grid-column: 1 / -1; margin: -4px 0 6px; }
 }
 </style>
 </head>
@@ -194,15 +213,17 @@ code { font: 12.5px/1.4 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace
       <div class="eyebrow" id="eyebrow"></div>
       <button class="pill-btn" id="theme" type="button" aria-label="Switch colour theme"></button>
     </div>
-    <h1>Do brain-inspired mechanisms help continual reinforcement learning?</h1>
-    <p class="subtitle">Mostly no, with two specific exceptions.</p>
-    <p class="lede">We tested seven brain-inspired ideas one at a time, each against a matched control that is not
-    brain-inspired, in small agents that learn a sequence of tasks. Every number on this page is read from the
-    frozen results.</p>
+    <h1>Testing Brain-Inspired Mechanisms for Task-Incremental Continual Reinforcement Learning: A Controlled Ablation Study</h1>
+    <p class="subtitle">No statistically reliable improvement beyond the matched controls; one narrow effect survived, two are conditional.</p>
+    <p class="lede">We tested six brain-inspired mechanisms one at a time, each against a matched control that is not
+    brain-inspired, in small agents that learn a sequence of tasks with the task identity given. A seventh, Transformer
+    working memory, is inconclusive because no benchmark we tried was shown to be valid. Given the seed counts, the
+    results rule out large effects rather than show equivalence, and only where the intervals are narrow. Every number
+    on this page is read from the frozen results, plus one follow-up labelled post-freeze.</p>
     <div class="tally" id="tally"></div>
     <nav class="toc" aria-label="Sections">
       <a href="#built">What we built</a><a href="#scorecard">Scorecard</a><a href="#agents">Watch the agents</a>
-      <a href="#forgetting">Forgetting</a><a href="#memory">Memory trade-off</a>
+      <a href="#forgetting">Forgetting</a><a href="#memory">Memory trade-off</a><a href="#next">What's next</a>
     </nav>
   </header>
 
@@ -214,9 +235,11 @@ code { font: 12.5px/1.4 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace
     <div class="card arch"><div id="archsvg"></div>
       <div class="arch-legend">
         <div><b>Swap one part at a time</b>Each ablation changes one component: spiking vs ordinary (CNN) encoder,
-        with or without Transformer memory, local learning rules on or off.</div>
-        <div><b>Matched controls</b>Sleep is compared with replay, which uses the same buffer interleaved with
-        online learning, and with EWC, naive fine-tuning and one network per task (isolation).</div>
+        with or without Transformer memory, local learning rules on or off. All non-isolation agents are a shared trunk
+        with a head and a task embedding per task.</div>
+        <div><b>Three standard baselines</b>Regularisation (EWC), replay (the same buffer as sleep, interleaved with online
+        learning) and capacity isolation (one network per task), plus naive fine-tuning. The post-freeze follow-up adds
+        LwF, which distils the network's own earlier outputs and stores no data.</div>
         <div><b>Fair budgets</b>Same frames, seeds and learning rate across arms; replayed samples matched exactly
         for sleep vs replay; memory counted as parameters plus buffer.</div>
       </div>
@@ -225,7 +248,10 @@ code { font: 12.5px/1.4 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace
 
   <section id="scorecard">
     <h2>Mechanism scorecard</h2>
-    <p class="sub">The same conclusions as the paper. Brackets are 95% confidence intervals; p-values are two-sided.</p>
+    <p class="sub">The same conclusions as the paper. Brackets are 95% confidence intervals; p-values are two-sided.
+    Evidence labels: <i>confirmatory</i> = a test prospectively specified in a version-controlled experiment log before
+    its runs; <i>exploratory</i> = not specified in advance; <i>descriptive</i> = no test. All arms of each comparison
+    used the same seeds.</p>
     <div class="card">
       <table class="score" id="score">
         <thead><tr><th>Mechanism and question</th><th>Verdict</th><th>Key number</th><th>Evidence</th></tr></thead>
@@ -255,7 +281,7 @@ code { font: 12.5px/1.4 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace
   </section>
 
   <section id="memory">
-    <h2>Memory trade-off: one shared network vs one network per task</h2>
+    <h2>Memory trade-off: a shared trunk with per-task heads vs one network per task</h2>
     <p class="sub">Final accuracy against total memory: the network's parameters plus the replay buffer. Isolation
     never forgets, by construction, but needs a new network for every task.</p>
     <div class="card">
@@ -269,6 +295,13 @@ code { font: 12.5px/1.4 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace
     stored per task (sleep and replay at the same buffer size share one label). Memory is fp32 parameters plus the
     buffer at its measured storage cost.</p>
     <details><summary>Table view: accuracy vs total memory</summary><div class="tablewrap" id="memtable"></div></details>
+  </section>
+
+  <section id="next">
+    <h2>What's next</h2>
+    <p class="sub">Plans and open questions from the paper's future-work section. These are not results, and nothing
+    here predicts what a larger study will find.</p>
+    <div class="next" id="nextgrid"></div>
   </section>
 
   <footer id="foot"></footer>
@@ -312,10 +345,10 @@ code { font: 12.5px/1.4 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace
   });
   try { matchMedia("(prefers-color-scheme: dark)").addEventListener("change", () => renderAll()); } catch (e) {}
 
-  const KIND = {helps: ["◐", "help, conditionally"], tradeoff: ["⇄", "trade-off"], none: ["○", "no effect beyond the control"], untested: ["?", "not tested"]};
+  const KIND = {survived: ["✓", "survived"], conditional: ["◐", "conditional"], notsurvived: ["○", "did not survive"], unresolved: ["?", "unresolved"]};
   const badge = (kind, text) => { const b = h("span", "badge " + kind); b.appendChild(h("span", "ic", KIND[kind][0])); b.appendChild(h("span", null, text)); return b; };
   const tally = document.getElementById("tally");
-  for (const k of ["helps", "tradeoff", "none", "untested"]) {
+  for (const k of ["survived", "conditional", "notsurvived", "unresolved"]) {
     const n = D.scorecard.filter(r => r.kind === k).length;
     if (n) tally.appendChild(badge(k, `${n} ${KIND[k][1]}`));
   }
@@ -394,7 +427,7 @@ code { font: 12.5px/1.4 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace
       el("text", {x: 520, y: ly + 4, class: "lab", "text-anchor": "middle"}, svg).textContent = "action";
       arrow(`M${R("wake") + 6},${CY("buf")} H${P.buf[0] - 6}`);
       arrow(`M${R("buf") + 6},${CY("buf")} H${P.sleep[0] - 6}`);
-      el("text", {x: 16, y: 234, class: "lab"}, svg).textContent = "Continual training of the sleep variant: wake and sleep phases alternate on the same shared network";
+      el("text", {x: 16, y: 234, class: "lab"}, svg).textContent = "Continual training of the sleep variant: wake and sleep phases alternate on the same shared trunk";
     } else {
       for (const [a, b] of [["env", "enc"], ["enc", "tf"], ["tf", "heads"]]) arrow(`M${CX(a)},${B(a) + 6} V${P[b][1] - 6}`);
       arrow(`M${R("heads") + 4},${CY("heads")} H${W - 20} V${CY("env")} H${R("env") + 10}`);
@@ -414,11 +447,14 @@ code { font: 12.5px/1.4 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace
     const m = h("td", "mech"); m.appendChild(h("b", null, r.mech)); m.appendChild(h("span", null, r.q)); tr.appendChild(m);
     const v = h("td", "verd"); v.appendChild(badge(r.kind, r.verdict)); tr.appendChild(v);
     tr.appendChild(h("td", "num", r.num));
-    tr.appendChild(h("td", "ev", r.ev));
+    const ev = h("td", "ev"); const lab = r.ev.split(/[,;:(]/)[0].trim();
+    if (["confirmatory", "exploratory", "descriptive"].includes(lab)) { ev.appendChild(h("span", "lab-tag", lab)); ev.appendChild(document.createTextNode(r.ev.slice(lab.length).replace(/^[,;:]\s*/, ""))); }
+    else ev.textContent = r.ev;
+    tr.appendChild(ev);
     tb.appendChild(tr);
   }
   const key = h("div", "legendkey");
-  for (const k of ["helps", "tradeoff", "none", "untested"]) key.appendChild(h("span", null, `${KIND[k][0]} ${KIND[k][1]}`));
+  for (const k of ["survived", "conditional", "notsurvived", "unresolved"]) key.appendChild(h("span", null, `${KIND[k][0]} ${KIND[k][1]}`));
   document.querySelector("#scorecard .card").appendChild(key);
 
   // ---------------- agents
@@ -565,8 +601,44 @@ code { font: 12.5px/1.4 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace
       `sleep with only ${K.buf} stored states per task reaches a similar mean accuracy to isolation (${K.sleepAcc} vs ` +
       `${K.isoAcc}) in ${K.sleepMb} MB instead of ${K.isoMb} MB. With ${K.n} seeds per arm the interval is wide ` +
       `(difference ${K.diffCi}, p = ${K.p}), so this is a similar mean, not evidence of equal accuracy. ` +
-      `With the default ${K.bigBuf} states per task, isolation is the more memory-efficient choice.`));
+      `With the default ${K.bigBuf} states per task, isolation is the more memory-efficient choice. ` +
+      `Both comparisons use full-width isolation; see the post-freeze follow-up below.`));
     host.appendChild(p);
+  })();
+  (function postResult() {
+    const P = D.post, card = document.querySelector("#memory .card");
+    const box = h("div", "post");
+    const h3 = h("h3", null, "Post-freeze follow-up: isolation with narrower networks");
+    h3.appendChild(h("small", null, `confirmatory · CNN, 5 tasks · ${P.n} seeds per arm (seeds ${P.seeds}, the same in every arm)`));
+    box.appendChild(h3);
+    box.appendChild(h("p", "note", "After the results were frozen, a prospectively specified test shrank isolation's per-task " +
+      "networks to a quarter of the width. At equal or lower memory, they beat a shared trunk trained with LwF " +
+      `(difference ${P.lwfCi}, Holm p = ${P.lwfHolm}) or with replay (difference ${P.replayCi}, Holm p = ${P.replayHolm}), ` +
+      `and differed from full-width isolation by only ${P.isoCi}. So the small-buffer advantage above holds only against ` +
+      "full-width isolation. Limits: the shared trunk was not shrunk the same way, and the SNN case is untested."));
+    const g = h("div", "postbars");
+    const lo = 0.85, hi = 1.0;
+    for (const a of P.arms) {
+      g.appendChild(h("div", null, a.label));
+      const track = h("div", "track"); const dot = h("div", "dot");
+      dot.style.left = `${(parseFloat(a.acc) - lo) / (hi - lo) * 100}%`;
+      dot.style.background = `var(--s-${a.method === "lwf" ? "sleep_matched" : a.method})`;
+      track.appendChild(dot); g.appendChild(track);
+      g.appendChild(h("div", "v", `ACC ${a.acc} · ${a.mb} MB`));
+    }
+    g.appendChild(h("div")); const ax = h("div", "axis"); ax.appendChild(h("span", null, "ACC 0.85")); ax.appendChild(h("span", null, "1.00")); g.appendChild(ax); g.appendChild(h("div"));
+    box.appendChild(g);
+    box.appendChild(h("p", "note", "Dots: mean final ACC on a scale from 0.85 to 1.00. ACC is mean ± SD over seeds; memory is fp32 parameters plus stored states."));
+    card.appendChild(box);
+  })();
+  (function nextSection() {
+    const X = D.next, host = document.getElementById("nextgrid");
+    const card = (title, body) => { const c = h("div", "card"); c.appendChild(h("h3", null, title)); for (const b of body) c.appendChild(b); host.appendChild(c); };
+    const list = items => { const u = h("ul"); for (const t of items) u.appendChild(h("li", null, t)); return u; };
+    card("Why scale up", [h("p", null, X.why), h("p", null, X.plan)]);
+    card("Validation first", [h("p", null, X.validate), h("p", null, X.method)]);
+    card("Questions for the scaled study", [list(X.questions)]);
+    card("Smaller follow-ups", [list(X.smaller)]);
   })();
   function drawMark(parent, shape, x, y, r, fill, stroke) {
     const st = `fill:${fill};stroke:${stroke};stroke-width:${fill === "none" ? 1.4 : 1.75};${LINE}`;

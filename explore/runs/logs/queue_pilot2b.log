@@ -1,0 +1,21 @@
+10 jobs pending
+START explore/runs/cl/fetch5_replay_buf973_s101/results.json
+START explore/runs/cl/fetch3_sleep_rb55040_s101/results.json
+START explore/runs/cl/fetch3_replay_b3_s101/results.json
+START explore/runs/cl/fetch3_sleep_rb10880_s101/results.json
+END rc=0 420s explore/runs/cl/fetch3_sleep_rb55040_s101/results.json
+END rc=0 420s explore/runs/cl/fetch3_sleep_rb10880_s101/results.json
+START explore/runs/dfa/dfae_homeo005_s101/eval.json
+START explore/runs/dfa/dfae_homeo005_s102/eval.json
+END rc=0 425s explore/runs/cl/fetch3_replay_b3_s101/results.json
+START explore/runs/dfa/dfae_homeo03_s101/eval.json
+END rc=0 750s explore/runs/cl/fetch5_replay_buf973_s101/results.json
+START explore/runs/dfa/dfae_homeo03_s102/eval.json
+END rc=0 640s explore/runs/dfa/dfae_homeo005_s101/eval.json
+START explore/runs/dfa/dfae_homeo015_s101/eval.json
+END rc=0 655s explore/runs/dfa/dfae_homeo005_s102/eval.json
+START explore/runs/dfa/dfae_homeo015_s102/eval.json
+END rc=0 875s explore/runs/dfa/dfae_homeo03_s101/eval.json
+END rc=0 835s explore/runs/dfa/dfae_homeo03_s102/eval.json
+END rc=0 645s explore/runs/dfa/dfae_homeo015_s101/eval.json
+END rc=0 755s explore/runs/dfa/dfae_homeo015_s102/eval.json

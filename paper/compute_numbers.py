@@ -1,4 +1,5 @@
-"""Every number quoted in the paper, computed from the frozen result files (runs/ and results/).
+"""Every number quoted in the paper, computed from the frozen result files (runs/ and results/) and, for the labelled
+post-freeze follow-up (C4), from explore/runs/confirm/.
 
     python paper/compute_numbers.py        # writes paper/numbers.tex and paper/NUMBERS.md
 
@@ -8,7 +9,7 @@ constant (also listed here) or a literature value (labelled as such in the text)
 
 Statistics: difference of means with a 95% Welch (Welch-Satterthwaite) confidence interval and two-sided Welch p;
 solve rates with Fisher's exact test and a Newcombe (Wilson score) 95% CI for the difference of proportions;
-Holm correction where a pre-registered family has several tests. n is small everywhere (3-10 seeds), so the CIs
+Holm correction where a prospectively specified family has several tests. n is small everywhere (3-10 seeds), so the CIs
 are wide and are the main thing to read.
 """
 from __future__ import annotations
@@ -154,6 +155,17 @@ def protocol():
     iso = json.load(open("runs/continual/fetch3_isolation_s1/results.json"))
     put("paramsCnnPerTask", f"{iso['params_per_task']:,}", "parameters, one isolated CNN network", "runs/continual/fetch3_isolation_s1/results.json")
     put("paramsHybridShared", f"{h['params']:,}", "parameters, shared full-hybrid agent", src_h)
+    # which parameters scale with the number of tasks: the shared agent adds one actor-critic head and one task-embedding
+    # vector per task (difference between the 5-task and 3-task CNN agents); the rest is the shared trunk (encoder)
+    c5 = json.load(open("runs/continual5_cnn/fetch5_sleep_s1/results.json"))
+    per_task = (c5["params"] - c["params"]) // 2
+    trunk = c["params"] - 3 * per_task
+    head = iso["params_per_task"] - trunk
+    src_p = "runs/continual{,5_cnn}/fetch{3,5}_sleep_s1/results.json, runs/continual/fetch3_isolation_s1/results.json (params)"
+    put("paramsCnnTrunk", f"{trunk:,}", "parameters of the shared CNN trunk (encoder), independent of the task count", src_p)
+    put("paramsPerTaskShared", f"{per_task:,}", "parameters the shared CNN agent adds per task (one head + one task embedding)", src_p)
+    put("paramsHead", f"{head:,}", "parameters of one actor-critic head (CNN agents)", src_p)
+    put("paramsTaskEmb", f"{per_task - head:,}", "parameters of one task-embedding vector", src_p)
     put("bufferPerTask", f"{c['method_kwargs'].get('buffer_per_task', 5000):,}", "replay states stored per task (default)",
         "runs/continual/fetch3_sleep_s1/results.json (method_kwargs; default of Sleep/Replay)")
     put("sleepPeriod", "25", "PPO updates between sleep phases (Sleep default)", "neuroplast/sleep/sleep.py (protocol constant)")
@@ -222,7 +234,7 @@ def rq3():
     put("snnCpuSlowdown", f"{snn_ms / cnn_ms:.1f}", "SNN / CNN CPU training cost per step", "results/compute.json")
 
 
-# ---------------------------------------------------------------- RQ1: local plasticity (DoorKey-6x6, n=10, pre-registered)
+# ---------------------------------------------------------------- RQ1: local plasticity (DoorKey-6x6, n=10, prospectively specified)
 def rq1():
     src = "runs/rq1_v2/rq1v2_<arm>_s*/{eval.json,metrics.csv} (scripts/rq1_stats.py; results/rq1_stats.md)"
     A = {k: load_rq1(k) for k in ("bp", "homeo", "tfs0.03", "rands0.03", "dfae", "dfae_homeo", "frozen", "tfs0.3", "hebs0.03")}
@@ -466,8 +478,8 @@ def rq5():
         put(f"fiveSnn{tag}P", pf(p), f"fetch5 SNN ({tag}) Welch p", root)
         put(f"fiveSnn{tag}N", f"{len(a)}", f"fetch5 SNN ({tag}) seeds per arm", root)
         if tag == "Fair":
-            thr = 0.8  # pre-registered "task learned" threshold (PROGRESS.md, session 3 pre-registration)
-            put("learnThreshold", f"{thr:g}", "task counted as learned if R[k][k] >= this (pre-registered)", "PROGRESS.md session-3 pre-registration (protocol constant)")
+            thr = 0.8  # "task learned" threshold, specified in the project log before the runs (PROGRESS.md, session 3)
+            put("learnThreshold", f"{thr:g}", "task counted as learned if R[k][k] >= this (specified before the runs)", "PROGRESS.md session-3 test plan (protocol constant)")
             learned_s = sum(sum(x["R"][k][k] >= thr for k in range(5)) for x in s.values())
             learned_i = sum(sum(x["R"][k][k] >= thr for k in range(5)) for x in i.values())
             put("fiveSnnFairLearnedSleep", f"{learned_s}/{5 * len(s)}", "fetch5 SNN fair: tasks learned to >= 0.8, sleep", root)
@@ -579,8 +591,51 @@ def compute_budget():
     put("computeRuns", f"{n_cont + n_single:,}", "number of frozen PPO runs counted in computeCoreHours", src)
 
 
+def postfreeze():
+    """Post-freeze follow-up C4 (explore/EXPLORE.md, prospectively specified before its runs): isolation with
+    quarter-width per-task networks vs the C1 arms (shared trunk with LwF-int8 or replay, full-width isolation),
+    CNN fetch5, seeds 201-210 in every arm. Same tests as explore/confirm_stats.py (Welch, Holm over H8-H10)."""
+    root = "explore/runs/confirm"
+    src = f"{root}/fetch5_<arm>_s20[1-9]|s210/results.json (explore/confirm_stats.py; explore/confirm_results.md)"
+    arms = {k: cl(root, a, "fetch5") for k, a in (("Narrow", "isolation_narrow"), ("Lwf", "lwf_int8"),
+                                                  ("Replay", "replay_buf973"), ("Iso", "isolation"))}
+    seeds = sorted(arms["Narrow"])
+    assert all(sorted(r) == seeds for r in arms.values()) and seeds == list(range(201, 211)), "C4 seed sets differ"
+    put("postN", str(len(seeds)), "post-freeze C4: seeds per arm (the same seeds 201-210 in every arm)", src)
+    put("postSeeds", f"{seeds[0]}--{seeds[-1]}", "post-freeze C4: seed set", src)
+    buf = arms["Replay"][seeds[0]]["method_kwargs"]["buffer_per_task"]
+    put("postReplayBuf", f"{buf:,}", "post-freeze C1/C4: replay states per task (one fp32 network's bytes / (5 x 188 B))", src)
+    for k, r in arms.items():
+        x = r[seeds[0]]
+        mb = x["params"] * 4 / 1e6 + (buf * 5 * 188 / 1e6 if k == "Replay" else 0.0)
+        acc = [v["metrics"]["ACC"] for v in r.values()]
+        put(f"post{k}Acc", msd(acc), f"post-freeze C4: {k} final ACC mean $\\pm$ SD", src)
+        put(f"post{k}Mean", f3(np.mean(acc)), f"post-freeze C4: {k} mean final ACC", src)
+        put(f"post{k}Mb", f2(mb), f"post-freeze C4: {k} persistent memory, fp32 parameters + stored states (MB)", src)
+        put(f"post{k}Params", f"{x['params']:,}", f"post-freeze C4: {k} total parameters", src)
+    put("postNarrowPerTask", f"{arms['Narrow'][seeds[0]]['params_per_task']:,}", "post-freeze C4: parameters per quarter-width isolated network", src)
+    nc = arms["Narrow"][seeds[0]]["cfg"]
+    put("postNarrowChannels", ", ".join(str(v) for v in nc["enc_kwargs"]["channels"]), "quarter-width network: conv channels", src)
+    put("postNarrowFeat", str(nc["feat_dim"]), "quarter-width network: feature dimension", src)
+    put("postNarrowHidden", str(nc["hidden"]), "quarter-width network: head hidden units", src)
+    put("postLwfBatch", "128", "LwF: current-task states distilled per PPO minibatch (also replay's per-minibatch count)",
+        "explore/np_explore/methods.py, LwF default (protocol constant)")
+    put("postSnapshotMb", f2(arms["Lwf"][seeds[0]]["params"] / 1e6), "LwF-int8: transient int8 teacher snapshot (MB, 1 byte/weight)",
+        "explore/runs/confirm/fetch5_lwf_int8_s201/results.json (params)")
+    put("postSamples", f"{np.mean([v['replay_samples'] for v in arms['Lwf'].values()]) / 1e6:.2f}M",
+        "post-freeze C1: distilled samples per LwF run (replay's count is the same)", src)
+    tests = [("HEight", "Narrow", "Lwf"), ("HNine", "Narrow", "Replay"), ("HTen", "Narrow", "Iso")]
+    res = [welch([v["metrics"]["ACC"] for v in arms[a].values()], [v["metrics"]["ACC"] for v in arms[b].values()])
+           for _, a, b in tests]
+    adj = holm([r[3] for r in res])
+    for (t, a, b), (d, lo, hi, p), ph in zip(tests, res, adj):
+        put(f"post{t}Ci", ci_str(d, lo, hi), f"post-freeze C4 {t}: {a} minus {b} final ACC [95% Welch CI]", src)
+        put(f"post{t}P", pf(p), f"post-freeze C4 {t}: Welch p (raw)", src)
+        put(f"post{t}Holm", pf(ph), f"post-freeze C4 {t}: Welch p, Holm over H8-H10", src)
+
+
 def main():
-    for fn in (protocol, rq3, rq1, dfa, rq2, rq5, memory, rq4, demo, seeds, compute_budget):
+    for fn in (protocol, rq3, rq1, dfa, rq2, rq5, memory, rq4, demo, seeds, compute_budget, postfreeze):
         fn()
     with open("paper/numbers.tex", "w") as f:
         f.write("% AUTO-GENERATED by paper/compute_numbers.py from runs/ and results/. Do not edit by hand.\n")
@@ -588,7 +643,8 @@ def main():
             f.write(f"\\newcommand{{\\{k}}}{{{v}\\xspace}} % {d}\n")
     with open("paper/NUMBERS.md", "w") as f:
         f.write("# Numbers in the paper and where they come from\n\n"
-                "Generated by `python paper/compute_numbers.py` from the frozen files in `runs/` and `results/`; every "
+                "Generated by `python paper/compute_numbers.py` from the frozen files in `runs/` and `results/` (and, for the "
+                "post-freeze follow-up C4, `explore/runs/confirm/`); every "
                 "result number in `main.tex` is one of these macros. Intervals are 95% CIs: Welch (difference of "
                 "means), Newcombe/Wilson (difference of solve rates) or paired t where stated. Protocol constants "
                 "that are not stored in `runs/` are marked *(protocol constant)* with the code file that sets them.\n\n"

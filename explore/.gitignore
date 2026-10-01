@@ -1,0 +1,5 @@
+# run checkpoints are large and reproducible from the logged configs; results.json / metrics.csv are kept
+runs/**/*.pt
+__pycache__/
+runs/**/*.lock
+runs/logs/*__*.log

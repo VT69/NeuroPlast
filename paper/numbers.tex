@@ -19,6 +19,10 @@
 \newcommand{\paramsCnnShared}{194,312\xspace} % parameters, shared CNN agent (3 task heads)
 \newcommand{\paramsCnnPerTask}{159,864\xspace} % parameters, one isolated CNN network
 \newcommand{\paramsHybridShared}{327,800\xspace} % parameters, shared full-hybrid agent
+\newcommand{\paramsCnnTrunk}{142,832\xspace} % parameters of the shared CNN trunk (encoder), independent of the task count
+\newcommand{\paramsPerTaskShared}{17,160\xspace} % parameters the shared CNN agent adds per task (one head + one task embedding)
+\newcommand{\paramsHead}{17,032\xspace} % parameters of one actor-critic head (CNN agents)
+\newcommand{\paramsTaskEmb}{128\xspace} % parameters of one task-embedding vector
 \newcommand{\bufferPerTask}{5,000\xspace} % replay states stored per task (default)
 \newcommand{\sleepPeriod}{25\xspace} % PPO updates between sleep phases (Sleep default)
 \newcommand{\sleepSteps}{700\xspace} % gradient steps per sleep phase (Sleep default)
@@ -318,7 +322,7 @@
 \newcommand{\fiveSnnFairCi}{+0.044 [\ensuremath{-}0.009, +0.098]\xspace} % fetch5 SNN (Fair) sleep minus isolation [95% CI]
 \newcommand{\fiveSnnFairP}{0.078\xspace} % fetch5 SNN (Fair) Welch p
 \newcommand{\fiveSnnFairN}{3\xspace} % fetch5 SNN (Fair) seeds per arm
-\newcommand{\learnThreshold}{0.8\xspace} % task counted as learned if R[k][k] >= this (pre-registered)
+\newcommand{\learnThreshold}{0.8\xspace} % task counted as learned if R[k][k] >= this (specified before the runs)
 \newcommand{\fiveSnnFairLearnedSleep}{14/15\xspace} % fetch5 SNN fair: tasks learned to >= 0.8, sleep
 \newcommand{\fiveSnnFairLearnedIso}{12/15\xspace} % fetch5 SNN fair: tasks learned to >= 0.8, isolation
 \newcommand{\fiveSnnFairFwt}{0.306 $\pm$ 0.170\xspace} % fetch5 SNN fair: sleep FWT vs isolation curves
@@ -364,3 +368,38 @@
 \newcommand{\seedRange}{3--10\xspace} % seeds per arm, range over the main arms
 \newcommand{\computeCoreHours}{110\xspace} % total single-thread CPU hours of all frozen PPO runs (continual + single-task; excludes RQ3 behaviour cloning)
 \newcommand{\computeRuns}{289\xspace} % number of frozen PPO runs counted in computeCoreHours
+\newcommand{\postN}{10\xspace} % post-freeze C4: seeds per arm (the same seeds 201-210 in every arm)
+\newcommand{\postSeeds}{201--210\xspace} % post-freeze C4: seed set
+\newcommand{\postReplayBuf}{973\xspace} % post-freeze C1/C4: replay states per task (one fp32 network's bytes / (5 x 188 B))
+\newcommand{\postNarrowAcc}{0.972 $\pm$ 0.002\xspace} % post-freeze C4: Narrow final ACC mean $\pm$ SD
+\newcommand{\postNarrowMean}{0.972\xspace} % post-freeze C4: Narrow mean final ACC
+\newcommand{\postNarrowMb}{0.90\xspace} % post-freeze C4: Narrow persistent memory, fp32 parameters + stored states (MB)
+\newcommand{\postNarrowParams}{224,640\xspace} % post-freeze C4: Narrow total parameters
+\newcommand{\postLwfAcc}{0.944 $\pm$ 0.018\xspace} % post-freeze C4: Lwf final ACC mean $\pm$ SD
+\newcommand{\postLwfMean}{0.944\xspace} % post-freeze C4: Lwf mean final ACC
+\newcommand{\postLwfMb}{0.91\xspace} % post-freeze C4: Lwf persistent memory, fp32 parameters + stored states (MB)
+\newcommand{\postLwfParams}{228,632\xspace} % post-freeze C4: Lwf total parameters
+\newcommand{\postReplayAcc}{0.920 $\pm$ 0.052\xspace} % post-freeze C4: Replay final ACC mean $\pm$ SD
+\newcommand{\postReplayMean}{0.920\xspace} % post-freeze C4: Replay mean final ACC
+\newcommand{\postReplayMb}{1.83\xspace} % post-freeze C4: Replay persistent memory, fp32 parameters + stored states (MB)
+\newcommand{\postReplayParams}{228,632\xspace} % post-freeze C4: Replay total parameters
+\newcommand{\postIsoAcc}{0.975 $\pm$ 0.001\xspace} % post-freeze C4: Iso final ACC mean $\pm$ SD
+\newcommand{\postIsoMean}{0.975\xspace} % post-freeze C4: Iso mean final ACC
+\newcommand{\postIsoMb}{3.20\xspace} % post-freeze C4: Iso persistent memory, fp32 parameters + stored states (MB)
+\newcommand{\postIsoParams}{799,320\xspace} % post-freeze C4: Iso total parameters
+\newcommand{\postNarrowPerTask}{44,928\xspace} % post-freeze C4: parameters per quarter-width isolated network
+\newcommand{\postNarrowChannels}{8, 16, 32\xspace} % quarter-width network: conv channels
+\newcommand{\postNarrowFeat}{64\xspace} % quarter-width network: feature dimension
+\newcommand{\postNarrowHidden}{64\xspace} % quarter-width network: head hidden units
+\newcommand{\postLwfBatch}{128\xspace} % LwF: current-task states distilled per PPO minibatch (also replay's per-minibatch count)
+\newcommand{\postSnapshotMb}{0.23\xspace} % LwF-int8: transient int8 teacher snapshot (MB, 1 byte/weight)
+\newcommand{\postSamples}{1.19M\xspace} % post-freeze C1: distilled samples per LwF run (replay's count is the same)
+\newcommand{\postHEightCi}{+0.028 [+0.015, +0.041]\xspace} % post-freeze C4 HEight: Narrow minus Lwf final ACC [95% Welch CI]
+\newcommand{\postHEightP}{<0.001\xspace} % post-freeze C4 HEight: Welch p (raw)
+\newcommand{\postHEightHolm}{0.002\xspace} % post-freeze C4 HEight: Welch p, Holm over H8-H10
+\newcommand{\postHNineCi}{+0.052 [+0.015, +0.089]\xspace} % post-freeze C4 HNine: Narrow minus Replay final ACC [95% Welch CI]
+\newcommand{\postHNineP}{0.011\xspace} % post-freeze C4 HNine: Welch p (raw)
+\newcommand{\postHNineHolm}{0.011\xspace} % post-freeze C4 HNine: Welch p, Holm over H8-H10
+\newcommand{\postHTenCi}{\ensuremath{-}0.004 [\ensuremath{-}0.005, \ensuremath{-}0.002]\xspace} % post-freeze C4 HTen: Narrow minus Iso final ACC [95% Welch CI]
+\newcommand{\postHTenP}{<0.001\xspace} % post-freeze C4 HTen: Welch p (raw)
+\newcommand{\postHTenHolm}{0.002\xspace} % post-freeze C4 HTen: Welch p, Holm over H8-H10

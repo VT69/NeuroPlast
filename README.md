@@ -28,6 +28,7 @@ train.py           single-file PPO (CleanRL-style); `train()` reused by everythi
 continual.py       task-sequence runner -> accuracy matrix, forgetting, transfer
 configs/           one YAML per experiment
 scripts/           experiment drivers (RQ3 sweep, job queue, analysis)
+explore/           post-freeze follow-up: experiment log (EXPLORE.md), runner, runs and prospectively specified tests
 jobs/              job lists for scripts/run_queue.py (resumable sweeps)
 runs/              run outputs (metrics.csv, final.pt, eval.json / results.json) — committed
 results/           aggregated markdown tables + figures (scripts/analyze.py)

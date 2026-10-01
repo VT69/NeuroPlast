@@ -13,6 +13,53 @@ rerun on the frozen data at 01:25 UTC (`rq1_stats.py`, `memory_fair.py`, `rq5_st
 Results went in as they came out, including the nulls: session 4 turned two earlier positive hints into nulls
 (sleep > replay; DFA+homeostasis solve rate) and found no usable memory benchmark.
 
+## Session 8 (2026-10-01): final revision before review (no new runs; frozen results unchanged)
+**What to look at first:** `paper/main.pdf` (preprint) and `paper/main_anonymous.pdf` (TMLR), Section 5.5's post-freeze
+paragraph and Table 4's last row; deck slides 10 and 16-18; the dashboard's memory section and "What's next".
+
+**Post-freeze result added (labelled as such everywhere).** The follow-up in `explore/` (open-ended session on the
+`explore` branch, 2026-09-30/10-01; its log is `explore/EXPLORE.md`) is now on `main`. Only the folder at the branch tip
+was copied, not the branch history, so the `.pt` checkpoints in that history stay off `main`. C4 was prospectively
+specified before its runs: on CNN fetch5 with seeds 201-210 in every arm, quarter-width isolation (5 x 44,928
+parameters, 0.90 MB) reached 0.972 ± 0.002. That beat a shared trunk with LwF-int8 (0.944, 0.91 MB; +0.028
+[0.015, 0.041], Holm p = 0.002) and with replay (0.920, 1.83 MB; +0.052 [0.015, 0.089], Holm p = 0.011), and was
+−0.004 [−0.005, −0.002] against full-width isolation (3.20 MB). Limits stated wherever the result appears: the shared
+trunk was not shrunk the same way, and the SNN case is untested (the only narrow-SNN runs were a 2-seed pilot at 150k
+frames/task). The macros (`post*`) come from `paper/compute_numbers.py::postfreeze()`, which reads
+`explore/runs/confirm/` and asserts that all four arms share seeds 201-210.
+
+**Wording and framing (paper, deck, dashboard):**
+* new title
+* "pre-registered" became "prospectively specified in a version-controlled experiment log"
+* headline: "no statistically reliable improvement beyond the matched control; given the seed counts, these results
+  rule out large effects rather than show equivalence". One deliberate qualifier was added: "and only where the
+  intervals are narrow". The STDP AUC CI (−0.26 to +0.33) and the SNN small-buffer CI (±0.17) do not rule out large
+  effects.
+* precise statements replace "STDP adds nothing" and "sleep does not beat replay"
+* six tested mechanisms plus an inconclusive Transformer
+* DFA is "backprop-free encoder credit assignment (heads use exact gradients)"
+* "shared trunk with per-task heads", with the parameters that scale with task count: trunk 142,832; per task 17,160
+  (head 17,032 + embedding 128); new macros `paramsCnnTrunk`, `paramsPerTaskShared`, `paramsHead`, `paramsTaskEmb`
+* a baselines subsection: regularisation / replay / isolation, plus LwF from the follow-up
+* "estimated arithmetic energy proxy"; the 80 vs 16 ms timing is defined as measured cost in our implementation (CPU
+  process time, 1 thread, one forward + backward + Adam step on 256 DoorKey-6x6 observations, mean of 5 after a
+  warm-up; `scripts/benchmark_compute.py`)
+* every result is labelled [confirmatory] / [exploratory] / [descriptive], and Table 4 has a Label column
+* a seed-set statement: all arms share seeds, except the unmatched SNN+Transformer sleep arm (1-6) vs replay (1-8) in
+  Table 3 / Fig. 3
+* the deck conclusion and the dashboard scorecard now use survived / conditional / did not survive / unresolved
+
+**Future work.** The preprint has a section "Future Work and Proposed Next Phase" with the scaling plan (JAX +
+XLand-MiniGrid on cloud GPUs), validation first, the questions, the smaller follow-ups, the methodology and the timeline.
+The anonymous build has one concise paragraph without a timeline. The deck has two "Next phase" slides before the
+conclusion; the limitations slide no longer repeats future work. The dashboard has a "What's next" section without a
+timeline. New bib entries `li2017learning`, `shin2017continual` and `nikulin2024xland` are marked TODO verify (no local
+PDFs).
+
+**Already done in session 7 and re-verified:** `--suite`/`--method` in the reproducibility commands, TrueType figure
+fonts (pdftotext gives "−" and "λ"), Figure 3 CIs clipped to [0, 1], and `relevant_literature/` absent from every
+branch's history (checked on a fresh clone).
+
 ## Session 7 (2026-09-30): final wording fixes; relevant_literature/ purged (no new experiments; results frozen)
 Wording fixes, identical across the paper, deck and dashboard (commit 43b2a28, after the purge):
 1. **Small-buffer result** (SNN, 200 states/task vs isolation). "Ties/matches" became "similar mean accuracy (0.838 vs
