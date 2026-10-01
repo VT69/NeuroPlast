@@ -1,0 +1,37 @@
+18 jobs pending
+START explore/runs/cl/fetch5_isolation_half_s101/results.json
+START explore/runs/cl/fetch5_isolation_quarter_s101/results.json
+START explore/runs/cl/fetch3_isolation_narrow_s101/results.json
+START explore/runs/cl_snn/fetch3_isolation_narrow_s101/results.json
+END rc=0 260s explore/runs/cl/fetch3_isolation_narrow_s101/results.json
+START explore/runs/cl/fetch5_isolation_half_s102/results.json
+END rc=0 395s explore/runs/cl/fetch5_isolation_quarter_s101/results.json
+START explore/runs/cl/fetch5_isolation_quarter_s102/results.json
+END rc=0 410s explore/runs/cl/fetch5_isolation_half_s101/results.json
+START explore/runs/cl/fetch3_isolation_narrow_s102/results.json
+END rc=0 615s explore/runs/cl_snn/fetch3_isolation_narrow_s101/results.json
+START explore/runs/cl_snn/fetch3_isolation_narrow_s102/results.json
+END rc=0 415s explore/runs/cl/fetch5_isolation_half_s102/results.json
+END rc=0 265s explore/runs/cl/fetch3_isolation_narrow_s102/results.json
+START explore/runs/confirm/fetch5_isolation_narrow_s201/results.json
+START explore/runs/confirm/fetch5_isolation_narrow_s202/results.json
+END rc=0 400s explore/runs/cl/fetch5_isolation_quarter_s102/results.json
+START explore/runs/confirm/fetch5_isolation_narrow_s203/results.json
+END rc=0 445s explore/runs/confirm/fetch5_isolation_narrow_s202/results.json
+START explore/runs/confirm/fetch5_isolation_narrow_s204/results.json
+END rc=0 455s explore/runs/confirm/fetch5_isolation_narrow_s201/results.json
+START explore/runs/confirm/fetch5_isolation_narrow_s205/results.json
+END rc=0 445s explore/runs/confirm/fetch5_isolation_narrow_s203/results.json
+START explore/runs/confirm/fetch5_isolation_narrow_s206/results.json
+END rc=0 630s explore/runs/cl_snn/fetch3_isolation_narrow_s102/results.json
+START explore/runs/confirm/fetch5_isolation_narrow_s207/results.json
+END rc=0 445s explore/runs/confirm/fetch5_isolation_narrow_s204/results.json
+START explore/runs/confirm/fetch5_isolation_narrow_s208/results.json
+END rc=0 445s explore/runs/confirm/fetch5_isolation_narrow_s205/results.json
+START explore/runs/confirm/fetch5_isolation_narrow_s209/results.json
+END rc=0 445s explore/runs/confirm/fetch5_isolation_narrow_s206/results.json
+END rc=0 440s explore/runs/confirm/fetch5_isolation_narrow_s207/results.json
+START explore/runs/confirm/fetch5_isolation_narrow_s210/results.json
+END rc=0 455s explore/runs/confirm/fetch5_isolation_narrow_s208/results.json
+END rc=0 455s explore/runs/confirm/fetch5_isolation_narrow_s209/results.json
+END rc=0 450s explore/runs/confirm/fetch5_isolation_narrow_s210/results.json

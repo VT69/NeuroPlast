@@ -8,15 +8,13 @@ confirmation uses 201-210. Neither range was used by any capstone run, which use
 Claim labels as in the paper: **[pilot]** is exploratory (1-2 seeds, never a finding); **[confirmed]** is only for
 Phase C runs done exactly as pre-registered below; **[lit]** is literature; **[interp]** is interpretation.
 
-## What to look at first (live; updated 04:20)
-- **Phase C is complete** (62/62 runs; results under "Phase C results").
-  - C3 is confirmed: with scarce replay (~14k samples), sleep forgets much more than interleaved replay.
-  - C1: LwF-int8 is not significantly different from replay@973 at half the memory, and it is about 3 points below
-    full isolation.
-  - C2 (SNN): LwF forgets slightly more than replay.
-- **Idea 8 overturned the LwF story.** Isolation shrunk to LwF's parameter count reached 0.972 on 2 pilot seeds, so LwF
-  has no memory advantage. C4 (pre-registered) confirms this with 10 seeds; the idea-8b width sweep runs alongside.
-- Three container restarts; killed runs were rerun from scratch with the same seeds (see the ledger).
+## What to look at first (final; 04:45)
+- **Phase D** (near the end) is the ranked summary. **Best result: C4.** On the CNN, isolation shrunk to LwF's
+  memory beats every shared method at equal memory (0.972 vs LwF 0.944, replay 0.920 at twice the memory). The
+  capstone's memory frontier undersold isolation by fixing its width.
+- C3: sleep loses badly to interleaved replay when replay is scarce. C1/C2: LwF-int8 ≈ replay at half the memory on
+  CNN, slightly more forgetting on SNN.
+- SNN pilot (unconfirmed): narrow isolation fails on the SNN, so sharing may still pay there.
 
 ## Budget (about 30 core-hours on this 4-core machine, one thread per job)
 | phase | planned core-h | what |
@@ -369,7 +367,7 @@ batch 128, coef 1.0).
   memory". That is still a memory result, but not an accuracy one.
 - If LwF-int8 is significantly below replay, buffer-free distillation is worse, and that gets reported.
 
-## Phase C results (run exactly as pre-registered; 62/62 runs, none missing)
+## Phase C results (run exactly as pre-registered; C1-C3 62/62 runs, C4 10/10, none missing)
 Full tables: `explore/confirm_results.md` (pre-registered tests, `explore/confirm_stats.py`). Exploratory follow-ups
 (written after seeing the results): `explore/confirm_secondary.md`. One change to `confirm_stats.py` after the runs:
 the descriptive "persistent MB" column counted the default 5,000-state buffer as 0 for C3. It now uses the same default
@@ -421,6 +419,90 @@ as `scripts/memory_fair.py`. No test changed.
   into every minibatch slows learning of the current task, while offline sleep leaves plasticity intact. Here the
   protection is worth far more than it costs.
 
+### C4: isolation at LwF's memory, CNN fetch5, 10 seeds [confirmed]
+| arm | final ACC | FORGET | persistent memory | CPU h/run |
+|---|---|---|---|---|
+| isolation, quarter width (5 × 44,928 params) | 0.972 ± 0.002 | 0.001 | 0.90 MB | 0.123 |
+| LwF-int8 (C1) | 0.944 ± 0.018 | 0.009 | 0.91 MB | 0.199 |
+| replay@973 (C1) | 0.920 ± 0.052 | 0.019 | 1.83 MB | 0.188 |
+| isolation, full width (C1) | 0.975 ± 0.001 | 0.000 | 3.20 MB | 0.152 |
+- **H8 (narrow isolation − LwF-int8): +0.028 [+0.015, +0.041], p = 0.0008, Holm p = 0.002.**
+- **H9 (narrow isolation − replay@973): +0.052 [+0.015, +0.089], p = 0.011, Holm p = 0.011.**
+- **H10 (narrow − full isolation): −0.004 [−0.005, −0.002], p = 0.0009, Holm p = 0.002.** Significant but tiny; the CI
+  lies within ±0.05, so "no large difference" by the pre-registered rule.
+- At equal memory, isolation beats buffer-free distillation, and it beats replay that has twice the memory. It loses
+  0.4 points to full width at 28% of the memory, and it is the cheapest arm in CPU time.
+
 ## Phase D: report
 
+### Confirmed (pre-registered, fresh seeds, run exactly as written), ranked by how much they change the picture
+1. **On the CNN, a quarter-width isolation network beats every shared method at equal memory (C4).** At 0.90 MB it
+   reaches 0.972, against 0.944 for LwF-int8 at 0.91 MB (+0.028 [0.015, 0.041]) and 0.920 for replay at 1.83 MB
+   (+0.052 [0.015, 0.089]). It is only 0.004 below full-width isolation at 3.20 MB. *Meaning:* the capstone's memory
+   frontier compared shared methods with isolation at a fixed width, and isolation's per-task networks were about 4×
+   larger than these tasks need. Per unit of memory, isolation dominates on CNN fetch. RQ5's "shared weights retain more
+   per unit of memory" is false here once isolation's width is part of the budget. Scope: task-incremental with a task
+   ID, easy and mutually similar MiniGrid tasks, CNN encoder, fp32 counted (int8 scales both by 4).
+2. **Sleep's advantage needs a large replay budget (C3).** At ~14k replayed samples (~2% of the usual budget), offline
+   sleep is 0.131 [0.010, 0.252] ACC below interleaved replay and forgets 0.241 [0.058, 0.424] more (Holm p = 0.034).
+   Its failure is bimodal and hits the first task. The capstone's "sleep ≥ replay" is a large-budget result. The
+   exploratory flip side: interleaved replay costs plasticity on the current task (last task 0.889 vs 0.973), which sleep
+   does not.
+3. **Buffer-free distillation (LwF with an int8 teacher) is a reasonable shared method, not a winner (C1, C2).**
+   - CNN fetch5: not distinguishable from replay with twice the persistent memory (+0.024 [−0.014, +0.062]). It is
+     excluded from being more than 0.014 worse, has a smaller spread (SD 0.018 vs 0.052), and is 0.031 below
+     full-width isolation.
+   - SNN fetch3: no ACC difference detectable (CI ±0.08), but it forgets slightly more than replay (+0.017
+     [0.006, 0.027], Holm p = 0.011).
+   - After item 1, its memory argument only holds against other shared methods.
+4. **int8 storage is free** (audit of 27 frozen checkpoints, paired; mean change −0.0003, p = 0.78). Not
+   pre-registered, but not a pilot either. Every memory number in the capstone and here can be divided by 4 without
+   changing any ordering.
+
+### Failed (kill criterion met or no effect; kept on record)
+- **PackNet inside one network:** the last task cannot learn on a 1/T share next to frozen weights (fetch5 last task
+  0.51-0.59). Gradual pruning fixed task-0 collapse, not this.
+- **CueFirst memory benchmark:** memory is required, but no memory agent (frame stack, GRU, Transformer) learned to use
+  the cue in 1M frames. All of them sit at the 50% guessing level. The Transformer question remains unanswered.
+- **DFA + homeostasis target sweep:** no target beat the pre-registered 0.15 (all 2/2 solved; underpowered).
+- **Stateful SNN as working memory:** not run, because its test bed failed.
+- **LwF's memory advantage:** killed by idea 8 and then confirmed killed by C4.
+
+### Promising but unconfirmed (pilots only)
+- **On the SNN, sharing still pays.** Narrow SNN isolation at C2's memory reached 0.636 and 0.854 (tasks fail to learn
+  in 150k frames), below LwF 0.869 and replay 0.885. If this holds, the substrate decides whether isolation or sharing
+  is more memory-efficient: per-task SNN learning is slow, so reusing a shared trunk matters. Two seeds only.
+- **Isolation degrades gracefully.** At ¼ of LwF's memory (0.23 MB) it still reaches 0.932 and 0.896.
+- **Hybrid scheduling (hypothesis).** Interleave a little replay (protects old tasks) and keep sleep for the rest
+  (protects plasticity). Motivated by C3's two-sided result; untested.
+
+### Worth a follow-up paper
+- **"Memory-fair continual RL: isolation width is part of the budget."** Trace full accuracy-vs-memory frontiers with
+  every method swept over its own size knob: isolation width, shared-network width, and buffer size. Do it on CNN and
+  SNN and on suites where tasks transfer, measuring forward transfer, which RQ5 asks about and nothing here measured.
+  C4 plus the SNN pilot is the motivating result: the winner may flip with the substrate.
+- **"When to sleep."** A replay-budget dose-response with 5-6 budgets × 8 seeds for sleep vs interleaved replay, plus the
+  hybrid schedule.
+
+### Deviations and incidents (all logged above)
+- Three container restarts (0.75 core-h lost); killed runs were rerun from scratch with the same seeds, as
+  pre-registered.
+- `confirm_stats.py`'s descriptive memory column was fixed after the runs (C3's buffer was counted as 0); tests
+  unchanged.
+- C4 and idea 8 were added after C1-C3 finished. C4 was pre-registered and committed before any C4 run, and it reuses
+  the C1 arms as comparators.
+- Idea 6 ran 2 seeds per arm instead of 3. Commit `16883dd` added `.pt` checkpoints, which remain in the `explore`
+  branch history.
+
+
 ## Budget ledger
+Computed by `explore/budget.py` from each run's logged wall time (one core per run) plus `explore/budget_extra.json`.
+| block | core-h |
+|---|---|
+| Phase B pilots (cl 2.59 incl. idea 8/8b CNN, cl_snn 0.72 incl. idea 8b SNN, dfa 1.20, mem 1.12, int8 audit 0.03, smoke 0.02) | 5.68 |
+| Phase C1-C3 (cap 12) | 11.17 |
+| C4 | 1.23 |
+| lost to three container restarts | 0.75 |
+| **total** | **18.83 of about 30** |
+About 11 core-h of the budget went unused. The remaining questions (an SNN confirmation, the full frontier) need more
+than that to answer properly, so I stopped rather than run underpowered versions.

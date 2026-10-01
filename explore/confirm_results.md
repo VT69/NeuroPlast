@@ -37,3 +37,18 @@
 |---|---|---|---|---|---|
 | H6 | sleep@14080 − replay b=3 | ACC | -0.131 [-0.252, -0.010] | 0.0376 | 0.0376 |
 | H7 | sleep@14080 − replay b=3 | FORGET | +0.241 [+0.058, +0.424] | 0.0172 | 0.0343 |
+
+### C4: CNN fetch5, isolation at LwF's memory (C1 arms reused), seeds 201-210
+
+| arm | n | final ACC (mean ± SD) | FORGET | persistent MB | replayed | CPU h/run | never-learned tasks |
+|---|---|---|---|---|---|---|---|
+| isolation-narrow | 10 | 0.972 ± 0.002 | 0.001 | 0.90 | 0.000M | 0.123 | 0 |
+| LwF-int8 | 10 | 0.944 ± 0.018 | 0.009 | 0.91 | 1.195M | 0.199 | 0 |
+| replay@973 | 10 | 0.920 ± 0.052 | 0.019 | 1.83 | 1.195M | 0.188 | 0 |
+| isolation | 10 | 0.975 ± 0.001 | 0.000 | 3.20 | 0.000M | 0.152 | 0 |
+
+| test | comparison | metric | difference [95% CI] | Welch p | Holm p |
+|---|---|---|---|---|---|
+| H8 | isolation-narrow − LwF-int8 | ACC | +0.028 [+0.015, +0.041] | 0.000766 | 0.0023 |
+| H9 | isolation-narrow − replay@973 | ACC | +0.052 [+0.015, +0.089] | 0.0111 | 0.0111 |
+| H10 | isolation-narrow − isolation | ACC | -0.004 [-0.005, -0.002] | 0.000905 | 0.0023 |
