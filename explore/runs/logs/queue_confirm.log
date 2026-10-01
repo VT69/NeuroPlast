@@ -1,0 +1,130 @@
+62 jobs pending
+START explore/runs/confirm_snn/fetch3_lwf_int8_s201/results.json
+START explore/runs/confirm_snn/fetch3_replay_buf1380_s201/results.json
+START explore/runs/confirm_snn/fetch3_lwf_int8_s202/results.json
+START explore/runs/confirm_snn/fetch3_replay_buf1380_s202/results.json
+END rc=0 805s explore/runs/confirm_snn/fetch3_replay_buf1380_s202/results.json
+START explore/runs/confirm_snn/fetch3_lwf_int8_s203/results.json
+END rc=0 845s explore/runs/confirm_snn/fetch3_replay_buf1380_s201/results.json
+START explore/runs/confirm_snn/fetch3_replay_buf1380_s203/results.json
+END rc=0 860s explore/runs/confirm_snn/fetch3_lwf_int8_s202/results.json
+START explore/runs/confirm_snn/fetch3_lwf_int8_s204/results.json
+END rc=0 895s explore/runs/confirm_snn/fetch3_lwf_int8_s201/results.json
+START explore/runs/confirm_snn/fetch3_replay_buf1380_s204/results.json
+END rc=0 775s explore/runs/confirm_snn/fetch3_replay_buf1380_s203/results.json
+START explore/runs/confirm_snn/fetch3_lwf_int8_s205/results.json
+END rc=0 830s explore/runs/confirm_snn/fetch3_lwf_int8_s203/results.json
+START explore/runs/confirm_snn/fetch3_replay_buf1380_s205/results.json
+END rc=0 750s explore/runs/confirm_snn/fetch3_replay_buf1380_s204/results.json
+START explore/runs/confirm_snn/fetch3_lwf_int8_s206/results.json
+END rc=0 825s explore/runs/confirm_snn/fetch3_lwf_int8_s204/results.json
+START explore/runs/confirm_snn/fetch3_replay_buf1380_s206/results.json
+54 jobs pending
+START explore/runs/confirm_snn/fetch3_lwf_int8_s205/results.json
+START explore/runs/confirm_snn/fetch3_replay_buf1380_s205/results.json
+START explore/runs/confirm_snn/fetch3_lwf_int8_s206/results.json
+START explore/runs/confirm_snn/fetch3_replay_buf1380_s206/results.json
+END rc=0 1125s explore/runs/confirm_snn/fetch3_replay_buf1380_s206/results.json
+START explore/runs/confirm_snn/fetch3_lwf_int8_s207/results.json
+END rc=0 1170s explore/runs/confirm_snn/fetch3_replay_buf1380_s205/results.json
+START explore/runs/confirm_snn/fetch3_replay_buf1380_s207/results.json
+END rc=0 1220s explore/runs/confirm_snn/fetch3_lwf_int8_s206/results.json
+START explore/runs/confirm_snn/fetch3_lwf_int8_s208/results.json
+END rc=0 1290s explore/runs/confirm_snn/fetch3_lwf_int8_s205/results.json
+START explore/runs/confirm_snn/fetch3_replay_buf1380_s208/results.json
+END rc=0 1175s explore/runs/confirm_snn/fetch3_lwf_int8_s207/results.json
+START explore/runs/confirm/fetch5_lwf_int8_s201/results.json
+END rc=0 1025s explore/runs/confirm_snn/fetch3_replay_buf1380_s208/results.json
+START explore/runs/confirm/fetch5_replay_buf973_s201/results.json
+END rc=0 1170s explore/runs/confirm_snn/fetch3_replay_buf1380_s207/results.json
+START explore/runs/confirm/fetch5_isolation_s201/results.json
+END rc=0 1165s explore/runs/confirm_snn/fetch3_lwf_int8_s208/results.json
+START explore/runs/confirm/fetch5_lwf_int8_s202/results.json
+END rc=0 535s explore/runs/confirm/fetch5_isolation_s201/results.json
+START explore/runs/confirm/fetch5_replay_buf973_s202/results.json
+END rc=0 675s explore/runs/confirm/fetch5_replay_buf973_s201/results.json
+START explore/runs/confirm/fetch5_isolation_s202/results.json
+END rc=0 730s explore/runs/confirm/fetch5_lwf_int8_s201/results.json
+START explore/runs/confirm/fetch5_lwf_int8_s203/results.json
+END rc=0 715s explore/runs/confirm/fetch5_lwf_int8_s202/results.json
+START explore/runs/confirm/fetch5_replay_buf973_s203/results.json
+END rc=0 580s explore/runs/confirm/fetch5_isolation_s202/results.json
+START explore/runs/confirm/fetch5_isolation_s203/results.json
+END rc=0 705s explore/runs/confirm/fetch5_replay_buf973_s202/results.json
+START explore/runs/confirm/fetch5_lwf_int8_s204/results.json
+END rc=0 740s explore/runs/confirm/fetch5_lwf_int8_s203/results.json
+START explore/runs/confirm/fetch5_replay_buf973_s204/results.json
+END rc=0 695s explore/runs/confirm/fetch5_replay_buf973_s203/results.json
+START explore/runs/confirm/fetch5_isolation_s204/results.json
+END rc=0 560s explore/runs/confirm/fetch5_isolation_s203/results.json
+START explore/runs/confirm/fetch5_lwf_int8_s205/results.json
+END rc=0 710s explore/runs/confirm/fetch5_lwf_int8_s204/results.json
+START explore/runs/confirm/fetch5_replay_buf973_s205/results.json
+END rc=0 555s explore/runs/confirm/fetch5_isolation_s204/results.json
+START explore/runs/confirm/fetch5_isolation_s205/results.json
+END rc=0 680s explore/runs/confirm/fetch5_replay_buf973_s204/results.json
+START explore/runs/confirm/fetch5_lwf_int8_s206/results.json
+END rc=0 725s explore/runs/confirm/fetch5_lwf_int8_s205/results.json
+START explore/runs/confirm/fetch5_replay_buf973_s206/results.json
+END rc=0 550s explore/runs/confirm/fetch5_isolation_s205/results.json
+START explore/runs/confirm/fetch5_isolation_s206/results.json
+END rc=0 680s explore/runs/confirm/fetch5_replay_buf973_s205/results.json
+START explore/runs/confirm/fetch5_lwf_int8_s207/results.json
+END rc=0 710s explore/runs/confirm/fetch5_lwf_int8_s206/results.json
+START explore/runs/confirm/fetch5_replay_buf973_s207/results.json
+END rc=0 555s explore/runs/confirm/fetch5_isolation_s206/results.json
+START explore/runs/confirm/fetch5_isolation_s207/results.json
+END rc=0 670s explore/runs/confirm/fetch5_replay_buf973_s206/results.json
+START explore/runs/confirm/fetch5_lwf_int8_s208/results.json
+END rc=0 720s explore/runs/confirm/fetch5_lwf_int8_s207/results.json
+START explore/runs/confirm/fetch5_replay_buf973_s208/results.json
+END rc=0 675s explore/runs/confirm/fetch5_replay_buf973_s207/results.json
+START explore/runs/confirm/fetch5_isolation_s208/results.json
+END rc=0 545s explore/runs/confirm/fetch5_isolation_s207/results.json
+START explore/runs/confirm/fetch5_lwf_int8_s209/results.json
+END rc=0 730s explore/runs/confirm/fetch5_lwf_int8_s208/results.json
+START explore/runs/confirm/fetch5_replay_buf973_s209/results.json
+END rc=0 680s explore/runs/confirm/fetch5_replay_buf973_s208/results.json
+START explore/runs/confirm/fetch5_isolation_s209/results.json
+END rc=0 550s explore/runs/confirm/fetch5_isolation_s208/results.json
+START explore/runs/confirm/fetch5_lwf_int8_s210/results.json
+END rc=0 725s explore/runs/confirm/fetch5_lwf_int8_s209/results.json
+START explore/runs/confirm/fetch5_replay_buf973_s210/results.json
+END rc=0 555s explore/runs/confirm/fetch5_isolation_s209/results.json
+START explore/runs/confirm/fetch5_isolation_s210/results.json
+END rc=0 690s explore/runs/confirm/fetch5_replay_buf973_s209/results.json
+START explore/runs/confirm/fetch3_sleep_rb14080_s201/results.json
+END rc=0 730s explore/runs/confirm/fetch5_lwf_int8_s210/results.json
+START explore/runs/confirm/fetch3_replay_b3_s201/results.json
+END rc=0 340s explore/runs/confirm/fetch3_sleep_rb14080_s201/results.json
+START explore/runs/confirm/fetch3_sleep_rb14080_s202/results.json
+END rc=0 690s explore/runs/confirm/fetch5_replay_buf973_s210/results.json
+START explore/runs/confirm/fetch3_replay_b3_s202/results.json
+END rc=0 345s explore/runs/confirm/fetch3_replay_b3_s201/results.json
+START explore/runs/confirm/fetch3_sleep_rb14080_s203/results.json
+END rc=0 555s explore/runs/confirm/fetch5_isolation_s210/results.json
+START explore/runs/confirm/fetch3_replay_b3_s203/results.json
+END rc=0 340s explore/runs/confirm/fetch3_sleep_rb14080_s202/results.json
+START explore/runs/confirm/fetch3_sleep_rb14080_s204/results.json
+END rc=0 355s explore/runs/confirm/fetch3_replay_b3_s202/results.json
+START explore/runs/confirm/fetch3_replay_b3_s204/results.json
+END rc=0 345s explore/runs/confirm/fetch3_sleep_rb14080_s203/results.json
+START explore/runs/confirm/fetch3_sleep_rb14080_s205/results.json
+END rc=0 360s explore/runs/confirm/fetch3_replay_b3_s203/results.json
+START explore/runs/confirm/fetch3_replay_b3_s205/results.json
+END rc=0 345s explore/runs/confirm/fetch3_sleep_rb14080_s204/results.json
+START explore/runs/confirm/fetch3_sleep_rb14080_s206/results.json
+END rc=0 365s explore/runs/confirm/fetch3_replay_b3_s204/results.json
+START explore/runs/confirm/fetch3_replay_b3_s206/results.json
+END rc=0 345s explore/runs/confirm/fetch3_sleep_rb14080_s205/results.json
+START explore/runs/confirm/fetch3_sleep_rb14080_s207/results.json
+END rc=0 360s explore/runs/confirm/fetch3_replay_b3_s205/results.json
+START explore/runs/confirm/fetch3_replay_b3_s207/results.json
+END rc=0 335s explore/runs/confirm/fetch3_sleep_rb14080_s206/results.json
+START explore/runs/confirm/fetch3_sleep_rb14080_s208/results.json
+END rc=0 340s explore/runs/confirm/fetch3_replay_b3_s206/results.json
+END rc=0 325s explore/runs/confirm/fetch3_sleep_rb14080_s207/results.json
+START explore/runs/confirm/fetch3_replay_b3_s208/results.json
+END rc=0 340s explore/runs/confirm/fetch3_replay_b3_s207/results.json
+END rc=0 320s explore/runs/confirm/fetch3_sleep_rb14080_s208/results.json
+END rc=0 340s explore/runs/confirm/fetch3_replay_b3_s208/results.json

@@ -55,8 +55,9 @@ def never_learned(r):
 def summary(name, rs, T):
     acc = [r["metrics"]["ACC"] for r in rs.values()]
     fg = [r["metrics"]["FORGET"] for r in rs.values()]
-    buf = rs and next(iter(rs.values())).get("method_kwargs", {}).get("buffer_per_task", 0)
     r0 = next(iter(rs.values())) if rs else None
+    # default buffer is 5,000 states/task for replay and sleep (as in scripts/memory_fair.py); descriptive column only
+    buf = r0 and r0.get("method_kwargs", {}).get("buffer_per_task", 5000 if r0["method"] in ("replay", "sleep") else 0)
     mem = r0["params"] * 4 / 1e6 + (buf or 0) * T * 188 / 1e6 if r0 else float("nan")
     rs_ = [r["replay_samples"] for r in rs.values()]
     cpu = [r["wall_time"] / 3600 for r in rs.values()]
