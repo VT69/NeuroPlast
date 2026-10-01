@@ -8,11 +8,15 @@ confirmation uses 201-210. Neither range was used by any capstone run, which use
 Claim labels as in the paper: **[pilot]** is exploratory (1-2 seeds, never a finding); **[confirmed]** is only for
 Phase C runs done exactly as pre-registered below; **[lit]** is literature; **[interp]** is interpretation.
 
-## What to look at first (live; updated 01:25)
-- Phase B is done and logged below. One idea survived its kill criterion: buffer-free distillation (LwF) with an int8
-  teacher. Idea 5 (sleep vs replay when replay is scarce) became a boundary test.
-- Phase C is running exactly as pre-registered: C2 (SNN) seeds 201-204 are done; 54 of 62 runs remain.
-- Three container restarts so far; the killed runs were rerun from scratch with the same seeds (logged in the ledger).
+## What to look at first (live; updated 04:20)
+- **Phase C is complete** (62/62 runs; results under "Phase C results").
+  - C3 is confirmed: with scarce replay (~14k samples), sleep forgets much more than interleaved replay.
+  - C1: LwF-int8 is not significantly different from replay@973 at half the memory, and it is about 3 points below
+    full isolation.
+  - C2 (SNN): LwF forgets slightly more than replay.
+- **Idea 8 overturned the LwF story.** Isolation shrunk to LwF's parameter count reached 0.972 on 2 pilot seeds, so LwF
+  has no memory advantage. C4 (pre-registered) confirms this with 10 seeds; the idea-8b width sweep runs alongside.
+- Three container restarts; killed runs were rerun from scratch with the same seeds (see the ledger).
 
 ## Budget (about 30 core-hours on this 4-core machine, one thread per job)
 | phase | planned core-h | what |
