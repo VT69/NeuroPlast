@@ -271,6 +271,23 @@ Logged before running; seeds 101-102; same frames, lr and evaluation as everythi
 - **What would change conclusions.** If the SNN narrow isolation is at least C2 replay's 0.885, isolation dominates per
   unit of memory on both substrates at these task difficulties; that would get its own pre-registration (C5).
 
+- **Pilot results (seeds 101, 102):**
+  | arm | memory (fp32) | ACC | per-task diagonal, worst | reference |
+  |---|---|---|---|---|
+  | CNN fetch5, ½ of LwF | 0.48 MB | 0.963, 0.947 | 0.96, 0.89 | LwF-int8 0.944 at 0.91 MB |
+  | CNN fetch5, ¼ of LwF | 0.23 MB | 0.932, 0.896 | 0.88, 0.76 | LwF-int8 0.944 at 0.91 MB |
+  | CNN fetch3 | 0.75 MB | 0.978, 0.977 | 0.98, 0.98 | frozen sleep@200 0.964, replay@200 0.946 at 0.89 MB; full isolation 0.979 at 1.92 MB |
+  | SNN fetch3 | 0.75 MB | 0.636, 0.854 | 0.38, 0.83 | C2 LwF-int8 0.869 (0.78 MB), replay@1380 0.885 (1.56 MB); frozen full SNN isolation 0.833 at 1.92 MB |
+- **CNN:** isolation degrades gracefully as it shrinks. It matches full width at 0.75 MB on fetch3, is at or above LwF
+  down to ½ of LwF's memory on fetch5, and is only a few points below at ¼. On the CNN, the capstone's "shared methods
+  win at small memory" depends on keeping isolation at full width. [pilot]
+- **SNN:** narrow isolation fails to learn tasks in 150k frames (s101: tasks 0 and 1 at 0.38 and 0.44). Pilot mean
+  0.745 is below C2's shared methods, and even full-width SNN isolation was below them in the capstone (0.833). On the
+  SNN, sharing still pays per unit of memory, plausibly because per-task SNN learning is the bottleneck and shared
+  weights carry what earlier tasks learned. [pilot; interp]
+- The C5 trigger (SNN narrow isolation ≥ 0.885) is not met, so there is no C5.
+- Cost: 8 runs, 0.93 core-h.
+
 ### Infrastructure incidents
 - Container restart 1: 4 pilot jobs killed, rerun from scratch; 0.183 core-h lost.
 - Container restart 2 (22:36): the first 4 C2 SNN runs killed about 2 min in, rerun from scratch with the same seeds
