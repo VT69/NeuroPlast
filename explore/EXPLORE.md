@@ -248,6 +248,25 @@ not be distinguished from anything. Dropped without spending compute.
   Report it and stop. Pilot mean < 0.914 (LwF − 0.03) means LwF may win per unit of memory; promote to a pre-registered
   C4 against C1's LwF-int8 runs.
 
+- **Pilot result (seeds 101-102): ACC 0.972 and 0.972, FORGET 0.002**; every task 0.97-0.98 right after training;
+  407 s per run. **Kill criterion met:** at LwF's parameter count, isolation matches or beats LwF (0.944 confirmed).
+  So on CNN fetch5, LwF has no memory advantage over isolation. This also qualifies the capstone's memory frontier,
+  which compared shared methods only against full-width isolation. [pilot]
+- Because that qualification matters for RQ5, it gets a confirmation (C4, below) and a cheap width sweep (idea 8b).
+
+### Idea 8b: how far isolation shrinks (width sweep), and whether it holds on fetch3 and on the SNN. [pilot]
+Logged before running; seeds 101-102; same frames, lr and evaluation as everything else.
+| arm | per-task network | total params | fp32 MB | compare with |
+|---|---|---|---|---|
+| CNN fetch5, ½ of LwF | channels (6,12,24), feat 48, hidden 32 | 119,210 | 0.48 | LwF-int8 0.944 (0.91 MB) |
+| CNN fetch5, ¼ of LwF | channels (4,8,16), feat 32, hidden 32 | 57,940 | 0.23 | LwF-int8 0.944 (0.91 MB) |
+| CNN fetch3 | channels (8,16,32), feat 96, hidden 48 | 186,624 | 0.75 | frozen sleep@200 0.964, replay@200 0.946 (0.89 MB) |
+| SNN fetch3 | channels (8,16,32), feat 96, hidden 48 | 187,080 | 0.75 | C2 LwF-int8 0.869 (0.78 MB), replay@1380 0.885 (1.56 MB) |
+- **Prediction.** CNN isolation holds down to ½ and breaks somewhere by ¼. The SNN is harder (capstone: SNN fetch5
+  isolation needed 450k frames/task), so narrow SNN isolation may fall below C2's shared methods.
+- **What would change conclusions.** If the SNN narrow isolation is at least C2 replay's 0.885, isolation dominates per
+  unit of memory on both substrates at these task difficulties; that would get its own pre-registration (C5).
+
 ### Infrastructure incidents
 - Container restart 1: 4 pilot jobs killed, rerun from scratch; 0.183 core-h lost.
 - Container restart 2 (22:36): the first 4 C2 SNN runs killed about 2 min in, rerun from scratch with the same seeds
@@ -302,6 +321,19 @@ batch 128, coef 1.0).
   capstone's replay runs (4,566-4,653 minibatches × 3). The exact counts are reported.
 - **H6.** Final ACC differs (two-sided Welch, α = 0.05; 95% CI).
 - **H7.** FORGET differs (Welch). Holm correction over H6-H7.
+
+### C4: isolation at LwF's memory (CNN fetch5; added after Phase C1-C3 finished and after the idea-8 pilot, before any C4 run)
+- **Motivation.** Idea-8 pilot: quarter-width isolation (224,640 params) reached 0.972 on 2 pilot seeds.
+- **Arm.** `isolation` with `--set "enc_kwargs={channels: [8, 16, 32]}" feat_dim=64 hidden=64`, tag `_narrow`. Seeds
+  201-210 (10 runs), `configs/cl_cnn.yaml`, outputs in `explore/runs/confirm/`.
+- **Comparison arms.** The C1 runs already on disk (same seeds, code, config and machine): LwF-int8, replay@973, and
+  full-width isolation. They are not rerun.
+- **H8.** ACC, narrow isolation − LwF-int8 (Welch, two-sided, 95% CI).
+- **H9.** ACC, narrow isolation − replay@973 (Welch).
+- **H10.** ACC, narrow isolation − full isolation (Welch). "No large difference" only if the CI lies within ±0.05.
+- Holm over H8-H10. FORGET is reported descriptively (isolation's is 0 by construction, apart from evaluation noise).
+- Same stopping rule as above. Analysis: `explore/confirm_stats.py` (C4 family added in the same commit as this
+  section).
 
 ### Stopping rule
 - Run every listed run once; no early stopping, no interim tests.

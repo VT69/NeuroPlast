@@ -108,6 +108,12 @@ if __name__ == "__main__":
                   "fetch3", 3, [("sleep@14080", "sleep_rb14080"), ("replay b=3", "replay_b3")],
                   [("H6", "sleep@14080", "replay b=3", "ACC"), ("H7", "sleep@14080", "replay b=3", "FORGET")],
                   range(201, 209))
+    out += [""]
+    out += family("C4: CNN fetch5, isolation at LwF's memory (C1 arms reused), seeds 201-210", "explore/runs/confirm",
+                  "fetch5", 5, [("isolation-narrow", "isolation_narrow"), ("LwF-int8", "lwf_int8"),
+                                ("replay@973", "replay_buf973"), ("isolation", "isolation")],
+                  [("H8", "isolation-narrow", "LwF-int8", "ACC"), ("H9", "isolation-narrow", "replay@973", "ACC"),
+                   ("H10", "isolation-narrow", "isolation", "ACC")], range(201, 211))
     text = "\n".join(out) + "\n"
     print(text)
     open("explore/confirm_results.md", "w").write(text)
