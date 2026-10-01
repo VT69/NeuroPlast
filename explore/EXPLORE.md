@@ -234,6 +234,20 @@ Cut to 2 seeds per target (101-102) instead of 3, to save budget for Phase C.
 Its only test bed was CueFirst-S11, which idea 4 killed: no memory agent learned the task, so a stateful-SNN arm could
 not be distinguished from anything. Dropped without spending compute.
 
+### Idea 8 (added after Phase C): isolation at LwF's memory. [pilot]
+- **Motivation.** [ours, C1] LwF-int8 reached 0.944 at 0.91 MB of persistent memory. Isolation reached 0.975, but at
+  3.20 MB. RQ5 asks about performance per unit of memory, so the fair reference is isolation shrunk to LwF's
+  parameter count. [lit] PackNet / HAT-style work treats isolation capacity as the binding constraint.
+- **Arm.** Five per-task networks with encoder channels (8, 16, 32), feat_dim 64, hidden 64: 44,928 params each, 224,640
+  total (LwF's shared network: 228,632). Same frames, lr, evaluation; fp32 for both (int8 would scale both by 4).
+- **Confound.** Narrower networks change optimisation as well as capacity. So this asks what isolation achieves at this
+  budget with the default recipe, not what the best small architecture achieves.
+- **Prediction.** Uncertain; the fetch tasks are easy, so a quarter-width network per task may still reach ~0.95.
+- **Pilot.** CNN fetch5, seeds 101-102 (about 0.3 core-h).
+- **Kill / promote.** Pilot mean ≥ 0.944 means isolation matches LwF per unit of memory, so LwF has no memory advantage.
+  Report it and stop. Pilot mean < 0.914 (LwF − 0.03) means LwF may win per unit of memory; promote to a pre-registered
+  C4 against C1's LwF-int8 runs.
+
 ### Infrastructure incidents
 - Container restart 1: 4 pilot jobs killed, rerun from scratch; 0.183 core-h lost.
 - Container restart 2 (22:36): the first 4 C2 SNN runs killed about 2 min in, rerun from scratch with the same seeds
@@ -301,6 +315,58 @@ batch 128, coef 1.0).
 - If H1's CI includes 0 and its upper bound is below +0.03, the claim becomes "LwF matches replay given 4× its extra
   memory". That is still a memory result, but not an accuracy one.
 - If LwF-int8 is significantly below replay, buffer-free distillation is worse, and that gets reported.
+
+## Phase C results (run exactly as pre-registered; 62/62 runs, none missing)
+Full tables: `explore/confirm_results.md` (pre-registered tests, `explore/confirm_stats.py`). Exploratory follow-ups
+(written after seeing the results): `explore/confirm_secondary.md`. One change to `confirm_stats.py` after the runs:
+the descriptive "persistent MB" column counted the default 5,000-state buffer as 0 for C3. It now uses the same default
+as `scripts/memory_fair.py`. No test changed.
+
+### C1: CNN fetch5, 10 seeds per arm [confirmed]
+| arm | final ACC | FORGET | persistent memory | replayed / distilled samples |
+|---|---|---|---|---|
+| LwF-int8 | 0.944 ± 0.018 | 0.009 | 0.91 MB (network only) | 1.195M |
+| replay@973 | 0.920 ± 0.052 | 0.019 | 1.83 MB | 1.195M |
+| isolation | 0.975 ± 0.001 | 0.000 | 3.20 MB | 0 |
+- **H1 (ACC, LwF − replay): +0.024 [−0.014, +0.062], Welch p = 0.19, Holm p = 0.20.** Not significant. The CI
+  includes 0 and its upper bound is above +0.03, so neither falsification branch applies: the direction is unresolved.
+  What the CI does exclude is LwF being more than 0.014 worse than replay, at half the persistent memory and a quarter
+  of the extra peak memory.
+- **H2 (FORGET): −0.010 [−0.022, +0.002], p = 0.10, Holm p = 0.20.** Not significant.
+- **H3 (ACC, LwF − isolation): −0.031 [−0.044, −0.019], p = 0.0003, Holm p = 0.001.** LwF is significantly below
+  isolation. The CI lies inside ±0.05, so by the pre-registered rule this is also "no large difference": isolation buys
+  about 3 points of ACC for 3.5× the memory.
+- No run had a never-learned task. The pilot's fetch5 s102 failure (task 2 at 0.33) did not recur in 10 fresh seeds.
+- [exploratory] LwF's spread is smaller (SD 0.018 vs 0.052; worst seed 0.911 vs 0.787; Brown-Forsythe p = 0.13), and
+  LwF is above replay on 8/10 seeds (paired difference +0.024 [−0.005, +0.053], p = 0.09).
+
+### C2: SNN fetch3, 8 seeds per arm [confirmed]
+| arm | final ACC | FORGET | persistent memory | samples |
+|---|---|---|---|---|
+| LwF-int8 | 0.869 ± 0.068 | 0.031 | 0.78 MB | 0.532M |
+| replay@1380 | 0.885 ± 0.073 | 0.014 | 1.56 MB | 0.527M |
+- **H4 (ACC): −0.016 [−0.092, +0.059], p = 0.65.** Not significant, and the CI is too wide to exclude a large effect
+  either way.
+- **H5 (FORGET): +0.017 [+0.006, +0.027], p = 0.005, Holm p = 0.011.** Significant: on the SNN, LwF forgets more than
+  replay. The effect is small in absolute terms (0.031 vs 0.014).
+- [exploratory] ACC is almost entirely decided by the seed (cross-arm correlation r = 0.98; seed 204 fails task 0 in
+  both arms). Paired by seed, LwF is 0.016 [0.004, 0.029] below replay (paired p = 0.02). So on the SNN, LwF is slightly
+  worse than replay with twice the persistent memory, consistently but by little.
+
+### C3: sleep vs replay at ~14k replayed samples (~2% of the usual budget), CNN fetch3, 8 seeds per arm [confirmed]
+| arm | final ACC | FORGET | samples |
+|---|---|---|---|
+| sleep, replay_budget 14,080 | 0.815 ± 0.145 | 0.244 | 14,080 |
+| replay, 3 per minibatch | 0.945 ± 0.020 | 0.003 | 13,986 (13,866-14,016) |
+- **H6 (ACC, sleep − replay): −0.131 [−0.252, −0.010], p = 0.038.** **H7 (FORGET): +0.241 [+0.058, +0.424], p = 0.017,
+  Holm p = 0.034.** Both significant. When replay is scarce, spending it inside the PPO minibatches protects old tasks
+  far better than spending it in offline sleep phases. The capstone's "sleep ≥ replay" holds only at the full budget.
+- [exploratory] Sleep's failure is bimodal and hits task 0: its final task-0 return is 0.03-0.93 (4/8 runs below 0.5),
+  against 0.98 on every replay run (Fisher p = 0.08).
+- [exploratory] Interleaved replay has a cost the ACC average hides. Its last task (just trained, no forgetting yet)
+  reaches 0.889 ± 0.055 against sleep's 0.973 ± 0.008 (difference 0.084 [0.038, 0.130], p = 0.003). Mixing old states
+  into every minibatch slows learning of the current task, while offline sleep leaves plasticity intact. Here the
+  protection is worth far more than it costs.
 
 ## Phase D: report
 
