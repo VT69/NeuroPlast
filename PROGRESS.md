@@ -13,7 +13,25 @@ rerun on the frozen data at 01:25 UTC (`rq1_stats.py`, `memory_fair.py`, `rq5_st
 Results went in as they came out, including the nulls: session 4 turned two earlier positive hints into nulls
 (sleep > replay; DFA+homeostasis solve rate) and found no usable memory benchmark.
 
-## Session 9 (2026-10-12): capstone report in the university format (no new runs; frozen results unchanged)
+## Session 10 (2026-10-12): capstone report rebuilt with the team's details (no new runs; frozen results unchanged)
+**What to look at first:** `report/NeuroPlast_Capstone_Report.pdf` (58 pages: viii front-matter pages, 50 body pages),
+then the placeholders below.
+
+- `report/` was replaced, not patched: the session-9 report (generic title, placeholders) was deleted and the report
+  rebuilt from the template with the team's answers. Phase-I; title "NeuroPlast - A Self-Consolidating RL Agent";
+  six members with registration numbers; guide Dr. Trapti Sharma; Program Chair Dr. Pradeep Kumar Mishra without a
+  designation; cover month October 2026; viva date October 12, 2026; A4 instead of the template's US Letter; no AI-use
+  declaration page; a member-wise contributions section; GitHub link and dashboard included; C4 included as
+  post-freeze; TinyML / embedded direction in future work, as plans only. References written out in IEEE style in
+  `report/content.py` (Yu et al. is arXiv:2602.01966, 2026; Spikingformer is AAAI vol. 40(3), pp. 2236-2244).
+- New: `report/make_figures.py` regenerates every report-only figure (it replaces the ad-hoc session-9 commands).
+- Checks: TOC/LoF/LoT page numbers against the rendered footers (89 entries, 0 mismatches); footer roman i-viii, then
+  Arabic from 1 at Chapter 1; no sample text left (text and metadata); team details match the team's reply verbatim;
+  headings use Heading 1/2/3; the .docx passes an OOXML schema check; all 58 pages inspected rendered.
+- Placeholders left: the guide's designation ([TBD: guide designation]); the contributions of the five members other
+  than Vaibhav Tiwari ([TBD: contribution, in the member's own words]); these were not invented.
+
+## Session 9 (2026-10-12): first capstone report draft, superseded by session 10 (no new runs)
 **What to look at first:** `report/NeuroPlast_Capstone_Report.pdf` (59 pages: x front-matter pages, 49 body
 pages), then the placeholders listed below and `report/REFERENCES_TO_VERIFY.md`.
 
