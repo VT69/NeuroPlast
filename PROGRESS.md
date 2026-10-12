@@ -13,6 +13,32 @@ rerun on the frozen data at 01:25 UTC (`rq1_stats.py`, `memory_fair.py`, `rq5_st
 Results went in as they came out, including the nulls: session 4 turned two earlier positive hints into nulls
 (sleep > replay; DFA+homeostasis solve rate) and found no usable memory benchmark.
 
+## Session 9 (2026-10-12): capstone report in the university format (no new runs; frozen results unchanged)
+**What to look at first:** `report/NeuroPlast_Capstone_Report.pdf` (59 pages: x front-matter pages, 49 body
+pages), then the placeholders listed below and `report/REFERENCES_TO_VERIFY.md`.
+
+- Built `report/NeuroPlast_Capstone_Report.docx` and `.pdf` (DSN4091 Capstone Project Report) from the university's
+  sample report, converted with LibreOffice. The cover, logo, page size, margins, styles, footer and front-matter
+  layout come from the template; all sample content was replaced. Generator: `report/build_report.py` (layout) and
+  `report/content.py` (text); see `report/README.md`. The template itself (`docs/report_template/`) is not committed:
+  it is another group's report and its metadata names its author.
+- Content draws only on the paper, this log, `docs/LITERATURE_CONTEXT.md`, the deck and the dashboard. Every result
+  number is read from `paper/compute_numbers.py` (via `demo/build_dashboard.py`); `report/NUMBERS_CHECK.md` lists
+  all 209 with macro, value and source. C4 is labelled post-freeze; the Transformer question is inconclusive; energy
+  is an estimated proxy; the TinyML / embedded-systems direction in Section 7.3 is written as plans only.
+- Checks done: TOC, List of Figures and List of Tables page numbers compared with the rendered footers (88 entries,
+  0 mismatches); footer is roman i-x in the front matter and Arabic from 1 at Chapter 1; no sample text left in the
+  PDF or the .docx (including its metadata); headings use Heading 1/2/3 with outline levels; the .docx passes an
+  OOXML schema check; all 59 pages were inspected rendered.
+- Placeholders left on purpose: registration numbers (TBD), guide name and designation (TBD), report type
+  "[Phase-I / Phase-II]" (cover, certificate, viva line), the AI-tools declaration ("[TODO: written by the team]"),
+  the viva date (blank, as in the template). The cover month is October 2026.
+- Judgement calls to review: Table 3.1 describes the build container (4 logical CPUs, about 15 GB RAM) and a team
+  laptop without specs; Table 3.2 gives the package versions installed now (requirements.txt gives only minimums);
+  references still marked `TODO verify` in `paper/refs.bib` are cited normally and listed in
+  `report/REFERENCES_TO_VERIFY.md` (Yu et al. 2025 has no venue, so it prints with the year only). Word may
+  paginate slightly differently from LibreOffice; the file asks Word to update fields on opening.
+
 ## Session 8 (2026-10-01): final revision before review (no new runs; frozen results unchanged)
 **What to look at first:** `paper/main.pdf` (preprint) and `paper/main_anonymous.pdf` (TMLR), Section 5.5's post-freeze
 paragraph and Table 4's last row; deck slides 10 and 16-18; the dashboard's memory section and "What's next".
